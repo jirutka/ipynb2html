@@ -1,13 +1,12 @@
 // This code is originally based on notebookjs 0.4.2 distributed under the MIT license.
+import ansiUp from 'ansi_up'
+import jsdom from 'jsdom'
+import marked from 'marked'
+
 const root = this
 const VERSION = '0.4.2'
 
-// Get browser or JSDOM document
-let doc = root.document
-if (!doc) {
-  const jsdom = require('jsdom')
-  doc = new jsdom.JSDOM().window.document
-}
+const doc = new jsdom.JSDOM().window.document
 
 // Helper functions
 const ident = x => x
@@ -33,21 +32,11 @@ function joinText (text) {
   }
 }
 
-// Get supporting libraries
-const condRequire = moduleName => typeof require === 'function' && require(moduleName)
-
-const getMarkdown = () => root.marked || condRequire('marked')
-
-function getAnsi () {
-  const lib = root.ansi_up || condRequire('ansi_up')
-  return lib && lib.ansi_to_html
-}
-
 // Set up `nb` namespace
 const nb = {
   prefix: 'nb-',
-  markdown: getMarkdown() || ident,
-  ansi: getAnsi() || ident,
+  markdown: marked,
+  ansi: ansiUp.ansi_to_html,
   highlighter: ident,
   VERSION
 }
@@ -328,15 +317,4 @@ nb.Notebook = Notebook
 
 nb.parse = (nbjson, config) => new nb.Notebook(nbjson, config)
 
-// Exports
-if (typeof define === 'function' && define.amd) {
-  define(() => nb)
-}
-if (typeof exports !== 'undefined') {
-  if (typeof module !== 'undefined' && module.exports) {
-    exports = module.exports = nb
-  }
-  exports.nb = nb
-} else {
-  root.nb = nb
-}
+export default nb
