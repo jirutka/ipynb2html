@@ -66,7 +66,7 @@ nb.Input = function (raw, cell) {
 
 nb.Input.prototype.render = function () {
   if (!this.raw.length) { return makeElement('div') }
-  var holder = makeElement('div', [ 'input' ])
+  var holder = makeElement('div', ['input'])
   var cell = this.cell
   if (typeof cell.number === 'number') {
     holder.setAttribute('data-prompt-number', this.cell.number)
@@ -88,7 +88,7 @@ nb.Input.prototype.render = function () {
 // Outputs and output-renderers
 var imageCreator = function (format) {
   return function (data) {
-    var el = makeElement('img', [ 'image-output' ])
+    var el = makeElement('img', ['image-output'])
     el.src = 'data:image/' + format + ';base64,' + joinText(data).replace(/\n/g, '')
     return el
   }
@@ -96,14 +96,14 @@ var imageCreator = function (format) {
 
 nb.display = {}
 nb.display.text = function (text) {
-  var el = makeElement('pre', [ 'text-output' ])
+  var el = makeElement('pre', ['text-output'])
   el.innerHTML = escapeHTML(joinText(text))
   return el
 }
 nb.display['text/plain'] = nb.display.text
 
 nb.display.html = function (html) {
-  var el = makeElement('div', [ 'html-output' ])
+  var el = makeElement('div', ['html-output'])
   el.innerHTML = joinText(html)
   return el
 }
@@ -115,7 +115,7 @@ nb.display.marked = function(md) {
 nb.display['text/markdown'] = nb.display.marked
 
 nb.display.svg = function (svg) {
-  var el = makeElement('div', [ 'svg-output' ])
+  var el = makeElement('div', ['svg-output'])
   el.innerHTML = joinText(svg)
   return el
 }
@@ -123,7 +123,7 @@ nb.display['text/svg+xml'] = nb.display.svg
 nb.display['image/svg+xml'] = nb.display.svg
 
 nb.display.latex = function (latex) {
-  var el = makeElement('div', [ 'latex-output' ])
+  var el = makeElement('div', ['latex-output'])
   el.innerHTML = joinText(latex)
   return el
 }
@@ -160,11 +160,11 @@ var render_display_data = function () {
       return nb.display[format](o.raw[format] || o.raw.data[format])
     }
   }
-  return makeElement('div', [ 'empty-output' ])
+  return makeElement('div', ['empty-output'])
 }
 
 var render_error = function () {
-  var el = makeElement('pre', [ 'pyerr' ])
+  var el = makeElement('pre', ['pyerr'])
   var raw = this.raw.traceback.join('\n')
   el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
   return el
@@ -183,7 +183,7 @@ nb.Output.prototype.renderers = {
   'pyerr': render_error,
   'error': render_error,
   'stream': function () {
-    var el = makeElement('pre', [ (this.raw.stream || this.raw.name) ])
+    var el = makeElement('pre', [(this.raw.stream || this.raw.name)])
     var raw = joinText(this.raw.text)
     el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
     return el
@@ -191,7 +191,7 @@ nb.Output.prototype.renderers = {
 }
 
 nb.Output.prototype.render = function () {
-  var outer = makeElement('div', [ 'output' ])
+  var outer = makeElement('div', ['output'])
   if (typeof this.cell.number === 'number') {
     outer.setAttribute('data-prompt-number', this.cell.number)
   }
@@ -205,7 +205,7 @@ nb.Output.prototype.render = function () {
 nb.coalesceStreams = function (outputs) {
   if (!outputs.length) { return outputs }
   var last = outputs[0]
-  var new_outputs = [ last ]
+  var new_outputs = [last]
   outputs.slice(1).forEach(function (o) {
     if (o.raw.output_type === 'stream' &&
       last.raw.output_type === 'stream' &&
@@ -227,7 +227,7 @@ nb.Cell = function (raw, worksheet) {
   cell.type = raw.cell_type
   if (cell.type === 'code') {
     cell.number = raw.prompt_number > -1 ? raw.prompt_number : raw.execution_count
-    var source = raw.input || [ raw.source ]
+    var source = raw.input || [raw.source]
     cell.input = new nb.Input(source, cell)
     var raw_outputs = (cell.raw.outputs || []).map(function (o) {
       return new nb.Output(o, cell)
@@ -238,7 +238,7 @@ nb.Cell = function (raw, worksheet) {
 
 nb.Cell.prototype.renderers = {
   markdown: function () {
-    var el = makeElement('div', [ 'cell', 'markdown-cell' ])
+    var el = makeElement('div', ['cell', 'markdown-cell'])
     el.innerHTML = nb.markdown(joinText(this.raw.source))
 
     /* Requires to render KaTeX
@@ -258,17 +258,17 @@ nb.Cell.prototype.renderers = {
     return el
   },
   heading: function () {
-    var el = makeElement('h' + this.raw.level, [ 'cell', 'heading-cell' ])
+    var el = makeElement('h' + this.raw.level, ['cell', 'heading-cell'])
     el.innerHTML = joinText(this.raw.source)
     return el
   },
   raw: function () {
-    var el = makeElement('div', [ 'cell', 'raw-cell' ])
+    var el = makeElement('div', ['cell', 'raw-cell'])
     el.innerHTML = joinText(this.raw.source)
     return el
   },
   code: function () {
-    var cell_el = makeElement('div', [ 'cell', 'code-cell' ])
+    var cell_el = makeElement('div', ['cell', 'code-cell'])
     cell_el.appendChild(this.input.render())
     var output_els = this.outputs.forEach(function (o) {
       cell_el.appendChild(o.render())
@@ -292,7 +292,7 @@ nb.Worksheet = function (raw, notebook) {
     return new nb.Cell(c, worksheet)
   })
   this.render = function () {
-    var worksheet_el = makeElement('div', [ 'worksheet' ])
+    var worksheet_el = makeElement('div', ['worksheet'])
     worksheet.cells.forEach(function (c) {
       worksheet_el.appendChild(c.render())
     })
@@ -308,7 +308,7 @@ nb.Notebook = function (raw, config) {
   this.config = config
   var meta = this.metadata = raw.metadata || {}
   this.title = meta.title || meta.name
-  var _worksheets = raw.worksheets || [ { cells: raw.cells } ]
+  var _worksheets = raw.worksheets || [{ cells: raw.cells }]
   this.worksheets = _worksheets.map(function (ws) {
     return new nb.Worksheet(ws, notebook)
   })
@@ -316,7 +316,7 @@ nb.Notebook = function (raw, config) {
 }
 
 nb.Notebook.prototype.render = function () {
-  var notebook_el = makeElement('div', [ 'notebook' ])
+  var notebook_el = makeElement('div', ['notebook'])
   this.worksheets.forEach(function (w) {
     notebook_el.appendChild(w.render())
   })
