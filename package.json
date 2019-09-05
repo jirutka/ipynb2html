@@ -1,0 +1,53 @@
+{
+  "name": "ipynb2html",
+  "version": "0.0.0",
+  "description": "Convert Jupyter Notebook to static HTML",
+  "author": "Jakub Jirutka <jakub@jirutka.cz>",
+  "license": "MIT",
+  "homepage": "https://github.com/jirutka/ipynb2html",
+  "bugs": "https://github.com/jirutka/ipynb2html/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jirutka/ipynb2html.git"
+  },
+  "keywords": [
+    "converter",
+    "html",
+    "ipython",
+    "jupyter",
+    "notebook"
+  ],
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint 'src/**/*.[jt]s'",
+    "test": "jest --detectOpenHandles --coverage --verbose",
+    "watch-ts": "tsc -w"
+  },
+  "engines": {
+    "node": ">=10.13.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@types/node": "^10.13.0",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "eslint": "^6.2.2",
+    "eslint-config-standard-with-typescript": "^8.0.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "jest": "^24.9.0",
+    "npm-run-all": "^4.1.5",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.3.0",
+    "typescript": "~3.5.2"
+  }
+}

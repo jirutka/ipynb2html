@@ -1,0 +1,73 @@
+= Jupyter Notebook to HTML
+:npm-name: ipynb2html
+:gh-name: jirutka/{npm-name}
+:gh-branch: master
+:vs-marketplace-uri: https://marketplace.visualstudio.com/items?itemName=
+
+ifdef::env-github[]
+image:https://travis-ci.com/{gh-name}.svg?branch={gh-branch}[Build Status, link="https://travis-ci.com/{gh-name}"]
+image:https://img.shields.io/npm/v/{npm-name}.svg[npm Version, link="https://www.npmjs.org/package/{npm-name}"]
+endif::env-github[]
+
+TODO
+
+
+== Development
+
+== System Requirements
+
+* https://nodejs.org[NodeJS] 10.13+
+* https://yarnpkg.com[yarn] 1.6+ (can be installed using npm)
+
+
+=== Used Tools
+
+* https://www.typescriptlang.org[TypeScript] the language
+* https://yarnpkg.com[yarn] for dependencies management and building
+* https://eslint.org[ESLint] for linting JS/TypeScript code
+* https://jestjs.io[Jest] for testing
+
+
+=== How to Start
+
+. Clone this repository:
+[source, subs="+attributes"]
+git clone git@github.com:{gh-name}.git
+
+. Install Yarn (if you don’t have it already):
+[source]
+npm install -g yarn
+
+. Install all JS dependencies:
+[source]
+yarn install
+
+. Build the project:
+[source]
+yarn build
+
+. Run tests:
+[source]
+yarn test
+
+. Run linter:
+[source]
+yarn lint
+
+IMPORTANT: Keep in mind that JS sources are located in the directory `src`; directory `lib` contains transpiled code (created after running `yarn build`)!
+
+
+=== Visual Studio Code
+
+If you use Visual Studio Code, you should install the following extensions:
+
+* link:{vs-marketplace-uri}EditorConfig.EditorConfig[EditorConfig for VS Code]
+* link:{vs-marketplace-uri}dbaeumer.vscode-eslint[ESLint]
+* link:{vs-marketplace-uri}Orta.vscode-jest[Jest] (and link:{vs-marketplace-uri}shtian.jest-snippets-standard[Jest Snippets Standard Style])
+* link:{vs-marketplace-uri}gamunu.vscode-yarn[yarn]
+
+
+== License
+
+This project is licensed under http://opensource.org/licenses/MIT/[MIT License].
+For the full text of the license, see the link:LICENSE[LICENSE] file.
