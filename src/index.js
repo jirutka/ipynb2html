@@ -34,7 +34,7 @@ function joinText (text) {
 }
 
 // Get supporting libraries
-const condRequire = module_name => typeof require === 'function' && require(module_name)
+const condRequire = moduleName => typeof require === 'function' && require(moduleName)
 
 const getMarkdown = () => root.marked || condRequire('marked')
 
@@ -65,16 +65,16 @@ nb.Input.prototype.render = function () {
   if (typeof cell.number === 'number') {
     holder.setAttribute('data-prompt-number', this.cell.number)
   }
-  const pre_el = makeElement('pre')
-  const code_el = makeElement('code')
+  const preEl = makeElement('pre')
+  const codeEl = makeElement('code')
   const notebook = cell.worksheet.notebook
   const m = notebook.metadata
   const lang = this.cell.raw.language || m.language || (m.kernelspec && m.kernelspec.language) || (m.language_info && m.language_info.name)
-  code_el.setAttribute('data-language', lang)
-  code_el.className = `lang-${lang}`
-  code_el.innerHTML = nb.highlighter(escapeHTML(joinText(this.raw)), pre_el, code_el, lang)
-  pre_el.appendChild(code_el)
-  holder.appendChild(pre_el)
+  codeEl.setAttribute('data-language', lang)
+  codeEl.className = `lang-${lang}`
+  codeEl.innerHTML = nb.highlighter(escapeHTML(joinText(this.raw)), preEl, codeEl, lang)
+  preEl.appendChild(codeEl)
+  holder.appendChild(preEl)
   this.el = holder
   return holder
 }
@@ -131,7 +131,7 @@ nb.display['image/png'] = nb.display.png
 nb.display.jpeg = imageCreator('jpeg')
 nb.display['image/jpeg'] = nb.display.jpeg
 
-nb.display_priority = [
+nb.displayPriority = [
   'png', 'image/png', 'jpeg', 'image/jpeg',
   'svg', 'image/svg+xml', 'text/svg+xml', 'html', 'text/html',
   'text/markdown', 'latex', 'text/latex',
@@ -139,9 +139,9 @@ nb.display_priority = [
   'text', 'text/plain'
 ]
 
-function render_display_data () {
+function renderDisplayData () {
   const o = this
-  const formats = nb.display_priority.filter(d => o.raw.data ? o.raw.data[d] : o.raw[d])
+  const formats = nb.displayPriority.filter(d => o.raw.data ? o.raw.data[d] : o.raw[d])
   const format = formats[0]
   if (format) {
     if (nb.display[format]) {
@@ -151,7 +151,7 @@ function render_display_data () {
   return makeElement('div', ['empty-output'])
 }
 
-function render_error () {
+function renderError () {
   const el = makeElement('pre', ['pyerr'])
   const raw = this.raw.traceback.join('\n')
   el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
@@ -165,11 +165,11 @@ nb.Output = function (raw, cell) {
 }
 
 nb.Output.prototype.renderers = {
-  'display_data': render_display_data,
-  'execute_result': render_display_data,
-  'pyout': render_display_data,
-  'pyerr': render_error,
-  'error': render_error,
+  'display_data': renderDisplayData,
+  'execute_result': renderDisplayData,
+  'pyout': renderDisplayData,
+  'pyerr': renderError,
+  'error': renderError,
   'stream': function () {
     const el = makeElement('pre', [(this.raw.stream || this.raw.name)])
     const raw = joinText(this.raw.text)
@@ -193,18 +193,18 @@ nb.Output.prototype.render = function () {
 nb.coalesceStreams = outputs => {
   if (!outputs.length) { return outputs }
   let last = outputs[0]
-  const new_outputs = [last]
+  const newOutputs = [last]
   outputs.slice(1).forEach(o => {
     if (o.raw.output_type === 'stream' &&
       last.raw.output_type === 'stream' &&
       o.raw.stream === last.raw.stream) {
       last.raw.text = last.raw.text.concat(o.raw.text)
     } else {
-      new_outputs.push(o)
+      newOutputs.push(o)
       last = o
     }
   })
-  return new_outputs
+  return newOutputs
 }
 
 // Cells
@@ -217,8 +217,8 @@ nb.Cell = function (raw, worksheet) {
     cell.number = raw.prompt_number > -1 ? raw.prompt_number : raw.execution_count
     const source = raw.input || [raw.source]
     cell.input = new nb.Input(source, cell)
-    const raw_outputs = (cell.raw.outputs || []).map(o => new nb.Output(o, cell))
-    cell.outputs = nb.coalesceStreams(raw_outputs)
+    const rawOutputs = (cell.raw.outputs || []).map(o => new nb.Output(o, cell))
+    cell.outputs = nb.coalesceStreams(rawOutputs)
   }
 }
 
@@ -254,12 +254,12 @@ nb.Cell.prototype.renderers = {
     return el
   },
   code () {
-    const cell_el = makeElement('div', ['cell', 'code-cell'])
-    cell_el.appendChild(this.input.render())
-    const output_els = this.outputs.forEach(o => {
-      cell_el.appendChild(o.render())
+    const cellEl = makeElement('div', ['cell', 'code-cell'])
+    cellEl.appendChild(this.input.render())
+    const outputEls = this.outputs.forEach(o => {
+      cellEl.appendChild(o.render())
     })
-    return cell_el
+    return cellEl
   }
 }
 
@@ -276,12 +276,12 @@ nb.Worksheet = function (raw, notebook) {
   this.notebook = notebook
   this.cells = raw.cells.map(c => new nb.Cell(c, worksheet))
   this.render = function () {
-    const worksheet_el = makeElement('div', ['worksheet'])
+    const worksheetEl = makeElement('div', ['worksheet'])
     worksheet.cells.forEach(c => {
-      worksheet_el.appendChild(c.render())
+      worksheetEl.appendChild(c.render())
     })
-    this.el = worksheet_el
-    return worksheet_el
+    this.el = worksheetEl
+    return worksheetEl
   }
 }
 
@@ -298,12 +298,12 @@ nb.Notebook = function (raw, config) {
 }
 
 nb.Notebook.prototype.render = function () {
-  const notebook_el = makeElement('div', ['notebook'])
+  const notebookEl = makeElement('div', ['notebook'])
   this.worksheets.forEach(w => {
-    notebook_el.appendChild(w.render())
+    notebookEl.appendChild(w.render())
   })
-  this.el = notebook_el
-  return notebook_el
+  this.el = notebookEl
+  return notebookEl
 }
 
 nb.parse = (nbjson, config) => new nb.Notebook(nbjson, config)
