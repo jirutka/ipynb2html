@@ -67,6 +67,11 @@ If you use Visual Studio Code, you should install the following extensions:
 * link:{vs-marketplace-uri}gamunu.vscode-yarn[yarn]
 
 
+== Credits
+
+* This project is originally based on https://github.com/jsvine/notebookjs[notebookjs] 0.4.2 developed by https://github.com/jsvine[Jeremy Singer-Vine] and distributed under the http://opensource.org/licenses/MIT/[MIT License].
+
+
 == License
 
 This project is licensed under http://opensource.org/licenses/MIT/[MIT License].
