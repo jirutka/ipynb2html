@@ -145,7 +145,6 @@ export class Output {
   renderers = {
     display_data: renderDisplayData,
     execute_result: renderDisplayData,
-    pyout: renderDisplayData,
     pyerr: renderError,
     error: renderError,
     stream: () => {
