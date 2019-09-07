@@ -227,11 +227,6 @@ export class Cell {
 
       return el
     },
-    heading () {
-      const el = makeElement(`h${this.raw.level}`, ['cell', 'heading-cell'])
-      el.innerHTML = joinText(this.raw.source)
-      return el
-    },
     raw () {
       const el = makeElement('div', ['cell', 'raw-cell'])
       el.innerHTML = joinText(this.raw.source)
