@@ -78,74 +78,54 @@ const imageCreator = (format) => (data) => {
 }
 
 nb.display = {
-  text: (data) => {
+  'text/plain': (data) => {
     const el = makeElement('pre', ['text-output'])
     el.innerHTML = escapeHTML(joinText(data))
     return el
   },
-  html: (data) => {
+  'text/html': (data) => {
     const el = makeElement('div', ['html-output'])
     el.innerHTML = joinText(data)
     return el
   },
-  marked: (data) => nb.display.html(nb.markdown(joinText(data))),
-  svg: (svg) => {
+  'text/markdown': (data) => nb.display['text/html'](nb.markdown(joinText(data))),
+  'image/svg+xml': (data) => {
     const el = makeElement('div', ['svg-output'])
-    el.innerHTML = joinText(svg)
+    el.innerHTML = joinText(data)
     return el
   },
-  latex: (data) => {
+  'text/latex': (data) => {
     const el = makeElement('div', ['latex-output'])
     el.innerHTML = joinText(data)
     return el
   },
-  javascript: (data) => {
+  'application/javascript': (data) => {
     const el = makeElement('script')
     el.innerHTML = joinText(data)
     return el
   },
-  png: imageCreator('png'),
-  jpeg: imageCreator('jpeg'),
+  'image/png': imageCreator('png'),
+  'image/jpeg': imageCreator('jpeg'),
 }
-
-Object.entries({
-  'text/plain': 'text',
-  'text/html': 'html',
-  'text/markdown': 'marked',
-  'text/svg+xml': 'svg',
-  'image/svg+xml': 'svg',
-  'text/latex': 'latex',
-  'application/javascript': 'javascript',
-  'image/png': 'png',
-  'image/jpeg': 'jpeg',
-}).forEach(([src, tgt]) => {
-  nb.display[src] = nb.display[tgt]
-})
+nb.display['text/svg+xml'] = nb.display['image/svg+xml']
 
 nb.displayPriority = [
-  'png',
   'image/png',
-  'jpeg',
   'image/jpeg',
-  'svg',
   'image/svg+xml',
   'text/svg+xml',
-  'html',
   'text/html',
   'text/markdown',
-  'latex',
   'text/latex',
-  'javascript',
   'application/javascript',
-  'text',
   'text/plain',
 ]
 
 function renderDisplayData () {
-  const format = nb.displayPriority.find(d => this.raw.data ? this.raw.data[d] : this.raw[d])
+  const format = nb.displayPriority.find(d => this.raw.data[d])
 
   if (format && nb.display[format]) {
-    return nb.display[format](this.raw[format] || this.raw.data[format])
+    return nb.display[format](this.raw.data[format])
   }
   return makeElement('div', ['empty-output'])
 }
