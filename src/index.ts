@@ -15,7 +15,7 @@ type Nb = {
   renderMath: (element: HTMLElement, config: { [k: string]: any }) => void,
   display: DataRenderers,
   displayPriority: string[],
-  parse: (nbjson: nbf.Notebook) => Notebook,
+  render: (notebook: nbf.Notebook) => HTMLElement,
 }
 
 type DataRenderer = (data: string) => HTMLElement
@@ -52,42 +52,6 @@ function joinText (text: string | string[]): string {
   return Array.isArray(text) ? text.map(joinText).join('') : text
 }
 
-export class Source {
-
-  constructor (public raw: string | string[], public cell: Cell) {
-  }
-
-  render (): HTMLElement {
-    if (!this.raw.length) {
-      return makeElement('div')
-    }
-    // Class "input" is for backward compatibility with notebook.js.
-    const holder = makeElement('div', ['source', 'input'])
-    const cell = this.cell
-
-    if (typeof cell.executionCount === 'number') {
-      holder.setAttribute('data-execution-count', this.cell.executionCount.toString())
-      // Only for backward compatibility with notebook.js.
-      holder.setAttribute('data-prompt-number', this.cell.executionCount.toString())
-    }
-    const preEl = makeElement('pre')
-    const codeEl = makeElement('code')
-
-    const m = cell.notebook.metadata
-    const lang = (m.language_info && m.language_info.name) || (m.kernelspec && m.kernelspec.language)
-
-    codeEl.setAttribute('data-language', lang)
-    codeEl.className = `lang-${lang}`
-    codeEl.innerHTML = nb.highlighter(escapeHTML(joinText(this.raw)), preEl, codeEl, lang)
-
-    preEl.appendChild(codeEl)
-    holder.appendChild(preEl)
-
-    return holder
-  }
-}
-
-
 // Outputs and output-renderers
 const imageCreator = (format: string) => (data: string | string[]): HTMLElement => {
   const el = makeElement('img', ['image-output'])
@@ -119,159 +83,145 @@ nb.displayPriority = [
   'text/plain',
 ]
 
-function renderDisplayData (this: Output): HTMLElement {
-  const format = nb.displayPriority.find(d => this.raw.data[d])
+
+function renderNotebook (notebook: nbf.Notebook): HTMLElement {
+  // Class "worksheet" is for backward compatibility with notebook.js.
+  const el = makeElement('div', ['notebook', 'worksheet'])
+
+  for (const cell of notebook.cells) {
+    el.appendChild(renderCell(cell, notebook))
+  }
+  return el
+}
+nb.render = renderNotebook
+
+function renderCell (cell: nbf.Cell, notebook: nbf.Notebook): HTMLElement {
+  switch (cell.cell_type) {
+    case nbf.CellType.Code: return renderCodeCell(cell, notebook)
+    case nbf.CellType.Markdown: return renderMarkdownCell(cell)
+    case nbf.CellType.Raw: return renderRawCell(cell)
+  }
+}
+
+function renderMarkdownCell (cell: nbf.MarkdownCell): HTMLElement {
+  const el = makeElement('div', ['cell', 'markdown-cell'], nb.markdown(joinText(cell.source)))
+
+  nb.renderMath(el, { delimiters: [
+    { left: '$$', right: '$$', display: true },
+    { left: '\\[', right: '\\]', display: true },
+    { left: '\\(', right: '\\)', display: false },
+    { left: '$', right: '$', display: false },
+  ] })
+
+  return el
+}
+
+function renderRawCell (cell: nbf.RawCell): HTMLElement {
+  return makeElement('div', ['cell', 'raw-cell'], joinText(cell.source))
+}
+
+function renderCodeCell (cell: nbf.CodeCell, notebook: nbf.Notebook): HTMLElement {
+  const outer = makeElement('div', ['cell', 'code-cell'])
+  outer.appendChild(renderSource(cell, notebook))
+
+  coalesceStreams(cell.outputs || [])
+    .map(output => renderOutput(output, cell))
+    .forEach(el => outer.appendChild(el))
+
+  return outer
+}
+
+function renderSource (cell: nbf.CodeCell, notebook: nbf.Notebook): HTMLElement {
+  if (!cell.source.length) {
+    return makeElement('div')
+  }
+  // Class "input" is for backward compatibility with notebook.js.
+  const holder = makeElement('div', ['source', 'input'])
+
+  if (typeof cell.execution_count === 'number') {
+    holder.setAttribute('data-execution-count', cell.execution_count.toString())
+    // Only for backward compatibility with notebook.js.
+    holder.setAttribute('data-prompt-number', cell.execution_count.toString())
+  }
+  const m = notebook.metadata
+  const lang = (m.language_info && m.language_info.name) || (m.kernelspec && m.kernelspec.language)
+
+  const preEl = makeElement('pre')
+  const codeEl = makeElement('code')
+
+  codeEl.setAttribute('data-language', lang)
+  codeEl.className = `lang-${lang}`
+  codeEl.innerHTML = nb.highlighter(escapeHTML(joinText(cell.source)), preEl, codeEl, lang)
+
+  preEl.appendChild(codeEl)
+  holder.appendChild(preEl)
+
+  return holder
+}
+
+function renderOutput (output: nbf.Output, cell: nbf.CodeCell): HTMLElement {
+  const outer = makeElement('div', ['output'])
+
+  if (typeof cell.execution_count === 'number') {
+    outer.setAttribute('data-execution-count', cell.execution_count.toString())
+    // Only for backward compatibility with notebook.js.
+    outer.setAttribute('data-prompt-number', cell.execution_count.toString())
+  }
+
+  const inner = (() => {
+    switch (output.output_type) {
+      case nbf.OutputType.DisplayData: // fallthrough
+      case nbf.OutputType.ExecuteResult: return renderData(output)
+      case nbf.OutputType.Stream: return renderStream(output)
+      case nbf.OutputType.Error: return renderError(output)
+    }
+  })()
+  outer.appendChild(inner)
+
+  return outer
+}
+
+function renderData (output: nbf.DisplayData | nbf.ExecuteResult): HTMLElement {
+  const format = nb.displayPriority.find(d => output.data[d])
 
   if (format && nb.display[format]) {
-    return nb.display[format](joinText(this.raw.data[format]))
+    return nb.display[format](joinText(output.data[format]))
   }
   return makeElement('div', ['empty-output'])
 }
 
-function renderError (this: Output): HTMLElement {
+function renderError (error: nbf.Error): HTMLElement {
+  const raw = error.traceback.join('\n')
+
   // Class "pyerr" is for backward compatibility with notebook.js.
   const el = makeElement('pre', ['error', 'pyerr'])
-  const raw = this.raw.traceback.join('\n')
-
   el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
 
   return el
 }
 
-export class Output {
-
-  type: nbf.OutputType
-
-  /* eslint-disable @typescript-eslint/camelcase */
-  renderers = {
-    display_data: renderDisplayData,
-    execute_result: renderDisplayData,
-    error: renderError,
-    stream (this: Output) {
-      const el = makeElement('pre', [this.raw.name])
-      const raw = joinText(this.raw.text)
-      el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
-      return el
-    },
-  }
-  /* eslint-enable @typescript-eslint/camelcase */
-
-  constructor (public raw: nbf.Output, public cell: Cell) {
-    this.type = raw.output_type
-  }
-
-  render (): HTMLElement {
-    const outer = makeElement('div', ['output'])
-
-    if (typeof this.cell.executionCount === 'number') {
-      outer.setAttribute('data-execution-count', this.cell.executionCount.toString())
-      // Only for backward compatibility with notebook.js.
-      outer.setAttribute('data-prompt-number', this.cell.executionCount.toString())
-    }
-    const inner = this.renderers[this.type].call(this)
-    outer.appendChild(inner)
-
-    return outer
-  }
+function renderStream (stream: nbf.Stream): HTMLElement {
+  const el = makeElement('pre', [stream.name])
+  const raw = joinText(stream.text)
+  el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
+  return el
 }
 
-// Post-processing
-function coalesceStreams (outputs: Output[]): Output[] {
+function coalesceStreams (outputs: nbf.Output[]): nbf.Output[] {
   if (!outputs.length) { return outputs }
 
   let last = outputs[0]
   const newOutputs = [last]
 
   for (const output of outputs.slice(1)) {
-    if (output.raw.output_type === 'stream' && last.raw.output_type === 'stream' && output.raw.name === last.raw.name) {
-      last.raw.text = last.raw.text.concat(output.raw.text)
+    if (output.output_type === 'stream' && last.output_type === 'stream' && output.name === last.name) {
+      last.text = last.text.concat(...output.text)
     } else {
       newOutputs.push(output)
       last = output
     }
   }
   return newOutputs
-}
-
-export class Cell {
-
-  type: nbf.CellType
-  executionCount?: number | null
-  source?: Source
-  outputs?: Output[]
-
-  renderers = {
-    markdown (this: Cell) {
-      const el = makeElement('div', ['cell', 'markdown-cell'], nb.markdown(joinText(this.raw.source)))
-
-      nb.renderMath(el, { delimiters: [
-        { left: '$$', right: '$$', display: true },
-        { left: '\\[', right: '\\]', display: true },
-        { left: '\\(', right: '\\)', display: false },
-        { left: '$', right: '$', display: false },
-      ] })
-
-      return el
-    },
-    raw (this: Cell) {
-      return makeElement('div', ['cell', 'raw-cell'], joinText(this.raw.source))
-    },
-    code (this: Cell) {
-      const el = makeElement('div', ['cell', 'code-cell'])
-      el.appendChild(this.source.render())
-
-      for (const output of this.outputs) {
-        el.appendChild(output.render())
-      }
-      return el
-    },
-  }
-
-  constructor (public raw: nbf.Cell, public notebook: Notebook) {
-    this.type = raw.cell_type
-
-    if (raw.cell_type === 'code') {
-      this.executionCount = raw.execution_count
-
-      const source = raw.source
-      this.source = new Source(source, this)
-
-      const rawOutputs = (raw.outputs || []).map(output => new Output(output, this))
-      this.outputs = coalesceStreams(rawOutputs)
-    }
-  }
-
-  render (): HTMLElement {
-    return this.renderers[this.type].call(this)
-  }
-}
-
-export class Notebook {
-
-  metadata: nbf.NotebookMetadata
-  title: string
-  cells: Cell[]
-
-  constructor (public raw: nbf.Notebook) {
-    const meta = this.metadata = raw.metadata || {}
-    this.title = meta.title || meta.name
-
-    this.cells = raw.cells.map(cell => new Cell(cell, this))
-  }
-
-  render () {
-    // Class "worksheet" is for backward compatibility with notebook.js.
-    const el = makeElement('div', ['notebook', 'worksheet'])
-
-    for (const cell of this.cells) {
-      el.appendChild(cell.render())
-    }
-    return el
-  }
-}
-
-nb.parse = function (nbjson: nbf.Notebook) {
-  return new Notebook(nbjson)
 }
 
 export default nb
