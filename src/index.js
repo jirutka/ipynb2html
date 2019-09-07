@@ -131,7 +131,8 @@ function renderDisplayData () {
 }
 
 function renderError () {
-  const el = makeElement('pre', ['pyerr'])
+  // Class "pyerr" is for backward compatibility with notebook.js.
+  const el = makeElement('pre', ['error', 'pyerr'])
   const raw = this.raw.traceback.join('\n')
 
   el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
@@ -145,7 +146,6 @@ export class Output {
   renderers = {
     display_data: renderDisplayData,
     execute_result: renderDisplayData,
-    pyerr: renderError,
     error: renderError,
     stream: () => {
       const el = makeElement('pre', [this.raw.name])
