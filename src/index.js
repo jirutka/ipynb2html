@@ -31,7 +31,7 @@ function joinText (text) {
   return text.join ? text.map(joinText).join('') : text
 }
 
-export class Input {
+export class Source {
 
   constructor (raw, cell) {
     this.raw = raw
@@ -42,18 +42,21 @@ export class Input {
     if (!this.raw.length) {
       return makeElement('div')
     }
-    const holder = makeElement('div', ['input'])
+    // Class "input" is for backward compatibility with notebook.js.
+    const holder = makeElement('div', ['source', 'input'])
     const cell = this.cell
 
-    if (typeof cell.number === 'number') {
-      holder.setAttribute('data-prompt-number', this.cell.number)
+    if (typeof cell.executionCount === 'number') {
+      holder.setAttribute('data-execution-count', this.cell.executionCount)
+      // Only for backward compatibility with notebook.js.
+      holder.setAttribute('data-prompt-number', this.cell.executionCount)
     }
     const preEl = makeElement('pre')
     const codeEl = makeElement('code')
 
     const notebook = cell.worksheet.notebook
     const m = notebook.metadata
-    const lang = this.cell.raw.language || m.language || (m.kernelspec && m.kernelspec.language) || (m.language_info && m.language_info.name)
+    const lang = (m.language_info && m.language_info.name) || (m.kernelspec && m.kernelspec.language)
 
     codeEl.setAttribute('data-language', lang)
     codeEl.className = `lang-${lang}`
@@ -183,8 +186,10 @@ export class Output {
   render () {
     const outer = makeElement('div', ['output'])
 
-    if (typeof this.cell.number === 'number') {
-      outer.setAttribute('data-prompt-number', this.cell.number)
+    if (typeof this.cell.executionCount === 'number') {
+      outer.setAttribute('data-execution-count', this.cell.executionCount)
+      // Only for backward compatibility with notebook.js.
+      outer.setAttribute('data-prompt-number', this.cell.executionCount)
     }
     const inner = this.renderers[this.type].call(this)
     outer.appendChild(inner)
@@ -234,7 +239,7 @@ export class Cell {
     },
     code () {
       const el = makeElement('div', ['cell', 'code-cell'])
-      el.appendChild(this.input.render())
+      el.appendChild(this.source.render())
 
       for (const output of this.outputs) {
         el.appendChild(output.render())
@@ -249,10 +254,10 @@ export class Cell {
     this.type = raw.cell_type
 
     if (this.type === 'code') {
-      this.number = raw.prompt_number > -1 ? raw.prompt_number : raw.execution_count
+      this.executionCount = raw.execution_count
 
-      const source = raw.input || [raw.source]
-      this.input = new Input(source, this)
+      const source = [raw.source]
+      this.source = new Source(source, this)
 
       const rawOutputs = (this.raw.outputs || []).map(output => new Output(output, this))
       this.outputs = coalesceStreams(rawOutputs)
