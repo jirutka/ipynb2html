@@ -37,9 +37,12 @@ const nb: Nb = {
   VERSION,
 } as any
 
-function makeElement (tag: string, classNames?: string[]): HTMLElement {
+function makeElement (tag: string, classNames?: string[], innerHTML?: string): HTMLElement {
   const el = doc.createElement(tag)
   el.className = (classNames || []).map(cn => nb.prefix + cn).join(' ')
+  if (innerHTML) {
+    el.innerHTML = innerHTML
+  }
   return el
 }
 
@@ -63,9 +66,9 @@ export class Source {
     const cell = this.cell
 
     if (typeof cell.executionCount === 'number') {
-      holder.setAttribute('data-execution-count', cell.executionCount.toString())
+      holder.setAttribute('data-execution-count', this.cell.executionCount.toString())
       // Only for backward compatibility with notebook.js.
-      holder.setAttribute('data-prompt-number', cell.executionCount.toString())
+      holder.setAttribute('data-prompt-number', this.cell.executionCount.toString())
     }
     const preEl = makeElement('pre')
     const codeEl = makeElement('code')
@@ -94,30 +97,20 @@ const imageCreator = (format: string) => (data: string | string[]): HTMLElement 
 
 nb.display = {
   'text/plain': (data) => {
-    const el = makeElement('pre', ['text-output'])
-    el.innerHTML = escapeHTML(joinText(data))
-    return el
+    return makeElement('pre', ['text-output'], escapeHTML(joinText(data)))
   },
   'text/html': (data) => {
-    const el = makeElement('div', ['html-output'])
-    el.innerHTML = joinText(data)
-    return el
+    return makeElement('div', ['html-output'], joinText(data))
   },
   'text/markdown': (data) => nb.display['text/html'](nb.markdown(joinText(data))),
   'image/svg+xml': (data) => {
-    const el = makeElement('div', ['svg-output'])
-    el.innerHTML = joinText(data)
-    return el
+    return makeElement('div', ['svg-output'], joinText(data))
   },
   'text/latex': (data) => {
-    const el = makeElement('div', ['latex-output'])
-    el.innerHTML = joinText(data)
-    return el
+    return makeElement('div', ['latex-output'], joinText(data))
   },
   'application/javascript': (data) => {
-    const el = makeElement('script')
-    el.innerHTML = joinText(data)
-    return el
+    return makeElement('script', [], joinText(data))
   },
   'image/png': imageCreator('png'),
   'image/jpeg': imageCreator('jpeg'),
@@ -219,8 +212,7 @@ export class Cell {
 
   renderers = {
     markdown (this: Cell) {
-      const el = makeElement('div', ['cell', 'markdown-cell'])
-      el.innerHTML = nb.markdown(joinText(this.raw.source))
+      const el = makeElement('div', ['cell', 'markdown-cell'], nb.markdown(joinText(this.raw.source)))
 
       nb.renderMath(el, { delimiters: [
         { left: '$$', right: '$$', display: true },
@@ -232,9 +224,7 @@ export class Cell {
       return el
     },
     raw (this: Cell) {
-      const el = makeElement('div', ['cell', 'raw-cell'])
-      el.innerHTML = joinText(this.raw.source)
-      return el
+      return makeElement('div', ['cell', 'raw-cell'], joinText(this.raw.source))
     },
     code (this: Cell) {
       const el = makeElement('div', ['cell', 'code-cell'])
