@@ -1,44 +1,60 @@
 // This code is originally based on notebookjs 0.4.2 distributed under the MIT license.
-import ansiUp from 'ansi_up'
+import AnsiUp from 'ansi_up'
 import jsdom from 'jsdom'
 import marked from 'marked'
+
+import * as nbf from './nbformat'
+
+// TODO: This is only transient type, remove later.
+type Nb = {
+  VERSION: string,
+  prefix: string,
+  markdown: (markup: string) => string,
+  ansi: (text: string) => string,
+  highlighter: (code: string, preEl: HTMLElement, codeEl?: HTMLElement, lang?: string) => string,
+  renderMath: (element: HTMLElement, config: { [k: string]: any }) => void,
+  display: DataRenderers,
+  displayPriority: string[],
+  parse: (nbjson: nbf.Notebook) => Notebook,
+}
+
+type DataRenderer = (data: string | string[]) => HTMLElement
+type DataRenderers = { [mediaType: string]: DataRenderer }
 
 const VERSION = '0.4.2'
 
 const doc = new jsdom.JSDOM().window.document
 
-const ident = (x) => x
+const ident = <T>(x: T): T => x
 
 // Set up `nb` namespace
-const nb = {
+const nb: Nb = {
   prefix: 'nb-',
   markdown: marked,
-  ansi: ansiUp.ansi_to_html,
+  ansi: new AnsiUp().ansi_to_html,
   highlighter: ident,
-  renderMath: doc.renderMathInElement || ident,
+  renderMath: (doc as any).renderMathInElement || ident,
   VERSION,
-}
+} as any
 
-function makeElement (tag, classNames) {
+function makeElement (tag: string, classNames?: string[]): HTMLElement {
   const el = doc.createElement(tag)
   el.className = (classNames || []).map(cn => nb.prefix + cn).join(' ')
   return el
 }
 
-const escapeHTML = (raw) => raw.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const escapeHTML = (raw: string) => raw.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-function joinText (text) {
-  return text.join ? text.map(joinText).join('') : text
+function joinText (text: string | string[]): string {
+  return Array.isArray(text) ? text.map(joinText).join('') : text
 }
 
 export class Source {
 
-  constructor (raw, cell) {
-    this.raw = raw
-    this.cell = cell
+  constructor (public raw: string | string[], public cell: Cell) {
   }
 
-  render () {
+  render (): HTMLElement {
     if (!this.raw.length) {
       return makeElement('div')
     }
@@ -47,9 +63,9 @@ export class Source {
     const cell = this.cell
 
     if (typeof cell.executionCount === 'number') {
-      holder.setAttribute('data-execution-count', this.cell.executionCount)
+      holder.setAttribute('data-execution-count', cell.executionCount.toString())
       // Only for backward compatibility with notebook.js.
-      holder.setAttribute('data-prompt-number', this.cell.executionCount)
+      holder.setAttribute('data-prompt-number', cell.executionCount.toString())
     }
     const preEl = makeElement('pre')
     const codeEl = makeElement('code')
@@ -70,9 +86,9 @@ export class Source {
 
 
 // Outputs and output-renderers
-const imageCreator = (format) => (data) => {
+const imageCreator = (format: string) => (data: string | string[]): HTMLElement => {
   const el = makeElement('img', ['image-output'])
-  el.src = `data:image/${format};base64,${joinText(data).replace(/\n/g, '')}`
+  el.setAttribute('src', `data:image/${format};base64,${joinText(data).replace(/\n/g, '')}`)
   return el
 }
 
@@ -105,7 +121,7 @@ nb.display = {
   },
   'image/png': imageCreator('png'),
   'image/jpeg': imageCreator('jpeg'),
-}
+} as DataRenderers
 nb.display['text/svg+xml'] = nb.display['image/svg+xml']
 
 nb.displayPriority = [
@@ -120,7 +136,7 @@ nb.displayPriority = [
   'text/plain',
 ]
 
-function renderDisplayData () {
+function renderDisplayData (this: Output): HTMLElement {
   const format = nb.displayPriority.find(d => this.raw.data[d])
 
   if (format && nb.display[format]) {
@@ -129,7 +145,7 @@ function renderDisplayData () {
   return makeElement('div', ['empty-output'])
 }
 
-function renderError () {
+function renderError (this: Output): HTMLElement {
   // Class "pyerr" is for backward compatibility with notebook.js.
   const el = makeElement('pre', ['error', 'pyerr'])
   const raw = this.raw.traceback.join('\n')
@@ -141,12 +157,14 @@ function renderError () {
 
 export class Output {
 
+  type: nbf.OutputType
+
   /* eslint-disable @typescript-eslint/camelcase */
   renderers = {
     display_data: renderDisplayData,
     execute_result: renderDisplayData,
     error: renderError,
-    stream: () => {
+    stream (this: Output) {
       const el = makeElement('pre', [this.raw.name])
       const raw = joinText(this.raw.text)
       el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
@@ -155,19 +173,17 @@ export class Output {
   }
   /* eslint-enable @typescript-eslint/camelcase */
 
-  constructor (raw, cell) {
-    this.raw = raw
-    this.cell = cell
+  constructor (public raw: nbf.Output, public cell: Cell) {
     this.type = raw.output_type
   }
 
-  render () {
+  render (): HTMLElement {
     const outer = makeElement('div', ['output'])
 
     if (typeof this.cell.executionCount === 'number') {
-      outer.setAttribute('data-execution-count', this.cell.executionCount)
+      outer.setAttribute('data-execution-count', this.cell.executionCount.toString())
       // Only for backward compatibility with notebook.js.
-      outer.setAttribute('data-prompt-number', this.cell.executionCount)
+      outer.setAttribute('data-prompt-number', this.cell.executionCount.toString())
     }
     const inner = this.renderers[this.type].call(this)
     outer.appendChild(inner)
@@ -177,7 +193,7 @@ export class Output {
 }
 
 // Post-processing
-function coalesceStreams (outputs) {
+function coalesceStreams (outputs: Output[]): Output[] {
   if (!outputs.length) { return outputs }
 
   let last = outputs[0]
@@ -196,8 +212,13 @@ function coalesceStreams (outputs) {
 
 export class Cell {
 
+  type: nbf.CellType
+  executionCount?: number | null
+  source?: Source
+  outputs?: Output[]
+
   renderers = {
-    markdown () {
+    markdown (this: Cell) {
       const el = makeElement('div', ['cell', 'markdown-cell'])
       el.innerHTML = nb.markdown(joinText(this.raw.source))
 
@@ -210,12 +231,12 @@ export class Cell {
 
       return el
     },
-    raw () {
+    raw (this: Cell) {
       const el = makeElement('div', ['cell', 'raw-cell'])
       el.innerHTML = joinText(this.raw.source)
       return el
     },
-    code () {
+    code (this: Cell) {
       const el = makeElement('div', ['cell', 'code-cell'])
       el.appendChild(this.source.render())
 
@@ -226,32 +247,32 @@ export class Cell {
     },
   }
 
-  constructor (raw, notebook) {
-    this.raw = raw
-    this.notebook = notebook
+  constructor (public raw: nbf.Cell, public notebook: Notebook) {
     this.type = raw.cell_type
 
-    if (this.type === 'code') {
+    if (raw.cell_type === 'code') {
       this.executionCount = raw.execution_count
 
-      const source = [raw.source]
+      const source = raw.source
       this.source = new Source(source, this)
 
-      const rawOutputs = (this.raw.outputs || []).map(output => new Output(output, this))
+      const rawOutputs = (raw.outputs || []).map(output => new Output(output, this))
       this.outputs = coalesceStreams(rawOutputs)
     }
   }
 
-  render () {
+  render (): HTMLElement {
     return this.renderers[this.type].call(this)
   }
 }
 
 export class Notebook {
 
-  constructor (raw) {
-    this.raw = raw
+  metadata: nbf.NotebookMetadata
+  title: string
+  cells: Cell[]
 
+  constructor (public raw: nbf.Notebook) {
     const meta = this.metadata = raw.metadata || {}
     this.title = meta.title || meta.name
 
@@ -269,7 +290,7 @@ export class Notebook {
   }
 }
 
-nb.parse = function (nbjson) {
+nb.parse = function (nbjson: nbf.Notebook) {
   return new Notebook(nbjson)
 }
 
