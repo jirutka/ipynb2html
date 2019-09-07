@@ -54,8 +54,7 @@ export class Source {
     const preEl = makeElement('pre')
     const codeEl = makeElement('code')
 
-    const notebook = cell.worksheet.notebook
-    const m = notebook.metadata
+    const m = cell.notebook.metadata
     const lang = (m.language_info && m.language_info.name) || (m.kernelspec && m.kernelspec.language)
 
     codeEl.setAttribute('data-language', lang)
@@ -227,9 +226,9 @@ export class Cell {
     },
   }
 
-  constructor (raw, worksheet) {
+  constructor (raw, notebook) {
     this.raw = raw
-    this.worksheet = worksheet
+    this.notebook = notebook
     this.type = raw.cell_type
 
     if (this.type === 'code') {
@@ -248,24 +247,6 @@ export class Cell {
   }
 }
 
-export class Worksheet {
-
-  constructor (raw, notebook) {
-    this.raw = raw
-    this.notebook = notebook
-    this.cells = raw.cells.map(cell => new Cell(cell, this))
-  }
-
-  render () {
-    const el = makeElement('div', ['worksheet'])
-
-    for (const cell of this.cells) {
-      el.appendChild(cell.render())
-    }
-    return el
-  }
-}
-
 export class Notebook {
 
   constructor (raw) {
@@ -274,17 +255,15 @@ export class Notebook {
     const meta = this.metadata = raw.metadata || {}
     this.title = meta.title || meta.name
 
-    const worksheets = raw.worksheets || [{ cells: raw.cells }]
-    this.worksheets = worksheets.map(sheet => new Worksheet(sheet, this))
-
-    this.sheet = this.worksheets[0]
+    this.cells = raw.cells.map(cell => new Cell(cell, this))
   }
 
   render () {
-    const el = makeElement('div', ['notebook'])
+    // Class "worksheet" is for backward compatibility with notebook.js.
+    const el = makeElement('div', ['notebook', 'worksheet'])
 
-    for (const sheet of this.worksheets) {
-      el.appendChild(sheet.render())
+    for (const cell of this.cells) {
+      el.appendChild(cell.render())
     }
     return el
   }
