@@ -169,7 +169,7 @@ export class Output {
     pyerr: renderError,
     error: renderError,
     stream: () => {
-      const el = makeElement('pre', [(this.raw.stream || this.raw.name)])
+      const el = makeElement('pre', [this.raw.name])
       const raw = joinText(this.raw.text)
       el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
       return el
@@ -206,7 +206,7 @@ function coalesceStreams (outputs) {
   const newOutputs = [last]
 
   for (const output of outputs.slice(1)) {
-    if (output.raw.output_type === 'stream' && last.raw.output_type === 'stream' && output.raw.stream === last.raw.stream) {
+    if (output.raw.output_type === 'stream' && last.raw.output_type === 'stream' && output.raw.name === last.raw.name) {
       last.raw.text = last.raw.text.concat(output.raw.text)
     } else {
       newOutputs.push(output)
