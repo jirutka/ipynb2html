@@ -18,7 +18,7 @@ type Nb = {
   parse: (nbjson: nbf.Notebook) => Notebook,
 }
 
-type DataRenderer = (data: string | string[]) => HTMLElement
+type DataRenderer = (data: string) => HTMLElement
 type DataRenderers = { [mediaType: string]: DataRenderer }
 
 const VERSION = '0.4.2'
@@ -96,22 +96,12 @@ const imageCreator = (format: string) => (data: string | string[]): HTMLElement 
 }
 
 nb.display = {
-  'text/plain': (data) => {
-    return makeElement('pre', ['text-output'], escapeHTML(joinText(data)))
-  },
-  'text/html': (data) => {
-    return makeElement('div', ['html-output'], joinText(data))
-  },
-  'text/markdown': (data) => nb.display['text/html'](nb.markdown(joinText(data))),
-  'image/svg+xml': (data) => {
-    return makeElement('div', ['svg-output'], joinText(data))
-  },
-  'text/latex': (data) => {
-    return makeElement('div', ['latex-output'], joinText(data))
-  },
-  'application/javascript': (data) => {
-    return makeElement('script', [], joinText(data))
-  },
+  'text/plain': (data) => makeElement('pre', ['text-output'], escapeHTML(data)),
+  'text/html': (data) => makeElement('div', ['html-output'], data),
+  'text/markdown': (data) => nb.display['text/html'](nb.markdown(data)),
+  'image/svg+xml': (data) => makeElement('div', ['svg-output'], data),
+  'text/latex': (data) => makeElement('div', ['latex-output'], data),
+  'application/javascript': (data) => makeElement('script', [], data),
   'image/png': imageCreator('png'),
   'image/jpeg': imageCreator('jpeg'),
 } as DataRenderers
@@ -133,7 +123,7 @@ function renderDisplayData (this: Output): HTMLElement {
   const format = nb.displayPriority.find(d => this.raw.data[d])
 
   if (format && nb.display[format]) {
-    return nb.display[format](this.raw.data[format])
+    return nb.display[format](joinText(this.raw.data[format]))
   }
   return makeElement('div', ['empty-output'])
 }
