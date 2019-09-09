@@ -1,7 +1,5 @@
 // This code is originally based on notebookjs 0.4.2 distributed under the MIT license.
-import AnsiUp from 'ansi_up'
 import jsdom from 'jsdom'
-import marked from 'marked'
 
 import {
   Cell,
@@ -44,8 +42,8 @@ const ident = <T>(x: T): T => x
 // Set up `nb` namespace
 const nb: Nb = {
   prefix: 'nb-',
-  markdown: marked,
-  ansi: new AnsiUp().ansi_to_html,
+  markdown: ident,
+  ansi: ident,
   highlighter: ident,
   renderMath: (doc as any).renderMathInElement || ident,
   VERSION,
