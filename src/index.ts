@@ -3,7 +3,21 @@ import AnsiUp from 'ansi_up'
 import jsdom from 'jsdom'
 import marked from 'marked'
 
-import * as nbf from './nbformat'
+import {
+  Cell,
+  CellType,
+  CodeCell,
+  DisplayData,
+  Error as NbError,
+  ExecuteResult,
+  MarkdownCell,
+  Notebook,
+  Output,
+  OutputType,
+  RawCell,
+  Stream as NbStream,
+} from './nbformat'
+
 
 // TODO: This is only transient type, remove later.
 type Nb = {
@@ -15,7 +29,7 @@ type Nb = {
   renderMath: (element: HTMLElement, config: { [k: string]: any }) => void,
   display: DataRenderers,
   displayPriority: string[],
-  render: (notebook: nbf.Notebook) => HTMLElement,
+  render: (notebook: Notebook) => HTMLElement,
 }
 
 type DataRenderer = (data: string) => HTMLElement
@@ -84,7 +98,7 @@ nb.displayPriority = [
 ]
 
 
-function renderNotebook (notebook: nbf.Notebook): HTMLElement {
+function renderNotebook (notebook: Notebook): HTMLElement {
   // Class "worksheet" is for backward compatibility with notebook.js.
   const el = makeElement('div', ['notebook', 'worksheet'])
 
@@ -95,15 +109,15 @@ function renderNotebook (notebook: nbf.Notebook): HTMLElement {
 }
 nb.render = renderNotebook
 
-function renderCell (cell: nbf.Cell, notebook: nbf.Notebook): HTMLElement {
+function renderCell (cell: Cell, notebook: Notebook): HTMLElement {
   switch (cell.cell_type) {
-    case nbf.CellType.Code: return renderCodeCell(cell, notebook)
-    case nbf.CellType.Markdown: return renderMarkdownCell(cell)
-    case nbf.CellType.Raw: return renderRawCell(cell)
+    case CellType.Code: return renderCodeCell(cell, notebook)
+    case CellType.Markdown: return renderMarkdownCell(cell)
+    case CellType.Raw: return renderRawCell(cell)
   }
 }
 
-function renderMarkdownCell (cell: nbf.MarkdownCell): HTMLElement {
+function renderMarkdownCell (cell: MarkdownCell): HTMLElement {
   const el = makeElement('div', ['cell', 'markdown-cell'], nb.markdown(joinText(cell.source)))
 
   nb.renderMath(el, { delimiters: [
@@ -116,11 +130,11 @@ function renderMarkdownCell (cell: nbf.MarkdownCell): HTMLElement {
   return el
 }
 
-function renderRawCell (cell: nbf.RawCell): HTMLElement {
+function renderRawCell (cell: RawCell): HTMLElement {
   return makeElement('div', ['cell', 'raw-cell'], joinText(cell.source))
 }
 
-function renderCodeCell (cell: nbf.CodeCell, notebook: nbf.Notebook): HTMLElement {
+function renderCodeCell (cell: CodeCell, notebook: Notebook): HTMLElement {
   const outer = makeElement('div', ['cell', 'code-cell'])
   outer.appendChild(renderSource(cell, notebook))
 
@@ -131,7 +145,7 @@ function renderCodeCell (cell: nbf.CodeCell, notebook: nbf.Notebook): HTMLElemen
   return outer
 }
 
-function renderSource (cell: nbf.CodeCell, notebook: nbf.Notebook): HTMLElement {
+function renderSource (cell: CodeCell, notebook: Notebook): HTMLElement {
   if (!cell.source.length) {
     return makeElement('div')
   }
@@ -159,7 +173,7 @@ function renderSource (cell: nbf.CodeCell, notebook: nbf.Notebook): HTMLElement 
   return holder
 }
 
-function renderOutput (output: nbf.Output, cell: nbf.CodeCell): HTMLElement {
+function renderOutput (output: Output, cell: CodeCell): HTMLElement {
   const outer = makeElement('div', ['output'])
 
   if (typeof cell.execution_count === 'number') {
@@ -170,10 +184,10 @@ function renderOutput (output: nbf.Output, cell: nbf.CodeCell): HTMLElement {
 
   const inner = (() => {
     switch (output.output_type) {
-      case nbf.OutputType.DisplayData: // fallthrough
-      case nbf.OutputType.ExecuteResult: return renderData(output)
-      case nbf.OutputType.Stream: return renderStream(output)
-      case nbf.OutputType.Error: return renderError(output)
+      case OutputType.DisplayData: // fallthrough
+      case OutputType.ExecuteResult: return renderData(output)
+      case OutputType.Stream: return renderStream(output)
+      case OutputType.Error: return renderError(output)
     }
   })()
   outer.appendChild(inner)
@@ -181,7 +195,7 @@ function renderOutput (output: nbf.Output, cell: nbf.CodeCell): HTMLElement {
   return outer
 }
 
-function renderData (output: nbf.DisplayData | nbf.ExecuteResult): HTMLElement {
+function renderData (output: DisplayData | ExecuteResult): HTMLElement {
   const format = nb.displayPriority.find(d => output.data[d])
 
   if (format && nb.display[format]) {
@@ -190,7 +204,7 @@ function renderData (output: nbf.DisplayData | nbf.ExecuteResult): HTMLElement {
   return makeElement('div', ['empty-output'])
 }
 
-function renderError (error: nbf.Error): HTMLElement {
+function renderError (error: NbError): HTMLElement {
   const raw = error.traceback.join('\n')
 
   // Class "pyerr" is for backward compatibility with notebook.js.
@@ -200,14 +214,14 @@ function renderError (error: nbf.Error): HTMLElement {
   return el
 }
 
-function renderStream (stream: nbf.Stream): HTMLElement {
+function renderStream (stream: NbStream): HTMLElement {
   const el = makeElement('pre', [stream.name])
   const raw = joinText(stream.text)
   el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
   return el
 }
 
-function coalesceStreams (outputs: nbf.Output[]): nbf.Output[] {
+function coalesceStreams (outputs: Output[]): Output[] {
   if (!outputs.length) { return outputs }
 
   let last = outputs[0]
