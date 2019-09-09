@@ -33,12 +33,11 @@
   },
   "dependencies": {
     "ansi_up": "^4.0.4",
-    "jsdom": "^15.1.1",
-    "marked": "^0.7.0"
+    "marked": "^0.7.0",
+    "nodom": "^2.2.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
-    "@types/jsdom": "^12.2.4",
     "@types/marked": "^0.6.5",
     "@types/node": "^10.13.0",
     "@typescript-eslint/eslint-plugin": "^1.13.0",

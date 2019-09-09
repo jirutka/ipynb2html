@@ -1,5 +1,5 @@
 // This code is originally based on notebookjs 0.4.2 distributed under the MIT license.
-import jsdom from 'jsdom'
+import { Document, HTMLElement } from 'nodom'
 
 import {
   Cell,
@@ -35,7 +35,7 @@ type DataRenderers = { [mediaType: string]: DataRenderer }
 
 const VERSION = '0.4.2'
 
-const doc = new jsdom.JSDOM().window.document
+const doc = new Document()
 
 const ident = <T>(x: T): T => x
 
