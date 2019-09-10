@@ -23,7 +23,7 @@ type Nb = {
   prefix: string,
   markdown: (markup: string) => string,
   ansi: (text: string) => string,
-  highlighter: (code: string, preEl: HTMLElement, codeEl?: HTMLElement, lang?: string) => string,
+  highlighter: (code: string, lang?: string) => string,
   renderMath: (element: HTMLElement, config: { [k: string]: any }) => void,
   display: DataRenderers,
   displayPriority: string[],
@@ -180,12 +180,9 @@ function renderSource (cell: CodeCell, notebook: Notebook): HTMLElement {
   const m = notebook.metadata
   const lang = (m.language_info && m.language_info.name) || (m.kernelspec && m.kernelspec.language)
 
-  const preEl = makeElement('pre')
-
-  const codeEl = makeElement('code', { 'classes': `lang-${lang}`, 'data-language': lang })
-  codeEl.innerHTML = nb.highlighter(escapeHTML(joinText(cell.source)), preEl, codeEl, lang)
-
-  preEl.appendChild(codeEl)
+  const html = nb.highlighter(escapeHTML(joinText(cell.source)), lang)
+  const codeEl = makeElement('code', { 'classes': `lang-${lang}`, 'data-language': lang }, html)
+  const preEl = makeElement('pre', [], [codeEl])
 
   const attrs = {
     ...executionCountAttrs(cell),
@@ -223,21 +220,17 @@ function renderData (output: DisplayData | ExecuteResult): HTMLElement {
 
 function renderError (error: NbError): HTMLElement {
   const raw = error.traceback.join('\n')
+  const html = nb.highlighter(nb.ansi(escapeHTML(raw)))
 
   // Class "pyerr" is for backward compatibility with notebook.js.
-  const el = makeElement('pre', ['error', 'pyerr'])
-  el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
-
-  return el
+  return makeElement('pre', ['error', 'pyerr'], html)
 }
 
 function renderStream (stream: NbStream): HTMLElement {
   const raw = joinText(stream.text)
+  const html = nb.highlighter(nb.ansi(escapeHTML(raw)))
 
-  const el = makeElement('pre', [stream.name])
-  el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
-
-  return el
+  return makeElement('pre', [stream.name], html)
 }
 
 function coalesceStreams (outputs: Output[]): Output[] {
