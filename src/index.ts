@@ -30,6 +30,8 @@ type Nb = {
   render: (notebook: Notebook) => HTMLElement,
 }
 
+type Attributes = { [k: string]: string }
+
 type DataRenderer = (data: string) => HTMLElement
 type DataRenderers = { [mediaType: string]: DataRenderer }
 
@@ -49,11 +51,35 @@ const nb: Nb = {
   VERSION,
 } as any
 
-function makeElement (tag: string, classNames?: string[], innerHTML?: string): HTMLElement {
+function makeElement (tag: string, classes?: string[], children?: HTMLElement[] | string): HTMLElement
+function makeElement (tag: string, attrs?: Attributes, children?: HTMLElement[] | string): HTMLElement
+function makeElement (
+  tag: string,
+  classesOrAttrs?: string[] | Attributes,
+  childrenOrHTML?: HTMLElement[] | string,
+): HTMLElement {
+
+  const prefixClassName = (name: string) => name.startsWith('lang-') ? name : nb.prefix + name
+
   const el = doc.createElement(tag)
-  el.className = (classNames || []).map(cn => nb.prefix + cn).join(' ')
-  if (innerHTML) {
-    el.innerHTML = innerHTML
+
+  if (Array.isArray(classesOrAttrs)) {
+    el.className = classesOrAttrs.map(prefixClassName).join(' ')
+
+  } else if (classesOrAttrs) {
+    for (const [key, val] of Object.entries(classesOrAttrs)) {
+      if (key === 'class') {
+        el.className = val.split(' ').map(prefixClassName).join(' ')
+      } else {
+        el.setAttribute(key, val)
+      }
+    }
+  }
+  if (Array.isArray(childrenOrHTML)) {
+    childrenOrHTML.forEach(e => el.appendChild(e))
+
+  } else if (childrenOrHTML) {
+    el.innerHTML = childrenOrHTML
   }
   return el
 }
@@ -66,9 +92,10 @@ function joinText (text: string | string[]): string {
 
 // Outputs and output-renderers
 const imageCreator = (format: string) => (data: string | string[]): HTMLElement => {
-  const el = makeElement('img', ['image-output'])
-  el.setAttribute('src', `data:image/${format};base64,${joinText(data).replace(/\n/g, '')}`)
-  return el
+  return makeElement('img', {
+    class: 'image-output',
+    src: `data:image/${format};base64,${joinText(data).replace(/\n/g, '')}`,
+  })
 }
 
 nb.display = {
@@ -96,14 +123,19 @@ nb.displayPriority = [
 ]
 
 
-function renderNotebook (notebook: Notebook): HTMLElement {
-  // Class "worksheet" is for backward compatibility with notebook.js.
-  const el = makeElement('div', ['notebook', 'worksheet'])
+function executionCountAttrs ({ execution_count: count }: CodeCell): Attributes | undefined {
+  return count ? {
+    'data-execution-count': String(count),
+    // Only for backward compatibility with notebook.js.
+    'data-prompt-number': String(count),
+  } : undefined
+}
 
-  for (const cell of notebook.cells) {
-    el.appendChild(renderCell(cell, notebook))
-  }
-  return el
+function renderNotebook (notebook: Notebook): HTMLElement {
+  const children = notebook.cells.map(cell => renderCell(cell, notebook))
+
+  // Class "worksheet" is for backward compatibility with notebook.js.
+  return makeElement('div', ['notebook', 'worksheet'], children)
 }
 nb.render = renderNotebook
 
@@ -133,54 +165,38 @@ function renderRawCell (cell: RawCell): HTMLElement {
 }
 
 function renderCodeCell (cell: CodeCell, notebook: Notebook): HTMLElement {
-  const outer = makeElement('div', ['cell', 'code-cell'])
-  outer.appendChild(renderSource(cell, notebook))
-
-  coalesceStreams(cell.outputs || [])
+  const children = coalesceStreams(cell.outputs || [])
     .map(output => renderOutput(output, cell))
-    .forEach(el => outer.appendChild(el))
 
-  return outer
+  children.unshift(renderSource(cell, notebook))
+
+  return makeElement('div', ['cell', 'code-cell'], children)
 }
 
 function renderSource (cell: CodeCell, notebook: Notebook): HTMLElement {
   if (!cell.source.length) {
     return makeElement('div')
   }
-  // Class "input" is for backward compatibility with notebook.js.
-  const holder = makeElement('div', ['source', 'input'])
-
-  if (typeof cell.execution_count === 'number') {
-    holder.setAttribute('data-execution-count', cell.execution_count.toString())
-    // Only for backward compatibility with notebook.js.
-    holder.setAttribute('data-prompt-number', cell.execution_count.toString())
-  }
   const m = notebook.metadata
   const lang = (m.language_info && m.language_info.name) || (m.kernelspec && m.kernelspec.language)
 
   const preEl = makeElement('pre')
-  const codeEl = makeElement('code')
 
-  codeEl.setAttribute('data-language', lang)
-  codeEl.className = `lang-${lang}`
+  const codeEl = makeElement('code', { 'classes': `lang-${lang}`, 'data-language': lang })
   codeEl.innerHTML = nb.highlighter(escapeHTML(joinText(cell.source)), preEl, codeEl, lang)
 
   preEl.appendChild(codeEl)
-  holder.appendChild(preEl)
 
-  return holder
+  const attrs = {
+    ...executionCountAttrs(cell),
+    // Class "input" is for backward compatibility with notebook.js.
+    class: 'source input',
+  }
+  return makeElement('div', attrs, [preEl])
 }
 
 function renderOutput (output: Output, cell: CodeCell): HTMLElement {
-  const outer = makeElement('div', ['output'])
-
-  if (typeof cell.execution_count === 'number') {
-    outer.setAttribute('data-execution-count', cell.execution_count.toString())
-    // Only for backward compatibility with notebook.js.
-    outer.setAttribute('data-prompt-number', cell.execution_count.toString())
-  }
-
-  const inner = (() => {
+  const innerEl = (() => {
     switch (output.output_type) {
       case OutputType.DisplayData: // fallthrough
       case OutputType.ExecuteResult: return renderData(output)
@@ -188,9 +204,12 @@ function renderOutput (output: Output, cell: CodeCell): HTMLElement {
       case OutputType.Error: return renderError(output)
     }
   })()
-  outer.appendChild(inner)
 
-  return outer
+  const attrs = {
+    ...executionCountAttrs(cell),
+    class: 'output',
+  }
+  return makeElement('div', attrs, [innerEl])
 }
 
 function renderData (output: DisplayData | ExecuteResult): HTMLElement {
@@ -213,9 +232,11 @@ function renderError (error: NbError): HTMLElement {
 }
 
 function renderStream (stream: NbStream): HTMLElement {
-  const el = makeElement('pre', [stream.name])
   const raw = joinText(stream.text)
+
+  const el = makeElement('pre', [stream.name])
   el.innerHTML = nb.highlighter(nb.ansi(escapeHTML(raw)), el)
+
   return el
 }
 
