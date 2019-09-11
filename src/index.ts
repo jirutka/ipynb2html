@@ -41,6 +41,15 @@ const doc = new Document()
 
 const ident = <T>(x: T): T => x
 
+const katexConfig = {
+  delimiters: [
+    { left: '$$', right: '$$', display: true },
+    { left: '\\[', right: '\\]', display: true },
+    { left: '\\(', right: '\\)', display: false },
+    { left: '$', right: '$', display: false },
+  ],
+}
+
 // Set up `nb` namespace
 const nb: Nb = {
   prefix: 'nb-',
@@ -149,13 +158,7 @@ function renderCell (cell: Cell, notebook: Notebook): HTMLElement {
 
 function renderMarkdownCell (cell: MarkdownCell): HTMLElement {
   const el = makeElement('div', ['cell', 'markdown-cell'], nb.markdown(joinText(cell.source)))
-
-  nb.renderMath(el, { delimiters: [
-    { left: '$$', right: '$$', display: true },
-    { left: '\\[', right: '\\]', display: true },
-    { left: '\\(', right: '\\)', display: false },
-    { left: '$', right: '$', display: false },
-  ] })
+  nb.renderMath(el, katexConfig)
 
   return el
 }
