@@ -108,16 +108,16 @@ const imageCreator = (format: string) => (data: string | string[]): HTMLElement 
 }
 
 nb.display = {
-  'text/plain': (data) => makeElement('pre', ['text-output'], escapeHTML(data)),
-  'text/html': (data) => makeElement('div', ['html-output'], data),
-  'text/markdown': (data) => nb.display['text/html'](nb.markdown(data)),
-  'image/svg+xml': (data) => makeElement('div', ['svg-output'], data),
-  'text/latex': (data) => makeElement('div', ['latex-output'], data),
-  'application/javascript': (data) => makeElement('script', [], data),
   'image/png': imageCreator('png'),
   'image/jpeg': imageCreator('jpeg'),
+  'image/svg+xml': (data) => makeElement('div', ['svg-output'], data),
+  'text/svg+xml': (data) => nb.display['image/svg+xml'](data),
+  'text/html': (data) => makeElement('div', ['html-output'], data),
+  'text/markdown': (data) => nb.display['text/html'](nb.markdown(data)),
+  'text/latex': (data) => makeElement('div', ['latex-output'], data),
+  'application/javascript': (data) => makeElement('script', [], data),
+  'text/plain': (data) => makeElement('pre', ['text-output'], escapeHTML(data)),
 } as DataRenderers
-nb.display['text/svg+xml'] = nb.display['image/svg+xml']
 
 nb.displayPriority = [
   'image/png',
