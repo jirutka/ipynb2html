@@ -60,9 +60,9 @@ const nb: Nb = {
   VERSION,
 } as any
 
-function makeElement (tag: string, classes?: string[], children?: HTMLElement[] | string): HTMLElement
-function makeElement (tag: string, attrs?: Attributes, children?: HTMLElement[] | string): HTMLElement
-function makeElement (
+function el (tag: string, classes?: string[], children?: HTMLElement[] | string): HTMLElement
+function el (tag: string, attrs?: Attributes, children?: HTMLElement[] | string): HTMLElement
+function el (
   tag: string,
   classesOrAttrs?: string[] | Attributes,
   childrenOrHTML?: HTMLElement[] | string,
@@ -101,7 +101,7 @@ function joinText (text: string | string[]): string {
 
 // Outputs and output-renderers
 const imageCreator = (format: string) => (data: string | string[]): HTMLElement => {
-  return makeElement('img', {
+  return el('img', {
     class: 'image-output',
     src: `data:image/${format};base64,${joinText(data).replace(/\n/g, '')}`,
   })
@@ -110,13 +110,13 @@ const imageCreator = (format: string) => (data: string | string[]): HTMLElement 
 nb.display = {
   'image/png': imageCreator('png'),
   'image/jpeg': imageCreator('jpeg'),
-  'image/svg+xml': (data) => makeElement('div', ['svg-output'], data),
+  'image/svg+xml': (data) => el('div', ['svg-output'], data),
   'text/svg+xml': (data) => nb.display['image/svg+xml'](data),
-  'text/html': (data) => makeElement('div', ['html-output'], data),
+  'text/html': (data) => el('div', ['html-output'], data),
   'text/markdown': (data) => nb.display['text/html'](nb.markdown(data)),
-  'text/latex': (data) => makeElement('div', ['latex-output'], data),
-  'application/javascript': (data) => makeElement('script', [], data),
-  'text/plain': (data) => makeElement('pre', ['text-output'], escapeHTML(data)),
+  'text/latex': (data) => el('div', ['latex-output'], data),
+  'application/javascript': (data) => el('script', [], data),
+  'text/plain': (data) => el('pre', ['text-output'], escapeHTML(data)),
 } as DataRenderers
 
 nb.displayPriority = [
@@ -144,7 +144,7 @@ function renderNotebook (notebook: Notebook): HTMLElement {
   const children = notebook.cells.map(cell => renderCell(cell, notebook))
 
   // Class "worksheet" is for backward compatibility with notebook.js.
-  return makeElement('div', ['notebook', 'worksheet'], children)
+  return el('div', ['notebook', 'worksheet'], children)
 }
 nb.render = renderNotebook
 
@@ -157,14 +157,14 @@ function renderCell (cell: Cell, notebook: Notebook): HTMLElement {
 }
 
 function renderMarkdownCell (cell: MarkdownCell): HTMLElement {
-  const el = makeElement('div', ['cell', 'markdown-cell'], nb.markdown(joinText(cell.source)))
-  nb.renderMath(el, katexConfig)
+  const div = el('div', ['cell', 'markdown-cell'], nb.markdown(joinText(cell.source)))
+  nb.renderMath(div, katexConfig)
 
-  return el
+  return div
 }
 
 function renderRawCell (cell: RawCell): HTMLElement {
-  return makeElement('div', ['cell', 'raw-cell'], joinText(cell.source))
+  return el('div', ['cell', 'raw-cell'], joinText(cell.source))
 }
 
 function renderCodeCell (cell: CodeCell, notebook: Notebook): HTMLElement {
@@ -173,26 +173,26 @@ function renderCodeCell (cell: CodeCell, notebook: Notebook): HTMLElement {
 
   children.unshift(renderSource(cell, notebook))
 
-  return makeElement('div', ['cell', 'code-cell'], children)
+  return el('div', ['cell', 'code-cell'], children)
 }
 
 function renderSource (cell: CodeCell, notebook: Notebook): HTMLElement {
   if (!cell.source.length) {
-    return makeElement('div')
+    return el('div')
   }
   const m = notebook.metadata
   const lang = (m.language_info && m.language_info.name) || (m.kernelspec && m.kernelspec.language)
 
   const html = nb.highlighter(escapeHTML(joinText(cell.source)), lang)
-  const codeEl = makeElement('code', { 'classes': `lang-${lang}`, 'data-language': lang }, html)
-  const preEl = makeElement('pre', [], [codeEl])
+  const codeEl = el('code', { 'classes': `lang-${lang}`, 'data-language': lang }, html)
+  const preEl = el('pre', [], [codeEl])
 
   const attrs = {
     ...executionCountAttrs(cell),
     // Class "input" is for backward compatibility with notebook.js.
     class: 'source input',
   }
-  return makeElement('div', attrs, [preEl])
+  return el('div', attrs, [preEl])
 }
 
 function renderOutput (output: Output, cell: CodeCell): HTMLElement {
@@ -209,7 +209,7 @@ function renderOutput (output: Output, cell: CodeCell): HTMLElement {
     ...executionCountAttrs(cell),
     class: 'output',
   }
-  return makeElement('div', attrs, [innerEl])
+  return el('div', attrs, [innerEl])
 }
 
 function renderData (output: DisplayData | ExecuteResult): HTMLElement {
@@ -218,7 +218,7 @@ function renderData (output: DisplayData | ExecuteResult): HTMLElement {
   if (format && nb.display[format]) {
     return nb.display[format](joinText(output.data[format]))
   }
-  return makeElement('div', ['empty-output'])
+  return el('div', ['empty-output'])
 }
 
 function renderError (error: NbError): HTMLElement {
@@ -226,14 +226,14 @@ function renderError (error: NbError): HTMLElement {
   const html = nb.ansi(escapeHTML(raw))
 
   // Class "pyerr" is for backward compatibility with notebook.js.
-  return makeElement('pre', ['error', 'pyerr'], html)
+  return el('pre', ['error', 'pyerr'], html)
 }
 
 function renderStream (stream: NbStream): HTMLElement {
   const raw = joinText(stream.text)
   const html = nb.ansi(escapeHTML(raw))
 
-  return makeElement('pre', [stream.name], html)
+  return el('pre', [stream.name], html)
 }
 
 function coalesceStreams (outputs: Output[]): Output[] {
