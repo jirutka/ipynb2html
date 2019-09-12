@@ -69,7 +69,7 @@ If you use Visual Studio Code, you should install the following extensions:
 
 == Credits
 
-* This project is originally based on https://github.com/jsvine/notebookjs[notebookjs] 0.4.2 developed by https://github.com/jsvine[Jeremy Singer-Vine] and distributed under the http://opensource.org/licenses/MIT/[MIT License].
+* The renderer module is originally based on https://github.com/jsvine/notebookjs[notebookjs] 0.4.2 developed by https://github.com/jsvine[Jeremy Singer-Vine] and distributed under the http://opensource.org/licenses/MIT/[MIT License].
 
 
 == License
