@@ -1,3 +1,10 @@
+
+const htmlEntities = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+}
+
 /**
  * Creates a "callable object" with the given properties. In fact, it creates
  * a function that calls `obj[funcName]` and copies all the enumerable
@@ -22,8 +29,8 @@ export function callableObject <T, K extends keyof T> (
  * Escapes characters with special meaning in HTML with the corresponding
  * HTML entities.
  */
-export function escapeHTML (raw: string): string {
-  return raw.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+export function escapeHTML (str: string): string {
+  return str.replace(/[&<>]/g, c => (htmlEntities as any)[c])
 }
 
 /**

@@ -32,10 +32,11 @@ describe('.callableObject', () => {
 
 describe('.escapeHTML', () => {
   test.each([
-    /* input       | expected                  */
-    ['<'           , '&lt;'                    ],
-    ['>'           , '&gt;'                    ],
-    ['Hey >_<! <<>>', 'Hey &gt;_&lt;! &lt;&lt;&gt;&gt;'],
+    /* input         | expected                              */
+    ['&'             , '&amp;'                               ],
+    ['<'             , '&lt;'                                ],
+    ['>'             , '&gt;'                                ],
+    ['Hey >_<! <<&>>', 'Hey &gt;_&lt;! &lt;&lt;&amp;&gt;&gt;'],
   ])('"%s" -> "%s"', (input, expected) => {
     expect( escapeHTML(input) ).toEqual(expected)
   })
