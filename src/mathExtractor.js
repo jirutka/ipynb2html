@@ -123,9 +123,9 @@ var removeMath = function (text) {
         start = i
         end = block
         braces = 0
-      } else if (block === '\\\\\(' || block === '\\\\\[') {
+      } else if (block === '\\\\(' || block === '\\\\[') {
         start = i
-        end = block.slice(-1) === '(' ? '\\\\\)' : '\\\\\]'
+        end = block.slice(-1) === '(' ? '\\\\)' : '\\\\]'
         braces = 0
       } else if (block.substr(1, 5) === 'begin') {
         start = i
@@ -153,10 +153,10 @@ var replaceMath = function (text, math) {
   var mathGroupProcess = function (match, n) {
     var mathGroup = math[n]
 
-    if (mathGroup.substr(0, 3) === '\\\\\(' && mathGroup.substr(mathGroup.length - 3) === '\\\\\)') {
-      mathGroup = '\\\(' + mathGroup.substring(3, mathGroup.length - 3) + '\\\)'
-    } else if (mathGroup.substr(0, 3) === '\\\\\[' && mathGroup.substr(mathGroup.length - 3) === '\\\\\]') {
-      mathGroup = '\\\[' + mathGroup.substring(3, mathGroup.length - 3) + '\\\]'
+    if (mathGroup.substr(0, 3) === '\\\\(' && mathGroup.substr(mathGroup.length - 3) === '\\\\)') {
+      mathGroup = '\\(' + mathGroup.substring(3, mathGroup.length - 3) + '\\)'
+    } else if (mathGroup.substr(0, 3) === '\\\\[' && mathGroup.substr(mathGroup.length - 3) === '\\\\]') {
+      mathGroup = '\\[' + mathGroup.substring(3, mathGroup.length - 3) + '\\]'
     }
 
     return mathGroup
