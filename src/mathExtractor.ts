@@ -14,13 +14,17 @@ import { escapeHTML } from './utils'
 // math in the text input.
 const mathSplitRx = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\d+@@|\\\\(?:\(|\)|\[|\]))/i
 
-// Except for extreme edge cases, this should catch precisely those pieces of
-// the Markdown source that will later be turned into code spans. While
-// MathJax will not TeXify code spans, we still have to consider them at this
-// point; the following issue has happened several times:
-//
-//     `$foo` and `$bar` are variables.  -->  <code>$foo ` and `$bar</code> are variables.
-//
+/**
+ * Escapes dollar characters (`$`) inside in-line codes and fenced code blocks
+ * found in the given Markdown text.
+ *
+ * Except for extreme edge cases, this should catch precisely those pieces of
+ * the Markdown source that will later be turned into code spans. While
+ * MathJax will not TeXify code spans, we still have to consider them at this
+ * point; the following issue has happened several times:
+ *
+ *     `$foo` and `$bar` are variables.  -->  <code>$foo ` and `$bar</code> are variables.
+ */
 function escapeCodes (text: string): string {
   const escapeDolar = (match: string) => match.replace(/\$/g, '~D')
 
@@ -30,6 +34,9 @@ function escapeCodes (text: string): string {
     .replace(/^\s{0,3}(`{3,})(.|\n)*?\1/gm, escapeDolar)
 }
 
+/**
+ * Reverts escaping performed by `escapeCodes()`.
+ */
 function unescapeCodes (text: string): string {
   const subs = { T: '~', D: '$' }
 
@@ -44,8 +51,8 @@ function unescapeCodes (text: string): string {
 // - The preProcess function is called on all blocks if it has been passed in
 function processMath (
   preProcess: (str: string) => string,
-  math: string[],
-  blocks: string[],
+  math: string[],  // will be modified in-place
+  blocks: string[],  // will be modified in-place
   start: number,
   end: number,
 ): void {
@@ -62,12 +69,23 @@ function processMath (
   math.push(preProcess(block))
 }
 
-// - Break up the text into its component parts and search through them for
-//   math delimiters, braces, line breaks, etc.
-// - Math delimiters must match and braces must balance.
-// - Don't allow math to pass through a double line break (which will be
-//   a paragraph).
-export function removeMath (text: string): [string, string[]] {
+/**
+ * Extracts delimited math expressions from the given *text*, substitutes them
+ * with numbered markers and returns a tuple of the modified *text* and an
+ * array of the extracted math expressions (including the delimiters).
+ *
+ * NOTE: If the *text* contains substrings that match our markers (`@@\d+@@`)
+ * used to substitute math expressions, they will be substituted too - to avoid
+ * errors when restoring math expressions. Thus the returned array will contain
+ * even items that are not math expressions.
+ */
+export function extractMath (text: string): [string, string[]] {
+  // - Break up the text into its component parts and search through them for
+  //   math delimiters, braces, line breaks, etc.
+  // - Math delimiters must match and braces must balance.
+  // - Don't allow math to pass through a double line break (which will be
+  //   a paragraph).
+
   const hasCodeSpans = text.includes('`')
 
   if (hasCodeSpans) {
@@ -142,8 +160,10 @@ export function removeMath (text: string): [string, string[]] {
   return [unescape(blocks.join('')), math]
 }
 
-// Put back the math strings that were saved, and clear the math array (no need
-// to keep it around).
-export function replaceMath (text: string, math: string[]): string {
-  return text.replace(/@@(\d+)@@/g, (_, n) => math[Number(n)])
+/**
+ * Replaces markers injected by `extractMath()` into the given *text* with
+ * strings from the given *chunks* array.
+ */
+export function restoreMath (text: string, chunks: string[]): string {
+  return text.replace(/@@(\d+)@@/g, (_, n) => chunks[Number(n)])
 }
