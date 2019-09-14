@@ -145,21 +145,5 @@ export function removeMath (text: string): [string, string[]] {
 // Put back the math strings that were saved, and clear the math array (no need
 // to keep it around).
 export function replaceMath (text: string, math: string[]): string {
-
-  // Replaces a math placeholder with its corresponding group.
-  // The math delimiters "\\(", "\\[", "\\)" and "\\]" are replaced removing
-  // one backslash in order to be interpreted correctly by MathJax.
-  const mathGroupProcess = (_: any, n: string) => {
-    const mathGroup = math[Number(n)]
-    const first3 = mathGroup.slice(0, 3)
-    const last3 = mathGroup.slice(-3)
-
-    if ((first3 === '\\\\(' && last3 === '\\\\)') || (first3 === '\\\\[' && last3 === '\\\\]')) {
-      return mathGroup.slice(1, -3) + last3.slice(1)
-    }
-    return mathGroup
-  }
-
-  // Replace all the math group placeholders in the text with the saved strings.
-  return text.replace(/@@(\d+)@@/g, mathGroupProcess)
+  return text.replace(/@@(\d+)@@/g, (_, n) => math[Number(n)])
 }
