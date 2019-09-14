@@ -39,24 +39,12 @@ export type Options = {
 
   /** A function for converting the given Markdown source to HTML. */
   markdownRenderer?: (markup: string) => string,
-
-  /** A function for rendering delimited math expressions in the given HTML element. */
-  mathRenderer?: (element: HTMLElement, config: {[k: string]: any}) => void,
 }
 
 export type DataRenderer = (data: string) => HTMLElement
 
 type DataRenderers = { [mediaType: string]: DataRenderer }
 
-
-const katexConfig = {
-  delimiters: [
-    { left: '$$', right: '$$', display: true },
-    { left: '\\[', right: '\\]', display: true },
-    { left: '\\(', right: '\\)', display: false },
-    { left: '$', right: '$', display: false },
-  ],
-}
 
 function joinText (text: string | string[]): string {
   return Array.isArray(text) ? text.map(joinText).join('') : text
@@ -101,7 +89,6 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
  */
 function buildRenderer (opts: Options) {
   const renderMarkdown = opts.markdownRenderer || identity
-  const renderMathInElement = opts.mathRenderer || identity
   const renderAnsiCodes = opts.ansiCodesRenderer || identity
   const highlightCode = opts.codeHighlighter || identity
 
@@ -151,11 +138,7 @@ function buildRenderer (opts: Options) {
     },
 
     MarkdownCell: (cell: MarkdownCell, _notebook: Notebook): HTMLElement => {
-      const html = renderMarkdown(joinText(cell.source))
-      const div = el('div', ['cell', 'markdown-cell'], html)
-      renderMathInElement(div, katexConfig)
-
-      return div
+      return el('div', ['cell', 'markdown-cell'], renderMarkdown(joinText(cell.source)))
     },
 
     RawCell: (cell: RawCell, _notebook: Notebook): HTMLElement => {
