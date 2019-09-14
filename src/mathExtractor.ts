@@ -1,7 +1,6 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 // Based on https://github.com/jupyter/notebook/blob/6.0.1/notebook/static/notebook/js/mathjaxutils.js.
-'use strict'
 
 // Some magic for deferring mathematical expressions to MathJax by hiding them
 // from the Markdown parser.
@@ -12,7 +11,7 @@
 
 // MATHSPLIT contains the pattern for math delimiters and special symbols
 // needed for searching for math in the text input.
-var MATHSPLIT = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\d+@@|\\\\(?:\(|\)|\[|\]))/i
+const MATHSPLIT = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\d+@@|\\\\(?:\(|\)|\[|\]))/i
 
 // - The math is in blocks i through j, so collect it into one block and clear
 //   the others.
@@ -20,8 +19,11 @@ var MATHSPLIT = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\
 // - Clear the current math positions and store the index of the math, then
 //   push the math string onto the storage array.
 // - The preProcess function is called on all blocks if it has been passed in
-var processMath = function (i, j, preProcess, math, blocks) {
-  var block = blocks.slice(i, j + 1).join('')
+function processMath (
+  i: number, j: number, preProcess: (block: string) => string, math: string[], blocks: string[],
+): string[] {
+
+  let block = blocks.slice(i, j + 1).join('')
     .replace(/&/g, '&amp;')  // use HTML entity for &
     .replace(/</g, '&lt;')  // use HTML entity for <
     .replace(/>/g, '&gt;')  // use HTML entity for >
@@ -31,11 +33,13 @@ var processMath = function (i, j, preProcess, math, blocks) {
     j--
   }
   // Replace the current block text with a unique tag to find later.
-  blocks[i] = '@@' + math.length + '@@'
+  blocks[i] = `@@${math.length}@@`
+
   if (preProcess) {
     block = preProcess(block)
   }
   math.push(block)
+
   return blocks
 }
 
@@ -44,12 +48,12 @@ var processMath = function (i, j, preProcess, math, blocks) {
 // - Math delimiters must match and braces must balance.
 // - Don't allow math to pass through a double line break (which will be
 //   a paragraph).
-var removeMath = function (text) {
-  var math = [] // stores math strings for later
-  var start
-  var end
-  var last
-  var braces
+export function removeMath (text: string): [string, string[]] {
+  const math: string[] = []  // stores math strings for later
+  let start: number | null = null
+  let end: string | null = null
+  let last: number | null = null
+  let braces = 0
 
   // Except for extreme edge cases, this should catch precisely those pieces of
   // the Markdown source that will later be turned into code spans. While
@@ -58,36 +62,35 @@ var removeMath = function (text) {
   //
   //     `$foo` and `$bar` are variables.  -->  <code>$foo ` and `$bar</code> are variables.
   //
-  var hasCodeSpans = /`/.test(text)
-  var deTilde
+  const hasCodeSpans = /`/.test(text)
+  let deTilde: (text: string) => string
+
   if (hasCodeSpans) {
-    var tilde = function (wholematch) {
-      return wholematch.replace(/\$/g, '~D')
-    }
+    const tilde = (match: string) => match.replace(/\$/g, '~D')
+
     text = text
       .replace(/~/g, '~T')
       .replace(/(^|[^\\])(`+)([^\n]*?[^`\n])\2(?!`)/gm, tilde)
       .replace(/^\s{0,3}(`{3,})(.|\n)*?\1/gm, tilde)
-    deTilde = function (text) {
-      return text.replace(/~([TD])/g, function (wholematch, character) {
-        return { T: '~', D: '$' }[character]
-      })
+
+    deTilde = (text) => {
+      return text.replace(/~([TD])/g, (_, char: 'T' | 'D') => ({ T: '~', D: '$' }[char]))
     }
   } else {
-    deTilde = function (text) { return text }
+    deTilde = (text) => text
   }
 
   // TODO: Test if it works correctly across browsers. The original code uses
   // utils.regex_split() based on http://blog.stevenlevithan.com/archives/cross-browser-split.
-  var blocks = text.replace(/\r\n?/g, '\n').split(MATHSPLIT)
+  let blocks = text.replace(/\r\n?/g, '\n').split(MATHSPLIT)
 
-  for (var i = 1, m = blocks.length; i < m; i += 2) {
-    var block = blocks[i]
+  for (let i = 1, m = blocks.length; i < m; i += 2) {
+    const block = blocks[i]
 
     if (block.charAt(0) === '@') {
       // Things that look like our math markers will get stored and then
       // retrieved along with the math.
-      blocks[i] = '@@' + math.length + '@@'
+      blocks[i] = `@@${math.length}@@`
       math.push(block)
 
     } else if (start) {
@@ -135,7 +138,7 @@ var removeMath = function (text) {
     }
   }
   if (last) {
-    blocks = processMath(start, last, deTilde, math, blocks)
+    blocks = processMath(start || 0, last, deTilde, math, blocks)
     start = null
     end = null
     last = null
@@ -145,13 +148,13 @@ var removeMath = function (text) {
 
 // Put back the math strings that were saved, and clear the math array (no need
 // to keep it around).
-var replaceMath = function (text, math) {
+export function replaceMath (text: string, math: string[]): string {
 
   // Replaces a math placeholder with its corresponding group.
   // The math delimiters "\\(", "\\[", "\\)" and "\\]" are replaced removing
   // one backslash in order to be interpreted correctly by MathJax.
-  var mathGroupProcess = function (match, n) {
-    var mathGroup = math[n]
+  const mathGroupProcess = (_: any, n: string) => {
+    let mathGroup = math[Number(n)]
 
     if (mathGroup.substr(0, 3) === '\\\\(' && mathGroup.substr(mathGroup.length - 3) === '\\\\)') {
       mathGroup = '\\(' + mathGroup.substring(3, mathGroup.length - 3) + '\\)'
@@ -166,9 +169,4 @@ var replaceMath = function (text, math) {
   text = text.replace(/@@(\d+)@@/g, mathGroupProcess)
 
   return text
-}
-
-module.exports = {
-  removeMath: removeMath,
-  replaceMath: replaceMath,
 }
