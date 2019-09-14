@@ -10,9 +10,44 @@ import { escapeHTML } from './utils'
 // Other minor modifications are also due to StackExchange and are used with
 // permission.
 
+export type ExtractedChunk = {
+  raw: string,
+} | {
+  raw: string,
+  math: string,
+  displayMode: boolean,
+}
+
 // The pattern for math delimiters and special symbols needed for searching for
 // math in the text input.
 const mathSplitRx = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\d+@@|\\\\(?:\(|\)|\[|\]))/i
+
+const delimiters = {
+  '$$': { displayMode: true },
+  '$': { displayMode: false },
+  '\\\\[': { displayMode: true },
+  '\\\\(': { displayMode: false },
+}
+
+/**
+ * Parses the given string that may contain a delimited math expression.
+ * Use this function to parse extracted chunks from `extractMath()`.
+ */
+function parseDelimitedMath (raw: string): ExtractedChunk {
+  const delim = Object.keys(delimiters)
+    .find(s => raw.startsWith(s)) as keyof typeof delimiters | undefined
+
+  if (delim) {
+    const math = raw.slice(delim.length, -delim.length)
+    return { raw, math, ...delimiters[delim] }
+
+  } else if (raw.startsWith('\\begin')) {
+    return { raw, math: raw, displayMode: true }
+
+  } else {
+    return { raw }
+  }
+}
 
 /**
  * Escapes dollar characters (`$`) inside in-line codes and fenced code blocks
@@ -72,14 +107,14 @@ function processMath (
 /**
  * Extracts delimited math expressions from the given *text*, substitutes them
  * with numbered markers and returns a tuple of the modified *text* and an
- * array of the extracted math expressions (including the delimiters).
+ * array of the extracted expressions.
  *
  * NOTE: If the *text* contains substrings that match our markers (`@@\d+@@`)
  * used to substitute math expressions, they will be substituted too - to avoid
  * errors when restoring math expressions. Thus the returned array will contain
- * even items that are not math expressions.
+ * even items that are not math expressions!
  */
-export function extractMath (text: string): [string, string[]] {
+export function extractMath (text: string): [string, ExtractedChunk[]] {
   // - Break up the text into its component parts and search through them for
   //   math delimiters, braces, line breaks, etc.
   // - Math delimiters must match and braces must balance.
@@ -157,7 +192,7 @@ export function extractMath (text: string): [string, string[]] {
     processMath(unescape, math, blocks, startIdx || 0, lastIdx)
     startIdx = endDelim = lastIdx = null
   }
-  return [unescape(blocks.join('')), math]
+  return [unescape(blocks.join('')), math.map(parseDelimitedMath)]
 }
 
 /**
