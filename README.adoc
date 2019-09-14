@@ -70,6 +70,7 @@ If you use Visual Studio Code, you should install the following extensions:
 == Credits
 
 * The renderer module is originally based on https://github.com/jsvine/notebookjs[notebookjs] 0.4.2 developed by https://github.com/jsvine[Jeremy Singer-Vine] and distributed under the http://opensource.org/licenses/MIT/[MIT License].
+* The mathExtractor module is based on https://github.com/jupyter/notebook/blob/6.0.1/notebook/static/notebook/js/mathjaxutils.js[mathjaxutils.js] from the https://github.com/jupyter/notebook[Jupyter Notebook] 6.0.1 distributed under the https://github.com/jupyter/notebook/blob/6.0.1/COPYING.md[Modified BSD License].
 
 
 == License
