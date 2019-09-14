@@ -19,8 +19,8 @@ var MATHSPLIT = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\
 // - Replace &, <, and > by named entities.
 // - Clear the current math positions and store the index of the math, then
 //   push the math string onto the storage array.
-// - The pre_process function is called on all blocks if it has been passed in
-var process_math = function (i, j, pre_process, math, blocks) {
+// - The preProcess function is called on all blocks if it has been passed in
+var processMath = function (i, j, preProcess, math, blocks) {
   var block = blocks.slice(i, j + 1).join('')
     .replace(/&/g, '&amp;')  // use HTML entity for &
     .replace(/</g, '&lt;')  // use HTML entity for <
@@ -32,8 +32,8 @@ var process_math = function (i, j, pre_process, math, blocks) {
   }
   // Replace the current block text with a unique tag to find later.
   blocks[i] = '@@' + math.length + '@@'
-  if (pre_process) {
-    block = pre_process(block)
+  if (preProcess) {
+    block = preProcess(block)
   }
   math.push(block)
   return blocks
@@ -44,8 +44,8 @@ var process_math = function (i, j, pre_process, math, blocks) {
 // - Math delimiters must match and braces must balance.
 // - Don't allow math to pass through a double line break (which will be
 //   a paragraph).
-var remove_math = function (text) {
-  var math = []  // stores math strings for later
+var removeMath = function (text) {
+  var math = [] // stores math strings for later
   var start
   var end
   var last
@@ -59,7 +59,7 @@ var remove_math = function (text) {
   //     `$foo` and `$bar` are variables.  -->  <code>$foo ` and `$bar</code> are variables.
   //
   var hasCodeSpans = /`/.test(text)
-  var de_tilde
+  var deTilde
   if (hasCodeSpans) {
     var tilde = function (wholematch) {
       return wholematch.replace(/\$/g, '~D')
@@ -68,13 +68,13 @@ var remove_math = function (text) {
       .replace(/~/g, '~T')
       .replace(/(^|[^\\])(`+)([^\n]*?[^`\n])\2(?!`)/gm, tilde)
       .replace(/^\s{0,3}(`{3,})(.|\n)*?\1/gm, tilde)
-    de_tilde = function (text) {
+    deTilde = function (text) {
       return text.replace(/~([TD])/g, function (wholematch, character) {
         return { T: '~', D: '$' }[character]
       })
     }
   } else {
-    de_tilde = function (text) { return text }
+    deTilde = function (text) { return text }
   }
 
   // TODO: Test if it works correctly across browsers. The original code uses
@@ -97,7 +97,7 @@ var remove_math = function (text) {
         if (braces) {
           last = i
         } else {
-          blocks = process_math(start, i, de_tilde, math, blocks)
+          blocks = processMath(start, i, deTilde, math, blocks)
           start = null
           end = null
           last = null
@@ -105,7 +105,7 @@ var remove_math = function (text) {
       } else if (block.match(/\n.*\n/)) {
         if (last) {
           i = last
-          blocks = process_math(start, i, de_tilde, math, blocks)
+          blocks = processMath(start, i, deTilde, math, blocks)
         }
         start = null
         end = null
@@ -135,40 +135,40 @@ var remove_math = function (text) {
     }
   }
   if (last) {
-    blocks = process_math(start, last, de_tilde, math, blocks)
+    blocks = processMath(start, last, deTilde, math, blocks)
     start = null
     end = null
     last = null
   }
-  return [de_tilde(blocks.join('')), math]
+  return [deTilde(blocks.join('')), math]
 }
 
 // Put back the math strings that were saved, and clear the math array (no need
 // to keep it around).
-var replace_math = function (text, math) {
+var replaceMath = function (text, math) {
 
   // Replaces a math placeholder with its corresponding group.
   // The math delimiters "\\(", "\\[", "\\)" and "\\]" are replaced removing
   // one backslash in order to be interpreted correctly by MathJax.
-  var math_group_process = function (match, n) {
-    var math_group = math[n]
+  var mathGroupProcess = function (match, n) {
+    var mathGroup = math[n]
 
-    if (math_group.substr(0, 3) === '\\\\\(' && math_group.substr(math_group.length - 3) === '\\\\\)') {
-      math_group = '\\\(' + math_group.substring(3, math_group.length - 3) + '\\\)'
-    } else if (math_group.substr(0, 3) === '\\\\\[' && math_group.substr(math_group.length - 3) === '\\\\\]') {
-      math_group = '\\\[' + math_group.substring(3, math_group.length - 3) + '\\\]'
+    if (mathGroup.substr(0, 3) === '\\\\\(' && mathGroup.substr(mathGroup.length - 3) === '\\\\\)') {
+      mathGroup = '\\\(' + mathGroup.substring(3, mathGroup.length - 3) + '\\\)'
+    } else if (mathGroup.substr(0, 3) === '\\\\\[' && mathGroup.substr(mathGroup.length - 3) === '\\\\\]') {
+      mathGroup = '\\\[' + mathGroup.substring(3, mathGroup.length - 3) + '\\\]'
     }
 
-    return math_group
+    return mathGroup
   }
 
   // Replace all the math group placeholders in the text with the saved strings.
-  text = text.replace(/@@(\d+)@@/g, math_group_process)
+  text = text.replace(/@@(\d+)@@/g, mathGroupProcess)
 
   return text
 }
 
 module.exports = {
-  remove_math: remove_math,
-  replace_math: replace_math,
+  removeMath: removeMath,
+  replaceMath: replaceMath,
 }
