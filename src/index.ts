@@ -1,10 +1,11 @@
 import anser from 'anser'
 import hjs from 'highlightjs'
-import { KatexOptions } from 'katex'
+import katex, { KatexOptions } from 'katex'
 import { MarkedOptions } from 'marked'
 import { Document } from 'nodom'
 
 import buildElementCreator from './elementCreator'
+import htmlRenderer from './htmlRenderer'
 import buildMarkdownRenderer from './markdownRenderer'
 import buildRenderer, { Options as RendererOpts, NbRenderer } from './renderer'
 
@@ -28,14 +29,24 @@ function codeHighlighter (code: string, lang: string): string {
     : code
 }
 
+function mathRenderer (tex: string) {
+  return katex.renderToString(tex, { displayMode: true, throwOnError: false })
+}
+
 export default (opts: Options = {}): NbRenderer => {
   const doc = new Document()
   const elementCreator = buildElementCreator(doc.createElement.bind(doc), opts.classPrefix)
   const markdownRenderer = buildMarkdownRenderer(opts.markedOpts, opts.katexOpts)
 
+  const dataRenderers = {
+    'text/html': htmlRenderer({ elementCreator, mathRenderer }),
+    ...opts.dataRenderers,
+  }
+
   return buildRenderer({
     ansiCodesRenderer,
     codeHighlighter,
+    dataRenderers,
     elementCreator,
     markdownRenderer,
     ...opts,
