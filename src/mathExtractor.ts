@@ -149,40 +149,51 @@ export function extractMath (text: string): [string, ExtractedChunk[]] {
     } else if (startIdx) {
       // If we are in math, look for the end delimiter, but don't go past
       // double line breaks, and and balance braces within the math.
-      if (block === endDelim) {
-        if (bracesLevel) {
-          lastIdx = i
-        } else {
-          processMath(unescape, math, blocks, startIdx, i)
+      switch (block) {
+        case endDelim:
+          if (bracesLevel) {
+            lastIdx = i
+          } else {
+            processMath(unescape, math, blocks, startIdx, i)
+            startIdx = endDelim = lastIdx = null
+          }
+          break
+        case '{':
+          bracesLevel++
+          break
+        case '}':
+          if (bracesLevel) { bracesLevel-- }
+          break
+        default: if (block.match(/\n.*\n/)) {
+          if (lastIdx) {
+            i = lastIdx
+            processMath(unescape, math, blocks, startIdx, i)
+          }
           startIdx = endDelim = lastIdx = null
+          bracesLevel = 0
         }
-      } else if (block.match(/\n.*\n/)) {
-        if (lastIdx) {
-          i = lastIdx
-          processMath(unescape, math, blocks, startIdx, i)
-        }
-        startIdx = endDelim = lastIdx = null
-        bracesLevel = 0
-      } else if (block === '{') {
-        bracesLevel++
-      } else if (block === '}' && bracesLevel) {
-        bracesLevel--
       }
     } else {
       // Look for math start delimiters and when found, set up
       // the end delimiter.
-      if (block === '$' || block === '$$') {
-        startIdx = i
-        endDelim = block
-        bracesLevel = 0
-      } else if (block === '\\\\(' || block === '\\\\[') {
-        startIdx = i
-        endDelim = block.endsWith('(') ? '\\\\)' : '\\\\]'
-        bracesLevel = 0
-      } else if (block.startsWith('\\begin')) {
-        startIdx = i
-        endDelim = '\\end' + block.substr(6)
-        bracesLevel = 0
+      switch (block) {
+        case '$':
+        case '$$':
+          startIdx = i
+          endDelim = block
+          bracesLevel = 0
+          break
+        case '\\\\(':
+        case '\\\\[':
+          startIdx = i
+          endDelim = block.endsWith('(') ? '\\\\)' : '\\\\]'
+          bracesLevel = 0
+          break
+        default: if (block.startsWith('\\begin')) {
+          startIdx = i
+          endDelim = '\\end' + block.substr(6)
+          bracesLevel = 0
+        }
       }
     }
   }
