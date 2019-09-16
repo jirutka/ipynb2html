@@ -18,7 +18,9 @@ import {
 
 
 export type Options = {
-  /** An object with additional data renderers indexed by a media type. */
+  /**
+   * An object with additional data renderers indexed by a media type.
+   */
   dataRenderers?: DataRenderers,
   /**
    * An array of the supported media types in the priority order. When a cell
@@ -27,8 +29,9 @@ export type Options = {
    * `Object.keys({ ...dataRenderers, ...builtinRenderers })`.
    */
   dataRenderersOrder?: string[],
-
-  /** A function for creating HTMLElement. */
+  /**
+   * A function for creating HTMLElement.
+   */
   elementCreator: ElementCreator,
   /**
    * A function for converting ANSI escape sequences in the given *text* to HTML.
@@ -43,8 +46,9 @@ export type Options = {
    * implicitly)!
    */
   codeHighlighter?: (code: string, lang: string) => string,
-
-  /** A function for converting the given Markdown source to HTML. */
+  /**
+   * A function for converting the given Markdown source to HTML.
+   */
   markdownRenderer?: (markup: string) => string,
 }
 
