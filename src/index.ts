@@ -23,7 +23,7 @@ type Nb = {
   prefix: string,
   markdown: (markup: string) => string,
   ansi: (text: string) => string,
-  highlighter: (code: string, lang?: string) => string,
+  highlighter: (code: string, lang: string) => string,
   renderMath: (element: HTMLElement, config: { [k: string]: any }) => void,
   display: DataRenderers,
   displayPriority: string[],
@@ -220,7 +220,7 @@ function renderData (output: DisplayData | ExecuteResult): HTMLElement {
 
 function renderError (error: NbError): HTMLElement {
   const raw = error.traceback.join('\n')
-  const html = nb.highlighter(nb.ansi(escapeHTML(raw)))
+  const html = nb.ansi(escapeHTML(raw))
 
   // Class "pyerr" is for backward compatibility with notebook.js.
   return makeElement('pre', ['error', 'pyerr'], html)
@@ -228,7 +228,7 @@ function renderError (error: NbError): HTMLElement {
 
 function renderStream (stream: NbStream): HTMLElement {
   const raw = joinText(stream.text)
-  const html = nb.highlighter(nb.ansi(escapeHTML(raw)))
+  const html = nb.ansi(escapeHTML(raw))
 
   return makeElement('pre', [stream.name], html)
 }
