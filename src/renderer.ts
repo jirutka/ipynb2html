@@ -36,8 +36,12 @@ export type Options = {
    * escape special characters unsafe for HTML (ansi_up does it implicitly)!
    */
   ansiCodesRenderer?: (text: string) => string,
-
-  /** A function for highlighting the given source code, it should return an HTML string. */
+  /**
+   * A function for highlighting the given source *code*, it should return an
+   * HTML string. It gets the text from the cell as-is, without prior escaping,
+   * so it must escape special characters unsafe for HTML (highlight.js does it
+   * implicitly)!
+   */
   codeHighlighter?: (code: string, lang: string) => string,
 
   /** A function for converting the given Markdown source to HTML. */
@@ -93,7 +97,7 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
 function buildRenderer (opts: Options) {
   const renderMarkdown = opts.markdownRenderer || identity
   const renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
-  const highlightCode = opts.codeHighlighter || identity
+  const highlightCode = opts.codeHighlighter || escapeHTML
 
   const el = opts.elementCreator
   const el2 = (tag: string, classes: string[]) => (data: string) => el(tag, classes, data)
@@ -162,7 +166,7 @@ function buildRenderer (opts: Options) {
         return el('div')
       }
       const lang = notebookLanguage(notebook)
-      const html = highlightCode(escapeHTML(joinText(cell.source)), lang)
+      const html = highlightCode(joinText(cell.source), lang)
 
       const codeEl = el('code', { 'classes': `lang-${lang}`, 'data-language': lang }, html)
       const preEl = el('pre', [], [codeEl])
