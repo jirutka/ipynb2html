@@ -30,8 +30,11 @@ export type Options = {
 
   /** A function for creating HTMLElement. */
   elementCreator: ElementCreator,
-
-  /** A function for converting ANSI escape sequences in the given text to HTML. */
+  /**
+   * A function for converting ANSI escape sequences in the given *text* to HTML.
+   * It gets the text from the cell as-is, without prior escaping, so it must
+   * escape special characters unsafe for HTML (ansi_up does it implicitly)!
+   */
   ansiCodesRenderer?: (text: string) => string,
 
   /** A function for highlighting the given source code, it should return an HTML string. */
@@ -89,7 +92,7 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
  */
 function buildRenderer (opts: Options) {
   const renderMarkdown = opts.markdownRenderer || identity
-  const renderAnsiCodes = opts.ansiCodesRenderer || identity
+  const renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
   const highlightCode = opts.codeHighlighter || identity
 
   const el = opts.elementCreator
@@ -201,17 +204,13 @@ function buildRenderer (opts: Options) {
     },
 
     Error: (error: NbError): HTMLElement => {
-      const raw = error.traceback.join('\n')
-      const html = renderAnsiCodes(escapeHTML(raw))
-
+      const html = renderAnsiCodes(error.traceback.join('\n'))
       // Class "pyerr" is for backward compatibility with notebook.js.
       return el('pre', ['error', 'pyerr'], html)
     },
 
     Stream: (stream: NbStream): HTMLElement => {
-      const raw = joinText(stream.text)
-      const html = renderAnsiCodes(escapeHTML(raw))
-
+      const html = renderAnsiCodes(joinText(stream.text))
       return el('pre', [stream.name], html)
     },
   })
