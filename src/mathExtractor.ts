@@ -1,7 +1,6 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 // Based on https://github.com/jupyter/notebook/blob/6.0.1/notebook/static/notebook/js/mathjaxutils.js.
-import { escapeHTML } from './utils'
 
 // Some magic for deferring mathematical expressions to MathJax by hiding them
 // from the Markdown parser.
@@ -80,7 +79,6 @@ function unescapeCodes (text: string): string {
 
 // - The math is in blocks start through end, so collect it into one block and
 //   clear the others.
-// - Replace &, <, and > by named entities.
 // - Clear the current math positions and store the index of the math, then
 //   push the math string onto the storage array.
 // - The preProcess function is called on all blocks if it has been passed in
@@ -92,7 +90,7 @@ function processMath (
   end: number,
 ): void {
 
-  const block = escapeHTML(blocks.slice(start, end + 1).join(''))
+  const block = blocks.slice(start, end + 1).join('')
 
   while (end > start) {
     blocks[end] = ''
