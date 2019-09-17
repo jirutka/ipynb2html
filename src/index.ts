@@ -1,4 +1,4 @@
-import AnsiUp from 'ansi_up'
+import anser from 'anser'
 import hjs from 'highlightjs'
 import { KatexOptions } from 'katex'
 import { MarkedOptions } from 'marked'
@@ -18,6 +18,10 @@ export type Options = Partial<RendererOpts> & {
 }
 
 
+function ansiCodesRenderer (input: string): string {
+  return anser.ansiToHtml(anser.escapeForHtml(input))
+}
+
 function codeHighlighter (code: string, lang: string): string {
   return hjs.getLanguage(lang)
     ? hjs.highlight(lang, code).value
@@ -27,10 +31,6 @@ function codeHighlighter (code: string, lang: string): string {
 export default (opts: Options = {}): NbRenderer => {
   const doc = new Document()
   const elementCreator = buildElementCreator(doc.createElement.bind(doc), opts.classPrefix)
-
-  const ansiUp = new AnsiUp()
-  const ansiCodesRenderer = ansiUp.ansi_to_html.bind(ansiUp)
-
   const markdownRenderer = buildMarkdownRenderer(opts.markedOpts, opts.katexOpts)
 
   return buildRenderer({
