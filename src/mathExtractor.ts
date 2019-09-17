@@ -9,17 +9,15 @@
 // Other minor modifications are also due to StackExchange and are used with
 // permission.
 
-export type ExtractedChunk = {
+export type MathExpression = {
   raw: string,
-} | {
-  raw: string,
-  math: string,
+  value: string,
   displayMode: boolean,
 }
 
 // The pattern for math delimiters and special symbols needed for searching for
 // math in the text input.
-const mathSplitRx = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\d+@@|\\\\(?:\(|\)|\[|\]))/i
+const mathSplitRx = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|\\\\(?:\(|\)|\[|\]))/i
 
 const delimiters = {
   '$$': { displayMode: true },
@@ -32,19 +30,16 @@ const delimiters = {
  * Parses the given string that may contain a delimited math expression.
  * Use this function to parse extracted chunks from `extractMath()`.
  */
-function parseDelimitedMath (raw: string): ExtractedChunk {
+function parseDelimitedMath (raw: string): MathExpression {
   const delim = Object.keys(delimiters)
     .find(s => raw.startsWith(s)) as keyof typeof delimiters | undefined
 
   if (delim) {
-    const math = raw.slice(delim.length, -delim.length)
-    return { raw, math, ...delimiters[delim] }
-
-  } else if (raw.startsWith('\\begin')) {
-    return { raw, math: raw, displayMode: true }
+    const value = raw.slice(delim.length, -delim.length)
+    return { raw, value, ...delimiters[delim] }
 
   } else {
-    return { raw }
+    return { raw, value: raw, displayMode: true }
   }
 }
 
@@ -97,7 +92,7 @@ function processMath (
     end--
   }
   // Replace the current block text with a unique tag to find later.
-  blocks[start] = `@@${math.length}@@`
+  blocks[start] = `@@${math.length + 1}@@`
 
   math.push(preProcess(block))
 }
@@ -107,20 +102,22 @@ function processMath (
  * with numbered markers and returns a tuple of the modified *text* and an
  * array of the extracted expressions.
  *
- * NOTE: If the *text* contains substrings that match our markers (`@@\d+@@`)
- * used to substitute math expressions, they will be substituted too - to avoid
- * errors when restoring math expressions. Thus the returned array will contain
- * even items that are not math expressions!
+ * NOTE: Sequences that looks like our markers (`@@\d+@@`) will be escaped by
+ * adding a zero (`0`) before the number. They will be unescaped in
+ * `restoreMath()`.
  */
-export function extractMath (text: string): [string, ExtractedChunk[]] {
+export function extractMath (text: string): [string, MathExpression[]] {
   // - Break up the text into its component parts and search through them for
   //   math delimiters, braces, line breaks, etc.
   // - Math delimiters must match and braces must balance.
   // - Don't allow math to pass through a double line break (which will be
   //   a paragraph).
 
-  const hasCodeSpans = text.includes('`')
+  // Escape things that look like our math markers so we can distinguish them
+  // later in `restoreMath()`.
+  text = text.replace(/@@(\d+)@@/g, (_, n) => `@@0${n}@@`)
 
+  const hasCodeSpans = text.includes('`')
   if (hasCodeSpans) {
     text = escapeCodes(text)
   }
@@ -140,13 +137,7 @@ export function extractMath (text: string): [string, ExtractedChunk[]] {
   for (let i = 1; i < blocks.length; i += 2) {
     const block = blocks[i]
 
-    if (block.startsWith('@')) {
-      // Things that look like our math markers will get stored and then
-      // retrieved along with the math.
-      blocks[i] = `@@${math.length}@@`
-      math.push(block)
-
-    } else if (startIdx) {
+    if (startIdx) {
       // If we are in math, look for the end delimiter, but don't go past
       // double line breaks, and and balance braces within the math.
       switch (block) {
@@ -205,9 +196,12 @@ export function extractMath (text: string): [string, ExtractedChunk[]] {
 }
 
 /**
- * Replaces markers injected by `extractMath()` into the given *text* with
- * strings from the given *chunks* array.
+ * Replaces math markers injected by `extractMath()` into the given *text*
+ * with strings from the given *math* array and unescapes sequences that looks
+ * like our markers.
  */
-export function restoreMath (text: string, chunks: string[]): string {
-  return text.replace(/@@(\d+)@@/g, (_, n) => chunks[Number(n)])
+export function restoreMath (text: string, math: string[]): string {
+  return text
+    .replace(/@@([1-9][0-9]*)@@/g, (_, n) => math[Number(n) - 1])
+    .replace(/@@0(\d+)@@/g, (_, n) => `@@${n}@@`)
 }
