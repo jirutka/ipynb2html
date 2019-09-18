@@ -14,7 +14,7 @@ export interface Notebook {
   nbformat_minor: number,
 
   /** Notebook format (major number). Incremented between backwards incompatible changes to the notebook format. */
-  nbformat: '4',
+  nbformat: 4,
 
   /** Array of cells of the current notebook. */
   cells: Cell[],
