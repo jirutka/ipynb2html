@@ -66,6 +66,15 @@ describe('.extractMath', () => {
     ])
   })
 
+  it('ignores math delimiters inside `inline code` with line breaks', () => {
+    expect(
+      extractMath('`$x\n$` and ``\n$`x`$\n`` is a code, `$x$\n\nis` not')
+    ).toEqual([
+      '`$x\n$` and ``\n$`x`$\n`` is a code, `@@1@@\n\nis` not',
+      [{ displayMode: false, raw: '$x$', value: 'x' }],
+    ])
+  })
+
   it('ignores math delimiters inside ```fenced code blocks```', () => {
     const text = dedent`
       Some code:

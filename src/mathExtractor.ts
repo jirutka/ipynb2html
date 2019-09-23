@@ -59,7 +59,9 @@ function escapeCodes (text: string): string {
 
   return text
     .replace(/~/g, '~T')
+    .replace(/\n(?!\n)/g, '~N')
     .replace(/(?:^|[^\\])(`+)[^\n]*?[^`\n]\1(?!`)/gm, escapeDolar)
+    .replace(/~N/g, '\n')
     .replace(/^\s{0,3}(`{3,})(?:.|\n)*?\1/gm, escapeDolar)
 }
 
