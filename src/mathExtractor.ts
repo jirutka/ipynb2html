@@ -35,7 +35,7 @@ function parseDelimitedMath (raw: string): MathExpression {
     .find(s => raw.startsWith(s)) as keyof typeof delimiters | undefined
 
   if (delim) {
-    const value = raw.slice(delim.length, -delim.length)
+    const value = raw.slice(delim.length, -delim.length).trim()
     return { raw, value, ...delimiters[delim] }
 
   } else {
