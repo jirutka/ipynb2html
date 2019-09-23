@@ -59,8 +59,8 @@ function escapeCodes (text: string): string {
 
   return text
     .replace(/~/g, '~T')
-    .replace(/(^|[^\\])(`+)([^\n]*?[^`\n])\2(?!`)/gm, escapeDolar)
-    .replace(/^\s{0,3}(`{3,})(.|\n)*?\1/gm, escapeDolar)
+    .replace(/(?:^|[^\\])(`+)[^\n]*?[^`\n]\1(?!`)/gm, escapeDolar)
+    .replace(/^\s{0,3}(`{3,})(?:.|\n)*?\1/gm, escapeDolar)
 }
 
 /**
