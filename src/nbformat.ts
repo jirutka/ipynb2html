@@ -97,7 +97,7 @@ interface BaseCell {
   metadata: CellMetadata,
 
   /** Contents of the cell, represented as an array of lines. */
-  source: string | string[],
+  source: MultilineString,
 }
 
 /** Notebook raw nbconvert cell. */
@@ -229,7 +229,7 @@ export interface Stream {
   name: string,
 
   /** The stream's text output, represented as an array of strings. */
-  text: string | string[],
+  text: MultilineString,
 }
 
 /** Output of an error that occurred during code cell execution. */
@@ -254,5 +254,7 @@ export interface Error {
 export interface MimeBundle {
 
   /** mimetype output (e.g. text/plain), represented as either an array of strings or a string. */
-  [mediaType: string]: string | string[],
+  [mediaType: string]: MultilineString,
 }
+
+export type MultilineString = string | string[]
