@@ -145,6 +145,7 @@ function buildRenderer (opts: Options) {
         case CellType.Code: return r.CodeCell(cell, notebook)
         case CellType.Markdown: return r.MarkdownCell(cell, notebook)
         case CellType.Raw: return r.RawCell(cell, notebook)
+        default: return el('div', [], '<!-- Unsupported cell type -->')
       }
     },
 
@@ -188,6 +189,7 @@ function buildRenderer (opts: Options) {
           case OutputType.ExecuteResult: return r.ExecuteResult(output)
           case OutputType.Stream: return r.Stream(output)
           case OutputType.Error: return r.Error(output)
+          default: return el('div', [], '<!-- Unsupported output type -->')
         }
       })()
       const attrs = { ...executionCountAttrs(cell), class: 'output' }
