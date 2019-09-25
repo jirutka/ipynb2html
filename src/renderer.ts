@@ -106,9 +106,9 @@ function buildRenderer (opts: Options) {
   const el = opts.elementCreator
   const el2 = (tag: string, classes: string[]) => (data: string) => el(tag, classes, data)
 
-  const embeddedImageEl = (format: string) => (data: string | string[]) => el('img', {
+  const embeddedImageEl = (format: string) => (data: string) => el('img', {
     class: 'image-output',
-    src: `data:image/${format};base64,${joinText(data).replace(/\n/g, '')}`,
+    src: `data:image/${format};base64,${data.replace(/\n/g, '')}`,
   })
 
   // opts.dataRenderers is intentionally included twice; to get the user's
