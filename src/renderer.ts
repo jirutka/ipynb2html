@@ -173,7 +173,7 @@ function buildRenderer (opts: Options) {
       const lang = notebookLanguage(notebook)
       const html = highlightCode(joinText(cell.source), lang)
 
-      const codeEl = el('code', { 'classes': `lang-${lang}`, 'data-language': lang }, html)
+      const codeEl = el('code', { 'class': `lang-${lang}`, 'data-language': lang }, html)
       const preEl = el('pre', [], [codeEl])
 
       // Class "input" is for backward compatibility with notebook.js.
