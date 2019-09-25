@@ -171,10 +171,7 @@ export interface CellMetadata {
 export interface MediaAttachments {
 
   /** The attachment's data stored as a mimebundle. */
-  [filename: string]: {
-    /** mimetype output (e.g. text/plain), represented as either an array of strings or a string. */
-    [mediaType: string]: string | string[],
-  },
+  [filename: string]: MimeBundle,
 }
 
 
@@ -199,10 +196,7 @@ export interface ExecuteResult {
   execution_count: number | null,
 
   /** A mime-type keyed dictionary of data */
-  data: {
-    /** mimetype output (e.g. text/plain), represented as either an array of strings or a string. */
-    [mediaType: string]: string | string[],
-  },
+  data: MimeBundle,
 
   /** Cell output metadata. */
   metadata: {
@@ -217,10 +211,7 @@ export interface DisplayData {
   output_type: OutputType.DisplayData,
 
   /** A mime-type keyed dictionary of data */
-  data: {
-    /** mimetype output (e.g. text/plain), represented as either an array of strings or a string. */
-    [mediaType: string]: string | string[],
-  },
+  data: MimeBundle,
 
   /** Cell output metadata. */
   metadata: {
@@ -255,4 +246,13 @@ export interface Error {
 
   /** The error's traceback, represented as an array of strings. */
   traceback: string[],
+}
+
+
+// ------------------------- Misc types ------------------------- //
+
+export interface MimeBundle {
+
+  /** mimetype output (e.g. text/plain), represented as either an array of strings or a string. */
+  [mediaType: string]: string | string[],
 }
