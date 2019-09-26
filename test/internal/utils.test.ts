@@ -1,4 +1,4 @@
-import { callableObject, escapeHTML, identity } from '@/utils'
+import { callableObject, escapeHTML, identity } from '@/internal/utils'
 
 
 describe('.callableObject', () => {
