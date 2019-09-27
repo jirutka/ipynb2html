@@ -30,10 +30,6 @@ export type Options = {
    */
   dataRenderersOrder?: string[],
   /**
-   * A function for creating HTMLElement.
-   */
-  elementCreator: ElementCreator,
-  /**
    * A function for converting ANSI escape sequences in the given *text* to HTML.
    * It gets the text from the cell as-is, without prior escaping, so it must
    * escape special characters unsafe for HTML (ansi_up does it implicitly)!
@@ -97,13 +93,17 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
  * a "callable object" of renderer functions for each Notebook's AST node.
  * You can easily replace any of the renderer functions to modify behaviour
  * of the renderer.
+ *
+ * @param {ElementCreator} elementCreator The function that will be used for
+ *   building all HTML elements.
+ * @param {Options} opts
  */
-function buildRenderer (opts: Options) {
+function buildRenderer (elementCreator: ElementCreator, opts: Options = {}) {
   const renderMarkdown = opts.markdownRenderer || identity
   const renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
   const highlightCode = opts.codeHighlighter || escapeHTML
 
-  const el = opts.elementCreator
+  const el = elementCreator
   const el2 = (tag: string, classes: string[]) => (data: string) => el(tag, classes, data)
 
   const embeddedImageEl = (format: string) => (data: string) => el('img', {

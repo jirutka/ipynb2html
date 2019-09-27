@@ -12,7 +12,7 @@ import buildRenderer, { Options as RendererOpts, NbRenderer } from './renderer'
 
 export { NbRenderer }
 
-export type Options = Partial<RendererOpts> & {
+export type Options = RendererOpts & {
   classPrefix?: string,
   katexOpts?: KatexOptions,
   markedOpts?: MarkedOptions,
@@ -43,11 +43,10 @@ export default (opts: Options = {}): NbRenderer => {
     ...opts.dataRenderers,
   }
 
-  return buildRenderer({
+  return buildRenderer(elementCreator, {
     ansiCodesRenderer,
     codeHighlighter,
     dataRenderers,
-    elementCreator,
     markdownRenderer,
     ...opts,
   })
