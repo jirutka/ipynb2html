@@ -2922,10 +2922,10 @@ node-pre-gyp@^0.12.0:
     semver "^5.3.0"
     tar "^4"
 
-nodom@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/nodom/-/nodom-2.2.1.tgz#66310685e6d5ac0215d6f3c7c8a6b3bb5c5fff6f"
-  integrity sha512-zRxqWngbCycY7jYTxCp4RSwqnwNd20Ioq6Jyotel50XyW1hD0pWosUDmXtJNRZw0Ozl531DOyfBAum41e7eGfg==
+nodom@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/nodom/-/nodom-2.3.0.tgz#466dc65583240d38190f7dd792a358c3b173adb6"
+  integrity sha512-HrxRnAHf0MUkbXCxQLfx/oI12hYcfhjMf1TkfWa4IWkwejxY8UnYLag+44RA0d3Sg0SQpljSg63xelE71mae2g==
 
 nopt@^4.0.1:
   version "4.0.1"
