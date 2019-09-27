@@ -2114,6 +2114,11 @@ istanbul-reports@^2.2.6:
   dependencies:
     handlebars "^4.1.2"
 
+jest-chain@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/jest-chain/-/jest-chain-1.1.2.tgz#80a098a4f5e19cd671d705d170bda501777ac3cf"
+  integrity sha512-9C4zfLK7/ZGnEctJbqiv6KDInWtdAqJBVmMePpEmyKlYfZy095At4bytuw5B2UvugPxYEbAHurJsFocn3fkkFw==
+
 jest-changed-files@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-24.9.0.tgz#08d8c15eb79a7fa3fc98269bc14b451ee82f8039"
