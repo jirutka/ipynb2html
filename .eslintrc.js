@@ -55,7 +55,7 @@ module.exports = {
 
     // TypeScript
     '@typescript-eslint/await-thenable': 'error',
-    '@typescript-eslint/consistent-type-definitions': ['warn', 'type'],
+    '@typescript-eslint/consistent-type-definitions': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': ['warn', {
       accessibility: 'no-public',

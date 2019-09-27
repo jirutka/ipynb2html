@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
-
 // These types are based on https://github.com/jupyter/nbformat/blob/b6b5a18e5a40d37f1cc0f71f65108288bdec9bb7/nbformat/v4/nbformat.v4.schema.json.
 // This file was originally generated using json-schema-to-typescript 7.0.0 and
 // then manually polished.
