@@ -22,9 +22,10 @@ describe('.callableObject', () => {
     })
 
     it('has all enumerable properties of the given template', () => {
-      expect( subject.str ).toBe(template.str)
-      expect( subject.func1 ).toBe(template.func1)
-      expect( subject.func2 ).toBe(template.func2)
+      expect( subject )
+        .toHaveProperty('str', template.str)
+        .toHaveProperty('func1', template.func1)
+        .toHaveProperty('func2', template.func2)
     })
   })
 })
