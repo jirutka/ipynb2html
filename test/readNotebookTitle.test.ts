@@ -1,5 +1,5 @@
-import readNotebookTitle from '@/readNotebookTitle'
 import { Notebook, CellType, MarkdownCell } from '@/nbformat'
+import readNotebookTitle from '@/readNotebookTitle'
 
 
 const markdownCell = (source: string | string[]): MarkdownCell => ({
@@ -12,7 +12,9 @@ const baseNotebook: Notebook = {
   nbformat: 4,
   nbformat_minor: 3,
   metadata: {},
-  cells: [ markdownCell('# Markdown Title\n\nLorem ipsum dolor') ],
+  cells: [
+    markdownCell('# Markdown Title\n\nLorem ipsum dolor'),
+  ],
 }
 
 
@@ -128,7 +130,5 @@ describe('readNotebookTitle', () => {
         expect( readNotebookTitle(notebook) ).toBe('')
       })
     })
-
   })
-
 })
