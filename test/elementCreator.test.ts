@@ -1,4 +1,3 @@
-import './setup'
 import { Document } from 'nodom'
 
 import buildElementCreator from '@/elementCreator'
