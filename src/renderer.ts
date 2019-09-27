@@ -83,9 +83,7 @@ function executionCountAttrs ({ execution_count: count }: CodeCell): { [k: strin
 }
 
 function notebookLanguage ({ metadata: meta }: Notebook): string {
-  return (meta.language_info && meta.language_info.name)
-    || (meta.kernelspec && meta.kernelspec.language)
-    || 'python'
+  return (meta.language_info && meta.language_info.name) || 'python'
 }
 
 /**
