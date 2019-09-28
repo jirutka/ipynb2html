@@ -74,12 +74,12 @@ function coalesceStreams (outputs: Output[]): Output[] {
   return newOutputs
 }
 
-function executionCountAttrs ({ execution_count: count }: CodeCell): { [k: string]: string } | undefined {
+function executionCountAttrs ({ execution_count: count }: CodeCell): { [k: string]: string } {
   return count ? {
     'data-execution-count': String(count),
     // Only for backward compatibility with notebook.js.
     'data-prompt-number': String(count),
-  } : undefined
+  } : {}
 }
 
 function notebookLanguage ({ metadata: meta }: Notebook): string {
