@@ -156,18 +156,17 @@ function buildRenderer (elementCreator: ElementCreator, opts: Options = {}) {
     },
 
     CodeCell: (cell: CodeCell, notebook: Notebook): HTMLElement => {
-      const children = coalesceStreams(cell.outputs || [])
+      const source = cell.source.length > 0
+        ? r.Source(cell, notebook)
+        : el('div')
+
+      const outputs = coalesceStreams(cell.outputs || [])
         .map(output => r.Output(output, cell))
 
-      children.unshift(r.Source(cell, notebook))
-
-      return el('div', ['cell', 'code-cell'], children)
+      return el('div', ['cell', 'code-cell'], [source, ...outputs])
     },
 
     Source: (cell: CodeCell, notebook: Notebook): HTMLElement => {
-      if (!cell.source.length) {
-        return el('div')
-      }
       const lang = notebookLanguage(notebook)
       const html = highlightCode(joinText(cell.source), lang)
 
