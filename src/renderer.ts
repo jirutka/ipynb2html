@@ -1,6 +1,4 @@
 // This code is originally based on notebookjs 0.4.2 distributed under the MIT license.
-import { HTMLElement } from 'nodom'
-
 import { ElementCreator } from './elementCreator'
 import { callableObject, escapeHTML, identity } from './internal/utils'
 import {
@@ -19,11 +17,11 @@ import {
 } from './nbformat'
 
 
-export type Options = {
+export type Options<TElement = HTMLElement> = {
   /**
    * An object with additional data renderers indexed by a media type.
    */
-  dataRenderers?: DataRenderers,
+  dataRenderers?: DataRenderers<TElement>,
   /**
    * An array of the supported media types in the priority order. When a cell
    * contains multiple representations of the data, the one with the media type
@@ -50,9 +48,9 @@ export type Options = {
   markdownRenderer?: (markup: string) => string,
 }
 
-export type DataRenderer = (data: string) => HTMLElement
+export type DataRenderer<TElement = HTMLElement> = (data: string) => TElement
 
-type DataRenderers = { [mediaType: string]: DataRenderer }
+type DataRenderers<TElement> = { [mediaType: string]: DataRenderer<TElement> }
 
 
 function joinText (text: string | string[]): string {
@@ -97,8 +95,10 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
  * @param {ElementCreator} elementCreator The function that will be used for
  *   building all HTML elements.
  * @param {Options} opts
+ * @return {NbRenderer}
+ * @template TElement Type of the element object that *elementCreator* produces.
  */
-function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Options = {}) {
+function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opts: Options<TElement> = {}) {
   const renderMarkdown = opts.markdownRenderer || identity
   const renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
   const highlightCode = opts.codeHighlighter || escapeHTML
@@ -114,7 +114,7 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
   // opts.dataRenderers is intentionally included twice; to get the user's
   // provided renderers in the default dataRenderersOrder before the built-in
   // renderers and at the same time allow to override any built-in renderer.
-  const dataRenderers: DataRenderers = {
+  const dataRenderers: DataRenderers<TElement> = {
     ...opts.dataRenderers,
     'image/png': embeddedImageEl('png'),
     'image/jpeg': embeddedImageEl('jpeg'),
@@ -134,13 +134,13 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
   }
 
   const r = callableObject('Notebook', {
-    Notebook: (notebook: Notebook): HTMLElement => {
+    Notebook: (notebook: Notebook): TElement => {
       const children = notebook.cells.map(cell => r.Cell(cell, notebook))
       // Class "worksheet" is for backward compatibility with notebook.js.
       return el('div', ['notebook', 'worksheet'], children)
     },
 
-    Cell: (cell: Cell, notebook: Notebook): HTMLElement => {
+    Cell: (cell: Cell, notebook: Notebook): TElement => {
       switch (cell.cell_type) {
         case CellType.Code: return r.CodeCell(cell, notebook)
         case CellType.Markdown: return r.MarkdownCell(cell, notebook)
@@ -149,15 +149,15 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
       }
     },
 
-    MarkdownCell: (cell: MarkdownCell, _notebook: Notebook): HTMLElement => {
+    MarkdownCell: (cell: MarkdownCell, _notebook: Notebook): TElement => {
       return el('div', ['cell', 'markdown-cell'], renderMarkdown(joinText(cell.source)))
     },
 
-    RawCell: (cell: RawCell, _notebook: Notebook): HTMLElement => {
+    RawCell: (cell: RawCell, _notebook: Notebook): TElement => {
       return el('div', ['cell', 'raw-cell'], joinText(cell.source))
     },
 
-    CodeCell: (cell: CodeCell, notebook: Notebook): HTMLElement => {
+    CodeCell: (cell: CodeCell, notebook: Notebook): TElement => {
       const source = cell.source.length > 0
         ? r.Source(cell, notebook)
         : el('div')
@@ -168,7 +168,7 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
       return el('div', ['cell', 'code-cell'], [source, ...outputs])
     },
 
-    Source: (cell: CodeCell, notebook: Notebook): HTMLElement => {
+    Source: (cell: CodeCell, notebook: Notebook): TElement => {
       const lang = notebookLanguage(notebook)
       const html = highlightCode(joinText(cell.source), lang)
 
@@ -181,7 +181,7 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
       return el('div', attrs, [preEl])
     },
 
-    Output: (output: Output, cell: CodeCell): HTMLElement => {
+    Output: (output: Output, cell: CodeCell): TElement => {
       const innerEl = (() => {
         switch (output.output_type) {
           case OutputType.DisplayData: return r.DisplayData(output)
@@ -196,7 +196,7 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
       return el('div', attrs, [innerEl])
     },
 
-    DisplayData: (output: DisplayData): HTMLElement => {
+    DisplayData: (output: DisplayData): TElement => {
       const type = resolveDataType(output)
       if (type) {
         return dataRenderers[type](joinText(output.data[type]))
@@ -204,7 +204,7 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
       return el('div', ['empty-output'])
     },
 
-    ExecuteResult: (output: ExecuteResult): HTMLElement => {
+    ExecuteResult: (output: ExecuteResult): TElement => {
       const type = resolveDataType(output)
       if (type) {
         return dataRenderers[type](joinText(output.data[type]))
@@ -212,13 +212,13 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
       return el('div', ['empty-output'])
     },
 
-    Error: (error: NbError): HTMLElement => {
+    Error: (error: NbError): TElement => {
       const html = renderAnsiCodes(error.traceback.join('\n'))
       // Class "pyerr" is for backward compatibility with notebook.js.
       return el('pre', ['error', 'pyerr'], html)
     },
 
-    Stream: (stream: NbStream): HTMLElement => {
+    Stream: (stream: NbStream): TElement => {
       const html = renderAnsiCodes(joinText(stream.text))
       return el('pre', [stream.name], html)
     },
@@ -226,6 +226,12 @@ function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Optio
   return r
 }
 
-export type NbRenderer = ReturnType<typeof buildRenderer>
-
 export default buildRenderer
+
+// XXX: An ugly hack to infer return type of generic function that returns
+// generalized object.
+abstract class DummyClass<T> {
+  renderer = buildRenderer<T>(this.elementCreator())
+  abstract elementCreator (): ElementCreator<T>
+}
+export type NbRenderer<TElement> = DummyClass<TElement>['renderer']

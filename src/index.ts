@@ -2,7 +2,7 @@ import anser from 'anser'
 import hjs from 'highlightjs'
 import katex, { KatexOptions } from 'katex'
 import { MarkedOptions } from 'marked'
-import { Document } from 'nodom'
+import { Document, HTMLElement } from 'nodom'
 
 import buildElementCreator from './elementCreator'
 import htmlRenderer from './htmlRenderer'
@@ -12,7 +12,7 @@ import buildRenderer, { Options as RendererOpts, NbRenderer } from './renderer'
 
 export { NbRenderer }
 
-export type Options = RendererOpts & {
+export type Options = RendererOpts<HTMLElement> & {
   classPrefix?: string,
   katexOpts?: KatexOptions,
   markedOpts?: MarkedOptions,
@@ -33,7 +33,7 @@ function mathRenderer (tex: string) {
   return katex.renderToString(tex, { displayMode: true, throwOnError: false })
 }
 
-export default (opts: Options = {}): NbRenderer => {
+export default (opts: Options = {}): NbRenderer<HTMLElement> => {
   const doc = new Document()
   const elementCreator = buildElementCreator(doc.createElement.bind(doc), opts.classPrefix)
   const markdownRenderer = buildMarkdownRenderer(opts.markedOpts, opts.katexOpts)

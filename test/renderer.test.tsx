@@ -26,13 +26,13 @@ describe('built renderer', () => {
   const dataRenderers = {
     'text/custom': rendererMock('DisplayData'),
   }
-  const rendererOpts: RendererOpts = {
+  const rendererOpts: RendererOpts<HTMLElement> = {
     ansiCodesRenderer,
     codeHighlighter,
     markdownRenderer,
     dataRenderers,
   }
-  let renderer: NbRenderer
+  let renderer: NbRenderer<HTMLElement>
 
 
   beforeEach(() => {
