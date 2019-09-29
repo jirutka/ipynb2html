@@ -1,14 +1,16 @@
-// NOTE: nodom.HTMLElement defines a subset of properties and functions of
-// the browser's HTMLElement, that's why we use it here.
-import { HTMLElement } from 'nodom'
-
-
 type Attributes = { [k: string]: string }
 
-export type ElementCreator =
-  & ((tag: string, classes?: string[], children?: HTMLElement[] | string) => HTMLElement)
-  & ((tag: string, attrs?: Attributes, children?: HTMLElement[] | string) => HTMLElement)
+// Definition of the smallest possible subset of the HTMLElement type required
+// for this module's function.
+export type MinimalElement = {
+  innerHTML: string,
+  setAttribute (name: string, value: string): void,
+  appendChild (child: any): any,
+}
 
+export type ElementCreator<TElement = HTMLElement> =
+  & ((tag: string, classes?: string[], children?: TElement[] | string) => TElement)
+  & ((tag: string, attrs?: Attributes, children?: TElement[] | string) => TElement)
 
 /**
  * Returns a function for building `HTMLElement`s.
@@ -17,11 +19,16 @@ export type ElementCreator =
  *   (e.g. `document.createElement.bind(document)`).
  * @param {string} classPrefix The prefix to be used for all CSS class names
  *   except `lang-*`. Default is `nb-`.
+ * @template TElement Type of the element object that *createElement* produces.
  */
-export default (createElement: (tag: string) => HTMLElement, classPrefix: string = 'nb-'): ElementCreator => {
+export default <TElement extends MinimalElement> (
+  createElement: (tag: string) => TElement,
+  classPrefix: string = 'nb-',
+): ElementCreator<TElement> => {
+
   const prefixClassName = (name: string) => name.startsWith('lang-') ? name : classPrefix + name
 
-  return (tag: string, classesOrAttrs?: string[] | Attributes, childrenOrHTML?: HTMLElement[] | string) => {
+  return (tag: string, classesOrAttrs?: string[] | Attributes, childrenOrHTML?: TElement[] | string): TElement => {
     const el = createElement(tag)
 
     if (Array.isArray(classesOrAttrs)) {

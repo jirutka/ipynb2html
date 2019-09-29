@@ -98,7 +98,7 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
  *   building all HTML elements.
  * @param {Options} opts
  */
-function buildRenderer (elementCreator: ElementCreator, opts: Options = {}) {
+function buildRenderer (elementCreator: ElementCreator<HTMLElement>, opts: Options = {}) {
   const renderMarkdown = opts.markdownRenderer || identity
   const renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
   const highlightCode = opts.codeHighlighter || escapeHTML

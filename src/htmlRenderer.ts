@@ -7,7 +7,7 @@ import { DataRenderer } from './renderer'
 const extractMathRx = /^\s*<html>\s*<script\s*type="math\/tex(?:;[^"]*)">([\s\S]*)<\/script><\/html>\s*$/
 
 export type Options = {
-  elementCreator: ElementCreator,
+  elementCreator: ElementCreator<HTMLElement>,
   mathRenderer: (math: string) => string,
 }
 
