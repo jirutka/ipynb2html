@@ -1,4 +1,6 @@
-import { ElementCreator, HTMLElement } from './elementCreator'
+import { HTMLElement } from 'nodom'
+
+import { ElementCreator } from './elementCreator'
 import { DataRenderer } from './renderer'
 
 

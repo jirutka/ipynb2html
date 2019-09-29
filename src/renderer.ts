@@ -1,5 +1,7 @@
 // This code is originally based on notebookjs 0.4.2 distributed under the MIT license.
-import { ElementCreator, HTMLElement } from './elementCreator'
+import { HTMLElement } from 'nodom'
+
+import { ElementCreator } from './elementCreator'
 import { callableObject, escapeHTML, identity } from './internal/utils'
 import {
   Cell,

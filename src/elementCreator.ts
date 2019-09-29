@@ -9,8 +9,6 @@ export type ElementCreator =
   & ((tag: string, classes?: string[], children?: HTMLElement[] | string) => HTMLElement)
   & ((tag: string, attrs?: Attributes, children?: HTMLElement[] | string) => HTMLElement)
 
-export { HTMLElement }
-
 
 /**
  * Returns a function for building `HTMLElement`s.
