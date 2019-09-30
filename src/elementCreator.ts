@@ -27,15 +27,14 @@ export default (createElement: (tag: string) => HTMLElement, classPrefix: string
     const el = createElement(tag)
 
     if (Array.isArray(classesOrAttrs)) {
-      el.className = classesOrAttrs.map(prefixClassName).join(' ')
+      el.setAttribute('class', classesOrAttrs.map(prefixClassName).join(' '))
 
     } else if (classesOrAttrs) {
-      for (const [key, val] of Object.entries(classesOrAttrs)) {
+      for (let [key, val] of Object.entries(classesOrAttrs)) {
         if (key === 'class') {
-          el.className = val.split(' ').map(prefixClassName).join(' ')
-        } else {
-          el.setAttribute(key, val)
+          val = val.split(' ').map(prefixClassName).join(' ')
         }
+        el.setAttribute(key, val)
       }
     }
     if (Array.isArray(childrenOrHTML)) {
