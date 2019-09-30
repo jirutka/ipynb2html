@@ -412,7 +412,7 @@ describe('built renderer', () => {
 
         it('returns pre.text-output with html-escaped data', () => {
           expect( renderer.DisplayData(output) ).toHtmlEqual(
-            <pre class="text-output">{ '&gt;_&lt;' }</pre>  // FIXME: unescape after updating nodom
+            <pre class="text-output">{ '>_<' }</pre>
           )
         })
       })
