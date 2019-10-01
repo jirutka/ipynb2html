@@ -17,6 +17,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'standard-with-typescript',
     'plugin:import/recommended',
     'plugin:import/typescript',
@@ -54,7 +55,6 @@ module.exports = {
     }],
 
     // TypeScript
-    '@typescript-eslint/await-thenable': 'error',
     '@typescript-eslint/consistent-type-definitions': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': ['warn', {
@@ -89,8 +89,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-namespace': 'warn',
-    '@typescript-eslint/no-object-literal-type-assertion': 'off',
-    '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-require-imports': 'error',
     '@typescript-eslint/no-unused-vars': ['error', {
       argsIgnorePattern: '^_',
@@ -103,12 +101,13 @@ module.exports = {
     }],
     '@typescript-eslint/prefer-for-of': 'warn',
     '@typescript-eslint/prefer-includes': 'warn',
-    '@typescript-eslint/prefer-interface': 'off',
+    '@typescript-eslint/prefer-regexp-exec': 'warn',
     '@typescript-eslint/prefer-string-starts-ends-with': 'warn',
     '@typescript-eslint/promise-function-async': ['error', {
       allowAny: true,
     }],
     '@typescript-eslint/semi': ['error', 'never'],
+    '@typescript-eslint/strict-boolean-expressions': 'off',
   },
   overrides: [
     {
