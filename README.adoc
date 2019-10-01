@@ -54,7 +54,7 @@ yarn test
 [source]
 yarn lint
 
-IMPORTANT: Keep in mind that JS sources are located in the directory `src`; directory `lib` contains transpiled code (created after running `yarn build`)!
+IMPORTANT: Keep in mind that JS sources are located in the `src` directories; `lib` directories contains transpiled code (created after running `yarn build`)!
 
 
 === Visual Studio Code

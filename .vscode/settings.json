@@ -10,6 +10,9 @@
 
   "files.encoding": "utf8",
   "files.eol": "\n",
+  "files.exclude": {
+    "**/.tsbuildinfo": true,
+  },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
 

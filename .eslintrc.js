@@ -1,9 +1,10 @@
 const tsconfigs = [
-  'tsconfig.json',
-  'test/tsconfig.json',
+  'packages/*/tsconfig.json',
+  'packages/*/test/tsconfig.json',
 ]
 
 module.exports = {
+  root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {

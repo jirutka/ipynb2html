@@ -1,44 +1,19 @@
 {
-  "name": "ipynb2html",
+  "name": "ipynb2html-parent",
   "version": "0.1.0-beta.5",
-  "description": "Convert Jupyter Notebook to static HTML",
-  "author": "Jakub Jirutka <jakub@jirutka.cz>",
-  "license": "MIT",
-  "homepage": "https://github.com/jirutka/ipynb2html",
-  "bugs": "https://github.com/jirutka/ipynb2html/issues",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jirutka/ipynb2html.git"
-  },
-  "keywords": [
-    "converter",
-    "html",
-    "ipython",
-    "jupyter",
-    "notebook"
-  ],
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "src"
-  ],
+  "private": true,
   "scripts": {
-    "build": "ttsc",
-    "clean": "rimraf coverage/ dist/ lib/ *.log",
+    "build": "ttsc --build",
+    "clean": "rimraf coverage/ lib/ *.log && wsrun clean",
     "lint": "eslint --ext .ts,.tsx,.js .",
+    "postinstall": "run-s build",
+    "publish-all": "wsrun --serial publish",
     "test": "jest --detectOpenHandles --coverage --verbose",
-    "watch-ts": "ttsc -w"
+    "version": "./scripts/bump-version && git add **/package.json",
+    "watch-ts": "ttsc --build --watch"
   },
   "engines": {
     "node": ">=10.13.0"
-  },
-  "dependencies": {
-    "anser": "^1.4.9",
-    "highlightjs": "^9.12.0",
-    "katex": "^0.11.0",
-    "marked": "^0.7.0",
-    "nodom": "^2.4.0"
   },
   "devDependencies": {
     "@types/dedent": "^0.7.0",
@@ -67,6 +42,11 @@
     "ts-transformer-export-default-name": "^0.1.0",
     "ts-transformer-inline-file": "^0.1.1",
     "ttypescript": "^1.5.7",
-    "typescript": "~3.6.4"
-  }
+    "typescript": "~3.6.4",
+    "wsrun": "^5.0.2",
+    "yarn-version-bump": "^0.0.3"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

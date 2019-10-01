@@ -1,9 +1,14 @@
 dist: bionic
+
 language: node_js
 node_js:
   - '10'
   - '12'
   - node
+
+env:
+  global:
+    - secure: "DrPA1eYBRjS+1/w/sRq/r5wQyOewuh1PGPzFtQR62TJeAyO6AvKQ6wfesxMA898b+0D3SCNxrCVK12XB3auySEOZocQuN7N51hsteA/QtPoBBbnoHy8Dap2YbiJ5fbCVnM/Wl/Z2rZmQWFBM3rmqXggCyEhKEw3kkz8WMm/7UCGVxmoHUelpMnDEII0RiJdPCGT19IA90KpJDsqbSzTVY+TsqjSNuN91LQ23ApwSHKklvbvKWxcgrtAzJDXLeS9CS3QqSHucurOM2Kpv0umOkBzds4da+NtWKYZC3XxThmMB5wT7b60EZPIc/iFftQFy2qiDAFxeGN+j9kwsNX68aXl4MuCGlzdvGj0KkeXYYhl1Jusc30uTzXYMlz2b3u+AcsMLLxFs2HvUU94SpAfe9VrarSnQK+6CZz0eCtF/NCCi6J9GqlBTsqzZDmdVaJpFDG1FidC4Ka9FcteKcWXqffowQ5KjIhqaearSmRESMqepV7T8tDUCb217PE0C+L0NGfg6RaY4DtGsJAawDeh/09aXrP6NakAKjWUfaJqjhkMexB8JTb+yanjVXsgj4VUfvTgvWjMi+yU3DIfopL+mawvgckRRL9DTEIf5ICjSruyEH8FWEz+kMzas41zboabR12YMLuorHfgZu31DiDsJkSD292t/lwWW6oybRl0iJBk="  # NPM_TOKEN=ceed......2bf2
 
 cache: yarn
 
@@ -15,11 +20,12 @@ script:
   - yarn run test
   - yarn run lint
 
+before_deploy:
+  - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> "$HOME"/.npmrc
+
 deploy:
-  provider: npm
-  email: jakub@jirutka.cz
-  api_key:
-    secure: "0D1IFNeu0BuCg8SCuNUNXARDARNQbmPCH1qivlIRURaoe5Lns/oTunavJ7eIrvPA/1wMOozWGo6TlVb0ucnWNJ+ux31XTX1BGFoTAUw/dZk3C3s0HT7WuTKLrO6itIQtoBIWMfKAAe5doF00fBDQgFgSwU64CgWsZ2GUNKxXOAfkagInYHU5izGGsS+HQ5FyR5QqQzkHNUiLYs9IA1V3TF2s93ITmcqQZlah/n03BChBEA/LRkMqlEF+1YKaO+4q0PglHYJ1vlN/8n/TQTmAgsm4S67x+ADcBA/3M5UawXPGf+ZyYr1sAgjnE/Rt5BrhApnzrb2m1z1vig1uRPL/bsKADZfSDJVyr+dU4zl73g8U9QtpOMdlOphLWdgWix+JmbUVgtu/iC83zjBBHEfP97NFNJLVkBhnSxoX8xu9+za0jYKlSln5Khoegh1lw9YGx1A/3Z34FxY+G5Fh2cUidrMBrI4F9BJWoiDAnEvvB3yFhZtqbDta1p2iROqwW8/Z5M1CjtyMnemvPi/9oGvlQVaqn7mr45srHIJHjqxdS9HMLDhy7fKr407NvSOl6N7VNxOTW2KfawAkCWqJccEvfRnoaouRhUhdMcDTqiIMl8hYO4jEML6ioJisaLksWXeT9Sv6QoNbPPaWoGjDc9/c0eedfn49U4YMnjCqfIpZAdo="  # 9919......6b7c
+  provider: script
+  script: yarn publish-all --non-interactive
   skip_cleanup: true
   on:
     tags: true

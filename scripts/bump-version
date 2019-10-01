@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+'use strict'
+
+const path = require('path')
+const { bumpVersion } = require('yarn-version-bump/src/bump-version')
+const { processJsonFile } = require('yarn-version-bump/src/util/json')
+const Workspace = require('yarn-version-bump/src/workspace')
+const rootPkg = require('../package.json')
+
+
+async function workspacePackages () {
+  return Object.keys((await new Workspace('.').workspaceSnapshot).packages)
+}
+
+async function bumpAllPackages (newVersion) {
+  processJsonFile('package.json', pkg => {
+    pkg.version = newVersion
+    return pkg
+  })
+  for (const pkgname of await workspacePackages()) {
+    console.log(`bumping ${pkgname} to ${newVersion}`)
+    await bumpVersion(pkgname, newVersion, '.')
+  }
+}
+
+const newVersion = process.argv[2] || rootPkg.version
+
+process.chdir(path.resolve(__dirname, '..'))
+
+bumpAllPackages(newVersion).catch(err => {
+  console.error(err)
+  process.exit(1)
+})

@@ -2,6 +2,9 @@
 /.tmp/
 /coverage/
 /dist/
-/lib/
+/packages/*/coverage/
+/packages/*/lib/
+/packages/*/*.js
+/scripts/*
 /types/
 /*.js

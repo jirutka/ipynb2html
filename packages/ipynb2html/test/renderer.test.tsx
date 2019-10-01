@@ -1,4 +1,4 @@
-import './setup'  // setupFilesAfterEnv doesn't work here
+import '~/test/setup'  // setupFilesAfterEnv doesn't work here
 
 import arrify from 'arrify'
 import { Document, HTMLElement } from 'nodom'
@@ -8,8 +8,8 @@ import buildRenderer, { NbRenderer, Options as RendererOpts } from '@/renderer'
 import { DisplayData, MimeBundle, MultilineString, Notebook } from '@/nbformat'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Anything } from './support/matchers/toMatchElement'
-import { mockLastResult, mockResults } from './support/helpers'
+import { Anything } from '~/test/support/matchers/toMatchElement'
+import { mockLastResult, mockResults } from '~/test/support/helpers'
 import * as _fixtures from './support/fixtures/notebook'
 
 const document = new Document()

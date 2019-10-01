@@ -1,7 +1,10 @@
 /coverage/
 /dist/
-/lib/
+/packages/*/coverage/
+/packages/*/lib/
 /.*cache/
 /.tmp/
 node_modules/
+.tsbuildinfo
+tsconfig.tsbuildinfo
 *.log
