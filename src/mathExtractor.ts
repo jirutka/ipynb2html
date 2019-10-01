@@ -157,7 +157,7 @@ export function extractMath (text: string): [string, MathExpression[]] {
         case '}':
           if (bracesLevel) { bracesLevel-- }
           break
-        default: if (block.match(/\n.*\n/)) {
+        default: if (/\n.*\n/.exec(block)) {
           if (lastIdx) {
             i = lastIdx
             processMath(unescape, math, blocks, startIdx, i)
