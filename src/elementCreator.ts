@@ -23,7 +23,7 @@ export type ElementCreator<TElement = HTMLElement> =
  */
 export default <TElement extends MinimalElement> (
   createElement: (tag: string) => TElement,
-  classPrefix: string = 'nb-',
+  classPrefix = 'nb-',
 ): ElementCreator<TElement> => {
 
   const prefixClassName = (name: string) => name.startsWith('lang-') ? name : classPrefix + name
