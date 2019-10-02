@@ -1,13 +1,15 @@
+const tsconfigs = [
+  'tsconfig.json',
+  'test/tsconfig.json',
+]
+
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    project: [
-      './tsconfig.json',
-      './test/tsconfig.json',
-    ],
+    project: tsconfigs,
   },
   env: {
     es6: true,
@@ -15,8 +17,10 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      // Use eslint-import-resolver-typescript to obey "paths" in tsconfig.json.
-      typescript: {},
+      // Use eslint-import-resolver-ts to obey "paths" in tsconfig.json.
+      ts: {
+        directory: tsconfigs,
+      },
     },
   },
   extends: [
@@ -54,11 +58,11 @@ module.exports = {
     'semi': 'off',
 
     // Import
+    'import/default': 'off',
     'import/newline-after-import': 'warn',
-    'import/order': ['warn', {
-      'groups': [['builtin', 'external']],
-      'newlines-between': 'always-and-inside-groups',
-    }],
+    'import/no-absolute-path': 'error',
+    // This rule disallows using both wildcard and selective imports from the same module.
+    'import/no-duplicates': 'off',
 
     // TypeScript
     '@typescript-eslint/consistent-type-definitions': 'off',

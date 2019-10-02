@@ -1,6 +1,8 @@
 import hjs from 'highlightjs'
-import katex, { KatexOptions } from 'katex'
-import marked, { MarkedOptions } from 'marked'
+import * as katex from 'katex'
+import { KatexOptions } from 'katex'
+import * as marked from 'marked'
+import { MarkedOptions } from 'marked'
 
 import { extractMath, restoreMath } from './mathExtractor'
 

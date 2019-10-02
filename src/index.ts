@@ -1,6 +1,7 @@
 import anser from 'anser'
 import hjs from 'highlightjs'
-import katex, { KatexOptions } from 'katex'
+import * as katex from 'katex'
+import { KatexOptions } from 'katex'
 import { MarkedOptions } from 'marked'
 import { Document, HTMLElement } from 'nodom'
 
