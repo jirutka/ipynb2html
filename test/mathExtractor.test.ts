@@ -21,7 +21,7 @@ describe('.extractMath', () => {
         it('extracts and substitutes math expression in the given text', () => {
           expect(
             extractMath(`Let's define ${raw}.`)
-          ).toEqual([`Let's define @@1@@.`, [{ displayMode, raw, value }]])
+          ).toEqual(["Let's define @@1@@.", [{ displayMode, raw, value }]])
         })
       })
 
@@ -32,7 +32,7 @@ describe('.extractMath', () => {
         it('extracts and substitutes math expression in the given text', () => {
           expect(
             extractMath(`Let's define ${raw}.`)
-          ).toEqual([`Let's define @@1@@.`, [{ displayMode, raw, value }]])
+          ).toEqual(["Let's define @@1@@.", [{ displayMode, raw, value }]])
         })
       })
     }
@@ -44,7 +44,7 @@ describe('.extractMath', () => {
     it('extracts and substitutes math expression in the given text', () => {
       expect(
         extractMath(`Let's define ${raw}.`)
-      ).toEqual([`Let's define @@1@@.`, [{ displayMode: true, raw, value: raw }]])
+      ).toEqual(["Let's define @@1@@.", [{ displayMode: true, raw, value: raw }]])
     })
   })
 
