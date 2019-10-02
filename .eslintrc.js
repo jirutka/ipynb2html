@@ -1,7 +1,13 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json',
+    ecmaFeatures: {
+      jsx: true,
+    },
+    project: [
+      './tsconfig.json',
+      './test/tsconfig.json',
+    ],
   },
   env: {
     es6: true,
@@ -111,11 +117,12 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.test.ts'],
+      files: ['*.test.ts?(x)'],
       rules: {
         // Allow to format arrays for parametrized tests as tables.
         'array-bracket-spacing': 'off',
         'comma-spacing': 'off',
+        'object-curly-spacing': 'off',
         'no-multi-spaces': 'off',
         'standard/array-bracket-even-spacing': 'off',
         // Allow spaces inside expect( foo ).

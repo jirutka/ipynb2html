@@ -7,6 +7,7 @@ import buildElementCreator from '@/elementCreator'
 import buildRenderer, { NbRenderer, Options as RendererOpts } from '@/renderer'
 import { DisplayData, MimeBundle, MultilineString, Notebook } from '@/nbformat'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Anything } from './support/matchers/toMatchElement'
 import { mockLastResult, mockResults } from './support/helpers'
 import * as _fixtures from './support/fixtures/notebook'

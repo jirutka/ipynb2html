@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "eslint 'src/**/*.[jt]s'",
+    "lint": "eslint --ext .ts,.tsx,.js .",
     "test": "jest --detectOpenHandles --coverage --verbose",
     "watch-ts": "tsc -w"
   },

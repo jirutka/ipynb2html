@@ -20,6 +20,8 @@ export type Options = RendererOpts<HTMLElement> & {
 
 
 function ansiCodesRenderer (input: string): string {
+  // TODO: Remove after https://github.com/IonicaBizau/anser/pull/49 is merged.
+  // eslint-disable-next-line import/no-named-as-default-member
   return anser.ansiToHtml(anser.escapeForHtml(input))
 }
 
