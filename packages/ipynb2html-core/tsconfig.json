@@ -14,7 +14,4 @@
   "include": [
     "./src",
   ],
-  "references": [
-    { "path": "../ipynb2html-core" },
-  ],
 }

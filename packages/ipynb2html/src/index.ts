@@ -4,17 +4,22 @@ import katex, { KatexOptions } from 'katex'
 import { MarkedOptions } from 'marked'
 import { Document, HTMLElement } from 'nodom'
 
-import buildElementCreator from './elementCreator'
-import htmlRenderer from './htmlRenderer'
+import {
+  createElementCreator,
+  createHtmlRenderer,
+  createNbRenderer,
+  NbRenderer,
+  NbRendererOpts as BaseOptions,
+} from 'ipynb2html-core'
+
 import buildMarkdownRenderer from './markdownRenderer'
-import buildRenderer, { Options as RendererOpts, NbRenderer } from './renderer'
 
 
 export { default as version } from './version'
 
 export { NbRenderer }
 
-export type Options = RendererOpts<HTMLElement> & {
+export type NbRendererOpts = BaseOptions<HTMLElement> & {
   /**
    * The prefix to be used for all CSS class names except `lang-*`.
    * Default is `nb-`.
@@ -60,20 +65,20 @@ function codeHighlighter (code: string, lang: string): string {
  * of the Notebook's AST nodes. You can easily replace any of the functions to
  * modify behaviour of the renderer.
  */
-export default (opts: Options = {}): NbRenderer<HTMLElement> => {
+export default (opts: NbRendererOpts = {}): NbRenderer<HTMLElement> => {
   const katexOpts = { ...defaultKatexOpts, ...opts.katexOpts }
 
   const doc = new Document()
-  const elementCreator = buildElementCreator(doc.createElement.bind(doc), opts.classPrefix)
+  const elementCreator = createElementCreator(doc.createElement.bind(doc), opts.classPrefix)
   const markdownRenderer = buildMarkdownRenderer(opts.markedOpts, katexOpts)
   const mathRenderer = (tex: string) => katex.renderToString(tex, katexOpts)
 
   const dataRenderers = {
-    'text/html': htmlRenderer({ elementCreator, mathRenderer }),
+    'text/html': createHtmlRenderer({ elementCreator, mathRenderer }),
     ...opts.dataRenderers,
   }
 
-  return buildRenderer(elementCreator, {
+  return createNbRenderer(elementCreator, {
     ansiCodesRenderer,
     codeHighlighter,
     dataRenderers,

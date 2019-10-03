@@ -6,10 +6,37 @@
 
 ifdef::env-github[]
 image:https://travis-ci.com/{gh-name}.svg?branch={gh-branch}[Build Status, link="https://travis-ci.com/{gh-name}"]
-image:https://img.shields.io/npm/v/{npm-name}.svg[npm Version, link="https://www.npmjs.org/package/{npm-name}"]
 endif::env-github[]
 
 TODO
+
+
+== Packages
+
+This repository contains the following packages, all published on https://www.npmjs.com/[npm].
+
+
+=== {npm-name}-core
+
+ifdef::env-github[]
+image:https://img.shields.io/npm/v/{npm-name}-core.svg[Version on npm, link="https://www.npmjs.org/package/{npm-name}-core"]
+endif::env-github[]
+
+This package provides the renderer itself (converter from ipynb to HTML) and some utilities with *no dependencies*.
+You have to provide your own syntax highlighter and Markdown, math and ANSI sequences renderer; or not, if you don’t need them.
+
+=== {npm-name}
+
+ifdef::env-github[]
+image:https://img.shields.io/npm/v/{npm-name}.svg[Version on npm, link="https://www.npmjs.org/package/{npm-name}"]
+endif::env-github[]
+
+This package builds on the {npm-name}-core and provides a complete, ready-to-go renderer configured with:
+
+* https://github.com/markedjs/marked[marked] as Markdown renderer,
+* https://github.com/KaTeX/KaTeX[KaTeX] as math renderer,
+* https://github.com/IonicaBizau/anser[anser] as ANSI sequences renderer,
+* https://github.com/highlightjs/highlight.js[highlight.js] as syntax highlighter.
 
 
 == Development

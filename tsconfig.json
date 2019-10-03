@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    { "path": "./packages/ipynb2html-core" },
     { "path": "./packages/ipynb2html" },
   ]
 }

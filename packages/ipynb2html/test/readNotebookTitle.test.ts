@@ -1,5 +1,6 @@
-import { Notebook, CellType, MarkdownCell } from '@/nbformat'
 import readNotebookTitle from '@/readNotebookTitle'
+
+import { Notebook, CellType, MarkdownCell } from 'ipynb2html-core'
 
 
 const markdownCell = (source: string | string[]): MarkdownCell => ({

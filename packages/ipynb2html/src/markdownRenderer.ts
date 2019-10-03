@@ -2,7 +2,7 @@ import hljs from 'highlightjs'
 import katex, { KatexOptions } from 'katex'
 import marked, { MarkedOptions } from 'marked'
 
-import { extractMath, restoreMath } from './mathExtractor'
+import { mathExtractor } from 'ipynb2html-core'
 
 
 function highlight (code: string, lang: string): string {
@@ -25,12 +25,12 @@ export default (markedOpts: MarkedOptions = {}, katexOpts: KatexOptions = {}) =>
    * Converts the given *markdown* into HTML.
    */
   return (markdown: string): string => {
-    const [text, math] = extractMath(markdown)
+    const [text, math] = mathExtractor.extractMath(markdown)
     const html = marked.parse(text, markedOpts)
 
     const mathHtml = math.map(({ value, displayMode }) => {
       return katex.renderToString(value, { ...katexOpts, displayMode })
     })
-    return restoreMath(html, mathHtml)
+    return mathExtractor.restoreMath(html, mathHtml)
   }
 }

@@ -1,6 +1,6 @@
 import marked from 'marked'
 
-import { Notebook, CellType } from './nbformat'
+import { Notebook, CellType } from 'ipynb2html-core'
 
 
 class EmptyRenderer extends marked.Renderer {

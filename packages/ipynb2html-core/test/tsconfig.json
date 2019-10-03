@@ -1,0 +1,5 @@
+// This file is needed only for VSCode, see https://github.com/palmerhq/tsdx/issues/84.
+{
+  "extends": "../tsconfig.json",
+  "include": ["."],
+}
