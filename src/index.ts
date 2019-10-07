@@ -11,6 +11,8 @@ import buildMarkdownRenderer from './markdownRenderer'
 import buildRenderer, { Options as RendererOpts, NbRenderer } from './renderer'
 
 
+export { default as version } from './version'
+
 export { NbRenderer }
 
 export type Options = RendererOpts<HTMLElement> & {

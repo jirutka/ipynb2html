@@ -4142,6 +4142,11 @@ ts-node@^8.3.0:
     source-map-support "^0.5.6"
     yn "^3.0.0"
 
+ts-transformer-inline-file@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/ts-transformer-inline-file/-/ts-transformer-inline-file-0.1.1.tgz#b3b6f42fe446cd49fff2436816627f4d6988bfd7"
+  integrity sha512-2bPkAFjATsRG4ld8TFTUqn4TvEdXLQf/wwGsepFeRKSXLPqFRhdUHusAGPB1/Zif3CVjppD+bfne58gynd8RfQ==
+
 tsconfig-paths@^3.9.0:
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.9.0.tgz#098547a6c4448807e8fcb8eae081064ee9a3c90b"
