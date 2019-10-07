@@ -33,7 +33,7 @@ TODO
 
 . Clone this repository:
 [source, subs="+attributes"]
-git clone git@github.com:{gh-name}.git
+git clone https://github.com/{gh-name}.git
 
 . Install Yarn (if you don’t have it already):
 [source]
