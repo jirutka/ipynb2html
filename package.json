@@ -24,11 +24,11 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "ttsc",
     "clean": "rimraf coverage/ dist/ lib/ *.log",
     "lint": "eslint --ext .ts,.tsx,.js .",
     "test": "jest --detectOpenHandles --coverage --verbose",
-    "watch-ts": "tsc -w"
+    "watch-ts": "ttsc -w"
   },
   "engines": {
     "node": ">=10.13.0"
@@ -64,6 +64,7 @@
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.3.0",
+    "ttypescript": "^1.5.7",
     "typescript": "~3.5.2"
   }
 }

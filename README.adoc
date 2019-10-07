@@ -23,6 +23,7 @@ TODO
 === Used Tools
 
 * https://www.typescriptlang.org[TypeScript] the language
+* https://github.com/cevek/ttypescript[ttypescript] wrapper for `tsc` allowing to use custom AST transformers
 * https://yarnpkg.com[yarn] for dependencies management and building
 * https://eslint.org[ESLint] for linting JS/TypeScript code
 * https://jestjs.io[Jest] for testing
