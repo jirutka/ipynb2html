@@ -1,6 +1,7 @@
 /coverage/
 /dist/
 /packages/*/coverage/
+/packages/*/dist/
 /packages/*/lib/
 /packages/*/README.md
 /.*cache/

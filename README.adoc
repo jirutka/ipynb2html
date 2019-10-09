@@ -3,13 +3,17 @@
 :gh-name: jirutka/{npm-name}
 :gh-branch: master
 :version: 0.1.0-beta.6
+:ansiup-version: 4.0.4
+:hljs-version: 9.15.10
+:katex-version: 0.11.1
+:marked-version: 0.7.0
 :vs-marketplace-uri: https://marketplace.visualstudio.com/items?itemName=
 
 ifdef::env-github[]
 image:https://travis-ci.com/{gh-name}.svg?branch={gh-branch}[Build Status, link="https://travis-ci.com/{gh-name}"]
 endif::env-github[]
 
-ipynb2html is a converter (renderer) of the https://nbformat.readthedocs.io/en/stable/[Jupyter Notebook Format] 4.0+ to static HTML.
+{npm-name} is a converter (renderer) of the https://nbformat.readthedocs.io/en/stable/[Jupyter Notebook Format] 4.0+ to static HTML.
 It works both in Node.js and browser environment.
 
 
@@ -45,7 +49,7 @@ This package builds on the {npm-name}-core and provides a complete, ready-to-go 
 
 == Usage
 
-=== Node.js
+=== Node.js (server-side)
 
 To render HTML in Node.js (server-side rendering), you need some (fake) DOM implementation.
 The recommended one is https://github.com/redom/nodom/[nodom] -- it’s lightweight, https://bundlephobia.com/result?p=nodom[small], doesn’t have any external dependencies and {npm-name} is tested against it.
@@ -68,7 +72,90 @@ console.log(renderNotebook(notebook).outerHTML)
 ----
 
 
+=== Browser (client-side)
+
+You have basically two options how to use {npm-name} in the browser: use the browser bundles provided in the {npm-name} package, or build your own bundle (using e.g. https://rollupjs.org[Rollup] or https://webpack.js.org/[webpack]).
+
+The provided bundles are in UMD format (AMD, CommonJS and IIFE in one file), so they should work in all environments (old and modern browsers, Node.js).
+They are transpiled and have injected https://github.com/zloirock/core-js/[core-js] polyfills to be compatible with browsers that have https://browserl.ist/?q=%3E0.5%25%2C+Firefox+ESR%2C+not+dead[>0.5% global coverage, Firefox ESR, and not dead browsers].
+
+
+==== Full Bundle
+
+`{npm-name}-full.min.js` is a self-contained bundle with all the external dependencies included (marked, KaTeX, Anser and Highlight.js).
+
+You can link it from https://www.jsdelivr.com/[jsDelivr CDN], for example:
+
+[source, html, subs="+attributes"]
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@{katex-version}/dist/katex.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@{hljs-version}/build/styles/default.min.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/{npm-name}@{version}/dist/{npm-name}-full.min.js" crossorigin="anonymous"></script>
+  </head>
+  ...
+</html>
+
+The bundle exposes global variable `{npm-name}`:
+
+[source, js, subs="+attributes"]
+const element = {npm-name}.render(notebook)
+document.body.appendChild(element)
+
+{npm-name} also provides function `autoRender` that renders each notebook on the page embedded (as JSON) inside `<script type="application/x-ipynb+json">\...</script>`.footnote:[Don’t forget to escape HTML special characters: `<`, `>`, and `&`.]
+
+[source, html, subs="+attributes"]
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@{katex-version}/dist/katex.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@{hljs-version}/build/styles/default.min.css" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/{npm-name}@{version}/dist/{npm-name}-full.min.js" crossorigin="anonymous"
+        onload="{npm-name}.autoRender();"></script>
+  </head>
+  <body>
+    <main>
+      <script type="application/x-ipynb+json">
+        {
+          "cells": [ ... ],
+          "metadata": { ... },
+          "nbformat": 4,
+          "nbformat_minor": 3
+        }
+      </script>
+    </main>
+  </body>
+<html>
+
+
+==== Slim Bundle
+
+`{npm-name}.min.js` contains only {npm-name} and {npm-name}-core code (plus polyfills).
+If you load marked, KaTeX, AnsiUp, and Highlight.js in the page, you will get the same functionality as with `{npm-name}-full.min.js`:
+
+[source, html, subs="+attributes"]
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@{katex-version}/dist/katex.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@{hljs-version}/build/styles/default.min.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/marked@{marked-version}/marked.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ansi_up@{ansiup-version}/ansi_up.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@{hljs-version}/build/highlight.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@{katex-version}/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/{npm-name}@{version}/dist/{npm-name}.min.js" crossorigin="anonymous"></script>
+  </head>
+  ...
+</html>
+
+Or you may use any other implementations and provide them to the `{npm-name}.createRenderer` function.
+All of them are optional, but you usually need at least a Markdown renderer.
+
 ifndef::npm-readme[]
+
 
 == Development
 
@@ -85,6 +172,7 @@ ifndef::npm-readme[]
 * https://yarnpkg.com[yarn] for dependencies management and building
 * https://eslint.org[ESLint] for linting JS/TypeScript code
 * https://jestjs.io[Jest] for testing
+* https://rollupjs.org[Rollup] for building single-file bundles
 
 
 === How to Start

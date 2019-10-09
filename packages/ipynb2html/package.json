@@ -18,16 +18,20 @@
     "notebook"
   ],
   "main": "lib/index.js",
+  "browser": "dist/ipynb2html.min.js",
   "types": "lib/index.d.ts",
   "files": [
+    "dist/ipynb2html.min.js*",
+    "dist/ipynb2html-full.min.js*",
     "lib",
     "src"
   ],
   "scripts": {
     "build": "ttsc --build",
-    "clean": "rimraf coverage/ lib/ .tsbuildinfo",
+    "bundle": "rollup -c",
+    "clean": "rimraf coverage/ dist/ lib/ .tsbuildinfo",
     "lint": "eslint --ext .ts,.tsx,.js .",
-    "prepublishOnly": "run-s readme2md",
+    "prepublishOnly": "run-p bundle readme2md",
     "test": "jest --detectOpenHandles --coverage --verbose",
     "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",
     "watch-ts": "ttsc --build --watch"
@@ -44,5 +48,10 @@
   },
   "peerDependencies": {
     "nodom": "^2.3.0"
-  }
+  },
+  "browserslist": [
+    ">0.5%",
+    "Firefox ESR",
+    "not dead"
+  ]
 }

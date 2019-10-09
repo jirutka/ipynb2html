@@ -19,7 +19,9 @@ function highlight (code: string, lang: string): string {
  * @param {KatexOptions} katexOpts Options for the KaTeX math renderer.
  */
 export default (markedOpts: MarkedOptions = {}, katexOpts: KatexOptions = {}) => {
-  markedOpts = { highlight, ...markedOpts }
+  if (hljs) {  // highlightjs may be an optional dependency (in browser bundle)
+    markedOpts = { highlight, ...markedOpts }
+  }
 
   /**
    * Converts the given *markdown* into HTML.

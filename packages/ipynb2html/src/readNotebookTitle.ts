@@ -1,6 +1,6 @@
 import marked from 'marked'
 
-import { Notebook, CellType } from 'ipynb2html-core'
+import { Notebook } from 'ipynb2html-core'
 
 
 class EmptyRenderer extends marked.Renderer {
@@ -38,7 +38,7 @@ export default (notebook: Notebook): string => {
   if (notebook.metadata.title) {
     return notebook.metadata.title
   }
-  if (notebook.cells.length > 0 && notebook.cells[0].cell_type === CellType.Markdown) {
+  if (notebook.cells.length > 0 && notebook.cells[0].cell_type === 'markdown') {
     const source = notebook.cells[0].source
     const markup = Array.isArray(source) ? source.join('') : source
 
