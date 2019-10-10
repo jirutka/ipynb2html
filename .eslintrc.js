@@ -63,6 +63,8 @@ module.exports = {
     'import/no-absolute-path': 'error',
     // This rule disallows using both wildcard and selective imports from the same module.
     'import/no-duplicates': 'off',
+    // Some packages has it wrong in type declarations (e.g. katex, marked).
+    'import/no-named-as-default-member': 'off',
 
     // TypeScript
     '@typescript-eslint/consistent-type-definitions': 'off',
