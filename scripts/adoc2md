@@ -1,0 +1,4 @@
+#!/bin/sh -e
+( set -o pipefail 2>/dev/null ) && set -o pipefail
+
+asciidoctor -o - -b docbook "$@" | pandoc -f docbook -t markdown_github -o -

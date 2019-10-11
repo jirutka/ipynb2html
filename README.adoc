@@ -40,11 +40,14 @@ This package builds on the {npm-name}-core and provides a complete, ready-to-go 
 * https://github.com/highlightjs/highlight.js[highlight.js] as syntax highlighter.
 
 
+ifndef::npm-readme[]
+
 == Development
 
 == System Requirements
 
 * https://nodejs.org[NodeJS] 10.13+
+* https://pandoc.org[Pandoc] and https://asciidoctor.org[Asciidoctor] (used only for converting README.adoc to Markdown for npmjs)
 
 
 === Used Tools
@@ -94,6 +97,8 @@ If you use Visual Studio Code, you should install the following extensions:
 * link:{vs-marketplace-uri}dbaeumer.vscode-eslint[ESLint]
 * link:{vs-marketplace-uri}Orta.vscode-jest[Jest] (and link:{vs-marketplace-uri}shtian.jest-snippets-standard[Jest Snippets Standard Style])
 * link:{vs-marketplace-uri}gamunu.vscode-yarn[yarn]
+
+endif::[]
 
 
 == Credits
