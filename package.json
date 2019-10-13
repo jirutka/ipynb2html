@@ -1,6 +1,6 @@
 {
   "name": "ipynb2html",
-  "version": "0.1.0-beta.4",
+  "version": "0.1.0-beta.5",
   "description": "Convert Jupyter Notebook to static HTML",
   "author": "Jakub Jirutka <jakub@jirutka.cz>",
   "license": "MIT",
