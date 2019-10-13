@@ -8,6 +8,7 @@
     "EditorConfig.EditorConfig",
     "gamunu.vscode-yarn",
     "Orta.vscode-jest",
+    "ryanluker.vscode-coverage-gutters",
     "shtian.jest-snippets-standard"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.

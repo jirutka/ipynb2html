@@ -47,7 +47,7 @@ yarn install
 [source]
 yarn build
 
-. Run tests:
+. Run tests and generate code coverage:
 [source]
 yarn test
 
@@ -62,6 +62,7 @@ IMPORTANT: Keep in mind that JS sources are located in the directory `src`; dire
 
 If you use Visual Studio Code, you should install the following extensions:
 
+* link:{vs-marketplace-uri}ryanluker.vscode-coverage-gutters[Coverage Gutters]
 * link:{vs-marketplace-uri}EditorConfig.EditorConfig[EditorConfig for VS Code]
 * link:{vs-marketplace-uri}dbaeumer.vscode-eslint[ESLint]
 * link:{vs-marketplace-uri}Orta.vscode-jest[Jest] (and link:{vs-marketplace-uri}shtian.jest-snippets-standard[Jest Snippets Standard Style])
