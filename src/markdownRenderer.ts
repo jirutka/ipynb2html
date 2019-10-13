@@ -1,4 +1,4 @@
-import hjs from 'highlightjs'
+import hljs from 'highlightjs'
 import * as katex from 'katex'
 import { KatexOptions } from 'katex'
 import * as marked from 'marked'
@@ -8,8 +8,8 @@ import { extractMath, restoreMath } from './mathExtractor'
 
 
 function highlight (code: string, lang: string): string {
-  return hjs.getLanguage(lang)
-    ? hjs.highlight(lang, code, true).value
+  return hljs.getLanguage(lang)
+    ? hljs.highlight(lang, code, true).value
     : code
 }
 

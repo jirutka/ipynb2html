@@ -1,5 +1,5 @@
 import anser from 'anser'
-import hjs from 'highlightjs'
+import hljs from 'highlightjs'
 import * as katex from 'katex'
 import { KatexOptions } from 'katex'
 import { MarkedOptions } from 'marked'
@@ -31,8 +31,8 @@ function ansiCodesRenderer (input: string): string {
 }
 
 function codeHighlighter (code: string, lang: string): string {
-  return hjs.getLanguage(lang)
-    ? hjs.highlight(lang, code).value
+  return hljs.getLanguage(lang)
+    ? hljs.highlight(lang, code).value
     : code
 }
 
