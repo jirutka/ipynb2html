@@ -16,8 +16,20 @@ export { default as version } from './version'
 export { NbRenderer }
 
 export type Options = RendererOpts<HTMLElement> & {
+  /**
+   * The prefix to be used for all CSS class names except `lang-*`.
+   * Default is `nb-`.
+   */
   classPrefix?: string,
+  /**
+   * Options for the KaTeX math renderer. Default is
+   * `{ displayMode: true, throwOnError: false }`. The provided options will
+   * be merged with the default.
+   */
   katexOpts?: KatexOptions,
+  /**
+   * Options for the marked Markdown renderer.
+   */
   markedOpts?: MarkedOptions,
 }
 
@@ -36,6 +48,19 @@ function codeHighlighter (code: string, lang: string): string {
     : code
 }
 
+/**
+ * Builds a full-fledged Notebook renderer for server-side rendering with a
+ * fake DOM implementation "nodom".
+ *
+ * It supports rendering of Markdown cells with math (using marked and KaTeX),
+ * code highlighting (using highlight.js), rendering of ANSI escape sequences
+ * (using Anser) and SageMath-style math outputs. All of them may be overridden
+ * via *opts*.
+ *
+ * It returns a "callable object" that exposes one renderer function for each
+ * of the Notebook's AST nodes. You can easily replace any of the functions to
+ * modify behaviour of the renderer.
+ */
 export default (opts: Options = {}): NbRenderer<HTMLElement> => {
   const katexOpts = { ...defaultKatexOpts, ...opts.katexOpts }
 

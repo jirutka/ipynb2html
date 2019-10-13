@@ -87,10 +87,10 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
 }
 
 /**
- * Builds a Notebook renderer function with the given options. It returns
- * a "callable object" of renderer functions for each Notebook's AST node.
- * You can easily replace any of the renderer functions to modify behaviour
- * of the renderer.
+ * Builds a Notebook renderer function with the given options. It returns a
+ * "callable object" that exposes a renderer function for each of the
+ * Notebook's AST node. You can easily replace any of the functions to modify
+ * behaviour of the renderer.
  *
  * @param {ElementCreator} elementCreator The function that will be used for
  *   building all HTML elements.
