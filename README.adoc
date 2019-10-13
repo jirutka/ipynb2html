@@ -17,7 +17,6 @@ TODO
 == System Requirements
 
 * https://nodejs.org[NodeJS] 10.13+
-* https://yarnpkg.com[yarn] 1.6+ (can be installed using npm)
 
 
 === Used Tools
