@@ -70,6 +70,7 @@
 
     // AST transformers used by ttypescript.
     "plugins": [
+      { "transform": "ts-transformer-export-default-name" },
       { "transform": "ts-transformer-inline-file/transformer" },
     ]
   },

@@ -4142,6 +4142,13 @@ ts-node@^8.3.0:
     source-map-support "^0.5.6"
     yn "^3.0.0"
 
+ts-transformer-export-default-name@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/ts-transformer-export-default-name/-/ts-transformer-export-default-name-0.1.0.tgz#cfb54a8914a0d3d39b2d0b4503534f97c56aecf3"
+  integrity sha512-BuuyacKdKhURfhyibd8D2kgDBEGu2vrqS4tZazkv9PXDKIRuOyNEGQkUX7j7BtaBC1/k+fLPCw0RcpVjNsVVIA==
+  dependencies:
+    camelcase "^5.3.1"
+
 ts-transformer-inline-file@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/ts-transformer-inline-file/-/ts-transformer-inline-file-0.1.1.tgz#b3b6f42fe446cd49fff2436816627f4d6988bfd7"
