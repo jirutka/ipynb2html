@@ -22,7 +22,6 @@ function highlight (code: string, lang: string): string {
  */
 export default (markedOpts: MarkedOptions = {}, katexOpts: KatexOptions = {}) => {
   markedOpts = { highlight, ...markedOpts }
-  katexOpts = { strict: false, throwOnError: false, ...katexOpts }
 
   /**
    * Converts the given *markdown* into HTML.

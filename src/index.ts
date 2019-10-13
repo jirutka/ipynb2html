@@ -21,6 +21,10 @@ export type Options = RendererOpts<HTMLElement> & {
   markedOpts?: MarkedOptions,
 }
 
+const defaultKatexOpts: KatexOptions = {
+  displayMode: true,
+  throwOnError: false,
+}
 
 function ansiCodesRenderer (input: string): string {
   return anser.ansiToHtml(anser.escapeForHtml(input))
@@ -32,14 +36,13 @@ function codeHighlighter (code: string, lang: string): string {
     : code
 }
 
-function mathRenderer (tex: string) {
-  return katex.renderToString(tex, { displayMode: true, throwOnError: false })
-}
-
 export default (opts: Options = {}): NbRenderer<HTMLElement> => {
+  const katexOpts = { ...defaultKatexOpts, ...opts.katexOpts }
+
   const doc = new Document()
   const elementCreator = buildElementCreator(doc.createElement.bind(doc), opts.classPrefix)
-  const markdownRenderer = buildMarkdownRenderer(opts.markedOpts, opts.katexOpts)
+  const markdownRenderer = buildMarkdownRenderer(opts.markedOpts, katexOpts)
+  const mathRenderer = (tex: string) => katex.renderToString(tex, katexOpts)
 
   const dataRenderers = {
     'text/html': htmlRenderer({ elementCreator, mathRenderer }),
