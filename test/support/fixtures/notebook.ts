@@ -3,7 +3,7 @@ import * as nb from '@/nbformat'
 const { CellType, OutputType } = nb
 
 
-export const Stream: nb.Stream = {
+export const Stream: nb.StreamOutput = {
   output_type: OutputType.Stream,
   name: 'stdout',
   text: [
@@ -12,7 +12,7 @@ export const Stream: nb.Stream = {
   ],
 }
 
-export const Error: nb.Error = {
+export const Error: nb.ErrorOutput = {
   output_type: OutputType.Error,
   ename: 'Error',
   evalue: 'whatever',

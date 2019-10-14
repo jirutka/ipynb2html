@@ -6,14 +6,14 @@ import {
   CellType,
   CodeCell,
   DisplayData,
-  Error as NbError,
+  ErrorOutput,
   ExecuteResult,
   MarkdownCell,
   Notebook,
   Output,
   OutputType,
   RawCell,
-  Stream as NbStream,
+  StreamOutput,
 } from './nbformat'
 
 
@@ -212,13 +212,13 @@ function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opt
       return el('div', ['empty-output'])
     },
 
-    Error: (error: NbError): TElement => {
+    Error: (error: ErrorOutput): TElement => {
       const html = renderAnsiCodes(error.traceback.join('\n'))
       // Class "pyerr" is for backward compatibility with notebook.js.
       return el('pre', ['error', 'pyerr'], html)
     },
 
-    Stream: (stream: NbStream): TElement => {
+    Stream: (stream: StreamOutput): TElement => {
       const html = renderAnsiCodes(joinText(stream.text))
       return el('pre', [stream.name], html)
     },

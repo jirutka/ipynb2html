@@ -175,7 +175,7 @@ export interface MediaAttachments {
 
 // ------------------------- Output types ------------------------- //
 
-export type Output = ExecuteResult | DisplayData | Stream | Error
+export type Output = ExecuteResult | DisplayData | StreamOutput | ErrorOutput
 
 export enum OutputType {
   ExecuteResult = 'execute_result',
@@ -218,7 +218,7 @@ export interface DisplayData {
 }
 
 /** Stream output from a code cell. */
-export interface Stream {
+export interface StreamOutput {
 
   /** Type of cell output. */
   output_type: OutputType.Stream,
@@ -231,7 +231,7 @@ export interface Stream {
 }
 
 /** Output of an error that occurred during code cell execution. */
-export interface Error {
+export interface ErrorOutput {
 
   /** Type of cell output. */
   output_type: OutputType.Error,
