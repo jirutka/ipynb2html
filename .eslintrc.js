@@ -99,7 +99,6 @@ module.exports = {
       singleline: { delimiter: 'comma', requireLast: false },
     }],
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-namespace': 'warn',
     '@typescript-eslint/no-require-imports': 'error',
     '@typescript-eslint/no-unused-vars': ['error', {
