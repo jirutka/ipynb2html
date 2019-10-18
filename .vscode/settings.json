@@ -15,8 +15,18 @@
 
   "flow.enabled": false,
 
+  "javascript.format.insertSpaceAfterConstructor": true,
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "javascript.format.semicolons": "remove",
+  "javascript.preferences.quoteStyle": "single",
+
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true
-  }
+  },
+
+  "typescript.format.insertSpaceAfterConstructor": true,
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "typescript.format.semicolons": "remove",
+  "typescript.preferences.quoteStyle": "single",
 }
