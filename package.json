@@ -67,6 +67,6 @@
     "ts-transformer-export-default-name": "^0.1.0",
     "ts-transformer-inline-file": "^0.1.1",
     "ttypescript": "^1.5.7",
-    "typescript": "~3.5.2"
+    "typescript": "~3.6.4"
   }
 }
