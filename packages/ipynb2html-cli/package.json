@@ -29,7 +29,8 @@
   ],
   "scripts": {
     "build": "ttsc --build",
-    "clean": "rimraf coverage/ lib/ .tsbuildinfo",
+    "bundle": "rollup -c",
+    "clean": "rimraf coverage/ dist/ lib/ .tsbuildinfo",
     "lint": "eslint --ext .ts,.tsx,.js .",
     "prepublishOnly": "run-s readme2md",
     "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",
