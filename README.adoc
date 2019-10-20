@@ -21,6 +21,7 @@ This repository contains the following packages, all published on https://www.np
 
 ifdef::env-github[]
 image:https://img.shields.io/npm/v/{npm-name}-core.svg[Version on npm, link="https://www.npmjs.org/package/{npm-name}-core"]
+image:https://img.shields.io/bundlephobia/min/{npm-name}-core.svg[Minified bundle size, link="https://bundlephobia.com/result?p={npm-name}-core"]
 endif::env-github[]
 
 This package provides the converter itself and some utilities with *no dependencies*.
@@ -30,6 +31,7 @@ You have to provide your own syntax highlighter and Markdown, math and ANSI sequ
 
 ifdef::env-github[]
 image:https://img.shields.io/npm/v/{npm-name}.svg[Version on npm, link="https://www.npmjs.org/package/{npm-name}"]
+image:https://img.shields.io/bundlephobia/min/{npm-name}.svg[Minified bundle size, link="https://bundlephobia.com/result?p={npm-name}"]
 endif::env-github[]
 
 This package builds on the {npm-name}-core and provides a complete, ready-to-go renderer configured with:
