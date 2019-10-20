@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "tsBuildInfoFile": "./.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["../../types/*"],
+      "@/*": ["./src/*"],
+      "~/*": ["../../*"],
+    },
+  },
+  "include": [
+    "./src",
+  ],
+  "references": [
+    { "path": "../ipynb2html-core" },
+    { "path": "../ipynb2html" },
+  ],
+}

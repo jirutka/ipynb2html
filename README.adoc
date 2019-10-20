@@ -32,6 +32,7 @@ endif::env-github[]
 This package provides the converter itself and some utilities with *no dependencies*.
 You have to provide your own syntax highlighter and Markdown, math and ANSI sequences renderer; or not, if you don’t need them.
 
+
 === {npm-name}
 
 ifdef::env-github[]
@@ -45,6 +46,16 @@ This package builds on the {npm-name}-core and provides a complete, ready-to-go 
 * https://github.com/KaTeX/KaTeX[KaTeX] as math renderer,
 * https://github.com/IonicaBizau/anser[anser] as ANSI sequences renderer,
 * https://github.com/highlightjs/highlight.js[highlight.js] as syntax highlighter.
+
+
+=== {npm-name}-cli
+
+ifdef::env-github[]
+image:https://img.shields.io/npm/v/{npm-name}-cli.svg[Version on npm, link="https://www.npmjs.org/package/{npm-name}-cli"]
+image:https://img.shields.io/bundlephobia/min/{npm-name}-cli.svg[Minified bundle size, link="https://bundlephobia.com/result?p={npm-name}-cli"]
+endif::env-github[]
+
+This package provides a CLI interface for {npm-name}.
 
 
 == Usage
