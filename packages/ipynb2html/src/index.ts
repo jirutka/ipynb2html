@@ -16,7 +16,7 @@ import buildMarkdownRenderer from './markdownRenderer'
 
 
 export { default as version } from './version'
-
+export { default as readNotebookTitle } from './readNotebookTitle'
 export { NbRenderer }
 
 export type NbRendererOpts = BaseOptions<HTMLElement> & {
