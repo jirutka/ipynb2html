@@ -31,9 +31,22 @@ before_deploy:
   - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> "$HOME"/.npmrc
 
 deploy:
-  provider: script
-  script: yarn publish-all --non-interactive
-  skip_cleanup: true
-  on:
-    tags: true
-    node_js: '10'
+  - provider: script
+    script: yarn publish-all --non-interactive
+    skip_cleanup: true
+    on:
+      repo: jirutka/ipynb2html
+      tags: true
+      node_js: '10'
+  - provider: releases
+    api_key:
+      secure: j5Ks+lUUE2NkUKKC4A+FRKVia3oRyanMKp25jZwF2jLOQxZp0/BggNOduw7zMLzPizmMbz7CkYV/pLyXH+rwCjOdQPnSGLorzfp6ztzG49SqPUK5i5PdSctYT7+C2HdYR25xtw6f06HXzLWTIeYb0JG+5pUCkI4R+z1JEqZhx3PMOkAx9Ec9UoYNKcbHe1E78y8zH0pDccVJ1ejrbmizEqZALpYNR+qCWhTfLVbwYlpJJGIKCIXVYI9tU/3y/6JOO+gCX2m8jqNVBPrwWWD//gGExn2lR6BK0WiXTE71FbM7GyVjoeh93Zg1WifF+7DBtaTI9qs+928afLn28AcWqB6P/HgoRgt/4oLvJU2hkdkIoNqQONqYZeglW1A5qYp6T3nURLpcn1cg2yBD6vNi8cet4ntgOsPu9Soa8pzsm9xcITMJNUlFOEWyYPyvgTXHUjZwbZvrZHRVYeHrDOuq9EEAz+11u1FYG49uSBZf3+H6CmL7n2qeoYhlMhT94bgIkF4ByFmP+OTUcMcWvDdA7uD8JqPMaxQI0hhjrszxPT7C5YNXsJ1Q0vU2zZSMF74fygsXlnr6VeqwxSzgF/6mAAuSwtKSg/pFPPLdevIeehw4oLCz+ZdxVk5kpfymKvqvueDdMMoV4Fse4Yhv81Z76tAPM35TtqJa77DJwqOVOCE=
+    file_glob: true
+    file:
+      - packages/ipynb2html-cli/dist/*.tar.gz
+      - packages/ipynb2html-cli/dist/*.zip
+    skip_cleanup: true
+    on:
+      repo: jirutka/ipynb2html
+      tags: true
+      node_js: '10'
