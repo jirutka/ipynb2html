@@ -65,7 +65,7 @@ function codeHighlighter (code: string, lang: string): string {
  * of the Notebook's AST nodes. You can easily replace any of the functions to
  * modify behaviour of the renderer.
  */
-export default (opts: NbRendererOpts = {}): NbRenderer<HTMLElement> => {
+export function createRenderer (opts: NbRendererOpts = {}): NbRenderer<HTMLElement> {
   const katexOpts = { ...defaultKatexOpts, ...opts.katexOpts }
 
   const doc = new Document()
