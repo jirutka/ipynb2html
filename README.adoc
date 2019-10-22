@@ -42,6 +42,23 @@ This package builds on the {npm-name}-core and provides a complete, ready-to-go 
 * https://github.com/highlightjs/highlight.js[highlight.js] as syntax highlighter.
 
 
+== Usage
+
+=== Node.js
+
+[source, js, subs="+attributes"]
+----
+import * as fs from 'fs'
+import * as ipynb from '{npm-name}'
+
+const renderNotebook = ipynb.createRenderer()
+
+const notebook = JSON.parse(fs.readFileSync('./example.ipynb', 'utf8'))
+
+console.log(renderNotebook(notebook).outerHTML)
+----
+
+
 ifndef::npm-readme[]
 
 == Development
