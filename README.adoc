@@ -46,12 +46,20 @@ This package builds on the {npm-name}-core and provides a complete, ready-to-go 
 
 === Node.js
 
+To render HTML in Node.js (server-side rendering), you need some (fake) DOM implementation.
+The recommended one is https://github.com/redom/nodom/[nodom] -- it’s lightweight, https://bundlephobia.com/result?p=nodom[small], doesn’t have any external dependencies and {npm-name} is tested against it.
+However, you can choose any other if you like.
+
+[source, subs="+attributes"]
+npm install {npm-name} nodom
+
 [source, js, subs="+attributes"]
 ----
 import * as fs from 'fs'
 import * as ipynb from '{npm-name}'
+import { Document } from 'nodom'
 
-const renderNotebook = ipynb.createRenderer()
+const renderNotebook = ipynb.createRenderer(new Document())
 
 const notebook = JSON.parse(fs.readFileSync('./example.ipynb', 'utf8'))
 

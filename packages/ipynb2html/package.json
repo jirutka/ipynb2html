@@ -40,7 +40,9 @@
     "highlightjs": "^9.12.0",
     "ipynb2html-core": "0.1.0-beta.6",
     "katex": "^0.11.0",
-    "marked": "^0.7.0",
+    "marked": "^0.7.0"
+  },
+  "peerDependencies": {
     "nodom": "^2.3.0"
   }
 }

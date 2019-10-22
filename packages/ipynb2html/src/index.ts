@@ -2,12 +2,12 @@ import anser from 'anser'
 import hljs from 'highlightjs'
 import katex, { KatexOptions } from 'katex'
 import { MarkedOptions } from 'marked'
-import { Document, HTMLElement } from 'nodom'
 
 import {
   createElementCreator,
   createHtmlRenderer,
   createNbRenderer,
+  MinimalElement,
   NbRenderer,
   NbRendererOpts as BaseOptions,
 } from 'ipynb2html-core'
@@ -19,7 +19,7 @@ export { default as version } from './version'
 export { default as readNotebookTitle } from './readNotebookTitle'
 export { NbRenderer }
 
-export type NbRendererOpts = BaseOptions<HTMLElement> & {
+export type NbRendererOpts<TElement = HTMLElement> = BaseOptions<TElement> & {
   /**
    * The prefix to be used for all CSS class names except `lang-*`.
    * Default is `nb-`.
@@ -35,6 +35,14 @@ export type NbRendererOpts = BaseOptions<HTMLElement> & {
    * Options for the marked Markdown renderer.
    */
   markedOpts?: MarkedOptions,
+}
+
+/**
+ * Definition of the smallest possible subset of the Document type required
+ * for this module's function.
+ */
+type MinimalDocument<TElement extends MinimalElement> = {
+  createElement (tag: string): TElement,
 }
 
 const defaultKatexOpts: KatexOptions = {
@@ -53,8 +61,7 @@ function codeHighlighter (code: string, lang: string): string {
 }
 
 /**
- * Builds a full-fledged Notebook renderer for server-side rendering with a
- * fake DOM implementation "nodom".
+ * Builds a full-fledged Jupyter Notebook renderer.
  *
  * It supports rendering of Markdown cells with math (using marked and KaTeX),
  * code highlighting (using highlight.js), rendering of ANSI escape sequences
@@ -64,12 +71,34 @@ function codeHighlighter (code: string, lang: string): string {
  * It returns a "callable object" that exposes one renderer function for each
  * of the Notebook's AST nodes. You can easily replace any of the functions to
  * modify behaviour of the renderer.
+ *
+ * @example
+ *   import * as fs from 'fs'
+ *   import * as ipynb from 'ipynb2html'
+ *   import { Document } from 'nodom'
+ *
+ *   const renderNotebook = ipynb.createRenderer(new Document())
+ *   const notebook = JSON.parse(fs.readFileSync('./example.ipynb', 'utf8'))
+ *
+ *   console.log(renderNotebook(notebook).outerHTML)
+ *
+ * @param document The `Document` object from the browser's native DOM or any
+ *   fake/virtual DOM library (e.g. nodom). The only required method is
+ *   `createElement`.
+ * @param opts The renderer options.
+ * @return A configured instance of the Notebook renderer.
  */
-export function createRenderer (opts: NbRendererOpts = {}): NbRenderer<HTMLElement> {
+export function createRenderer <TElement extends MinimalElement> (
+  document: MinimalDocument<TElement>,
+  opts: NbRendererOpts<TElement> = {},
+): NbRenderer<TElement> {
+
   const katexOpts = { ...defaultKatexOpts, ...opts.katexOpts }
 
-  const doc = new Document()
-  const elementCreator = createElementCreator(doc.createElement.bind(doc), opts.classPrefix)
+  const elementCreator = createElementCreator(
+    document.createElement.bind(document),
+    opts.classPrefix,
+  )
   const markdownRenderer = buildMarkdownRenderer(opts.markedOpts, katexOpts)
   const mathRenderer = (tex: string) => katex.renderToString(tex, katexOpts)
 
