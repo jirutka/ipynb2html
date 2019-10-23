@@ -3,6 +3,7 @@
 /coverage/
 /dist/
 /packages/*/coverage/
+/packages/*/dist/
 /packages/*/lib/
 /packages/*/*.js
 /scripts/*
