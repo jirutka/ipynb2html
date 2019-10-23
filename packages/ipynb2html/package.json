@@ -1,6 +1,6 @@
 {
   "name": "ipynb2html",
-  "version": "0.1.0-beta.6",
+  "version": "0.1.0-beta.7",
   "description": "Convert Jupyter Notebook to static HTML",
   "author": "Jakub Jirutka <jakub@jirutka.cz>",
   "license": "MIT",
@@ -42,7 +42,7 @@
   "dependencies": {
     "anser": "^1.4.9",
     "highlightjs": "^9.12.0",
-    "ipynb2html-core": "0.1.0-beta.6",
+    "ipynb2html-core": "0.1.0-beta.7",
     "katex": "^0.11.0",
     "marked": "^0.7.0"
   },
