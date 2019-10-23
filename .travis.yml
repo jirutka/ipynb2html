@@ -23,6 +23,7 @@ install:
 
 script:
   - yarn run build
+  - yarn run bundle
   - yarn run test
   - yarn run lint
 
