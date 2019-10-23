@@ -9,7 +9,7 @@
     "postinstall": "run-s build",
     "publish-all": "wsrun --serial publish",
     "test": "jest --detectOpenHandles --coverage --verbose",
-    "version": "./scripts/bump-version && git add **/package.json",
+    "version": "./scripts/bump-version && git add README.adoc **/package.json",
     "watch-ts": "ttsc --build --watch"
   },
   "engines": {
@@ -33,6 +33,7 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
+    "fs-extra": "^8.1.0",
     "jest": "^24.9.0",
     "jest-chain": "^1.1.2",
     "nodom": "^2.3.0",

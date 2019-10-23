@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
+const fs = require('fs-extra')
 const path = require('path')
 const { bumpVersion } = require('yarn-version-bump/src/bump-version')
 const { processJsonFile } = require('yarn-version-bump/src/util/json')
@@ -23,11 +24,20 @@ async function bumpAllPackages (newVersion) {
   }
 }
 
+async function updateReadme (newVersion) {
+  return fs.readFile('README.adoc', 'utf8')
+    .then(str => str.replace(/^:version: \d.*$/m, `:version: ${newVersion}`))
+    .then(str => fs.writeFile('README.adoc', str))
+}
+
 const newVersion = process.argv[2] || rootPkg.version
 
 process.chdir(path.resolve(__dirname, '..'))
 
-bumpAllPackages(newVersion).catch(err => {
+Promise.all([
+  bumpAllPackages(newVersion),
+  updateReadme(newVersion),
+]).catch(err => {
   console.error(err)
   process.exit(1)
 })
