@@ -1,0 +1,30 @@
+TODO: Remove after https://github.com/oplinjie/rollup-plugin-add-git-msg/pull/1 is merged.
+
+diff --git a/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.es.js b/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.es.js
+index 184a00e..fb3fde4 100644
+--- a/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.es.js
++++ b/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.es.js
+@@ -73,7 +73,8 @@ Banner.prototype.getHeaderArray = function getHeaderArray (opt) {
+   if (opt.showTag) {
+     var tag = runGitCommand(TAG_COMMAND);
+     if (tag) {
+-      gitMsg = gitMsg.concat(("v" + tag + " - "));
++      var prefix = tag.indexOf("v") === 0 ? "" : "v"
++      gitMsg = gitMsg.concat((prefix + tag + " - "));
+     }
+   }
+ 
+diff --git a/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.js b/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.js
+index 7d16072..f288638 100644
+--- a/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.js
++++ b/node_modules/rollup-plugin-add-git-msg/dist/rollup-plugin-add-git-msg.js
+@@ -77,7 +77,8 @@ Banner.prototype.getHeaderArray = function getHeaderArray (opt) {
+   if (opt.showTag) {
+     var tag = runGitCommand(TAG_COMMAND);
+     if (tag) {
+-      gitMsg = gitMsg.concat(("v" + tag + " - "));
++      var prefix = tag.indexOf("v") === 0 ? "" : "v"
++      gitMsg = gitMsg.concat((prefix + tag + " - "));
+     }
+   }
+ 
