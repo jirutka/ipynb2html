@@ -1,6 +1,7 @@
 import addGitMsg from 'rollup-plugin-add-git-msg'
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
+import license from 'rollup-plugin-node-license'
 import resolve from 'rollup-plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import ttypescript from 'ttypescript'
@@ -32,6 +33,10 @@ const plugins = [
         incremental: true,
       },
     },
+    // This is needed for node-license plugin. :(
+    // https://github.com/ezolenko/rollup-plugin-typescript2#plugins-using-asyncawait
+    objectHashIgnoreUnknownHack: true,
+    clean: true,
   }),
   // Resolve node modules.
   resolve({
@@ -65,13 +70,15 @@ const plugins = [
       '* This project is licensed under the terms of the MIT license.'
     ].join('\n'),
   }),
+  // Generate table of the bundled packages at top of the file.
+  license({ format: 'table' }),
   // Minify JS.
   terser({
     ecma: 5,
     include: [/^.+\.min\.js$/],
     output: {
-      // Preserve comment injected by addGitMsg.
-      comments: RegExp(`\\$\\{${pkg.name}\\}`),
+      // Preserve comment injected by addGitMsg and license.
+      comments: RegExp(`(?:\\$\\{${pkg.name}\\}|Bundled npm packages)`),
     },
   }),
 ]
