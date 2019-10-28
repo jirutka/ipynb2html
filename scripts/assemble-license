@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+'use strict'
+
+const fs = require('fs')
+const path = require('path')
+
+
+function extractLicenseTable (filename) {
+  const source = fs.readFileSync(filename, 'utf8')
+
+  const start = source.indexOf('/*!\n * Bundled npm packages')
+  const end = start + source.slice(start).indexOf('*/')
+
+  return source
+    .slice(start, end)
+    .split('\n')
+    .filter(s => s.startsWith(' * |'))
+    .map(s => s.slice(3))
+    .join('\n')
+}
+
+function readLicense () {
+  return fs.readFileSync(path.join(__dirname, '../LICENSE'), 'utf8')
+}
+
+
+const argv = process.argv.slice(2)
+if (argv.length < 1 || ['-h', '--help'].includes(argv[0])) {
+  console.warn('Usage: assemble-license <bundle-file>')
+  process.exit(2)
+}
+
+const bundlePath = path.resolve(argv[0])
+
+console.log(`\
+${readLicense()}
+-------------------------
+
+This product bundles source code of the following projects:
+
+${extractLicenseTable(bundlePath)}\
+`)

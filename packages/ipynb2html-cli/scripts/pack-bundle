@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+cd "$(dirname "$0")/../dist"
+export PATH="$(pwd)/../../../scripts:$PATH"
+
+assemble-license ipynb2html > LICENSE
+create-archives ipynb2html-cli ipynb2html ipynb2html.map LICENSE
