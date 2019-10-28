@@ -58,7 +58,31 @@ endif::env-github[]
 This package provides a CLI interface for {npm-name}.
 
 
+== Installation
+
+All the <<Packages, packages>> can be installed using `npm` or `yarn` from https://www.npmjs.com/[npmjs.com].
+
+
+=== Standalone CLI Tool
+
+{npm-name}-cli is also provided as a single minified JavaScript with all the external dependencies bundled in.
+It requires only Node.js (version 10 or newer) to be installed on the system.
+
+* https://github.com/{gh-name}/releases/download/v{version}/{npm-name}-cli-v{version}.tar.gz[{npm-name}-cli-v{version}.tar.gz]
+* https://github.com/{gh-name}/releases/download/v{version}/{npm-name}-cli-v{version}.zip[{npm-name}-cli-v{version}.zip]
+
+The archive also contains source maps (useful for debugging).
+
+
 == Usage
+
+=== CLI
+
+[source, subs="+attributes"]
+{npm-name} notebook.ipynb notebook.html
+
+Run `{npm-name} --help` for more information.
+
 
 === Node.js (server-side)
 
