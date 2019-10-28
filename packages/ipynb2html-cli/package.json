@@ -29,8 +29,9 @@
   ],
   "scripts": {
     "build": "ttsc --build",
-    "bundle": "rollup -c",
+    "bundle": "rollup -c && run-s create-archives",
     "clean": "rimraf coverage/ dist/ lib/ .tsbuildinfo",
+    "create-archives": "../../scripts/create-archives dist/ipynb2html-cli dist/ipynb2html dist/ipynb2html.map",
     "lint": "eslint --ext .ts,.tsx,.js .",
     "prepublishOnly": "run-s readme2md",
     "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",

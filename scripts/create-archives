@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+'use strict'
+
+const commonPathPrefix = require('common-path-prefix')
+const execa = require('execa')
+const fs = require('fs-extra')
+const path = require('path')
+const tar = require('tar')
+const { ZipFile } = require('yazl')
+
+
+async function writeTarGz (basename, fileList, cwd) {
+  console.log(`Creating ${basename}.tar.gz...`)
+
+  return tar.create({
+    file: `${basename}.tar.gz`,
+    prefix: path.basename(basename),
+    gzip: true,
+    portable: true,
+    cwd: cwd || '.',
+  }, fileList)
+}
+
+async function writeZip (basename, fileList, cwd) {
+  const prefix = path.basename(basename)
+  const zipfile = new ZipFile()
+
+  return new Promise((resolve, reject) => {
+    console.log(`Creating ${basename}.zip...`)
+
+    for (let fname of fileList) {
+      zipfile.addFile(path.join(cwd || '.', fname), path.join(prefix, fname))
+    }
+    zipfile.outputStream
+      .pipe(fs.createWriteStream(`${basename}.zip`))
+      .on('close', resolve)
+      .on('error', reject)
+    zipfile.end()
+  })
+}
+
+async function gitDescribe (prefix) {
+  const output = await execa.stdout('git', [
+    'describe',
+    '--always',
+    `--match=${prefix}*`
+  ])
+  return output.startsWith(prefix) ? output : `v0.0.0-${output}`
+}
+
+async function createArchives (destName, srcFiles) {
+  const version = await gitDescribe('v')
+  destName += `-${version}`
+
+  const srcDir = commonPathPrefix(srcFiles)
+  const fileList = srcFiles.map(p => p.slice(srcDir.length))
+
+  fs.mkdirpSync(path.dirname(destName))
+
+  return Promise.all([
+    writeTarGz(destName, fileList, srcDir),
+    writeZip(destName, fileList, srcDir),
+  ])
+}
+
+
+const argv = process.argv.slice(2)
+if (argv.length < 3 || ['-h', '--help'].includes(argv[0])) {
+  console.warn('Usage: create-archives <dest-basename> <src-file>...')
+  process.exit(2)
+}
+
+const destName = argv[0]
+const srcFiles = argv.slice(1)
+
+createArchives(destName, srcFiles).catch(err => {
+  console.error(err)
+  process.exit(1)
+})
