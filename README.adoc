@@ -58,6 +58,8 @@ endif::env-github[]
 This package provides a CLI interface for {npm-name}.
 
 
+ifndef::npm-readme[]
+
 == Installation
 
 All the <<Packages, packages>> can be installed using `npm` or `yarn` from https://www.npmjs.com/[npmjs.com].
@@ -72,6 +74,8 @@ It requires only Node.js (version 10 or newer) to be installed on the system.
 * https://github.com/{gh-name}/releases/download/v{version}/{npm-name}-cli-v{version}.zip[{npm-name}-cli-v{version}.zip]
 
 The archive also contains source maps (useful for debugging).
+
+endif::[]
 
 
 == Usage
