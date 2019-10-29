@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+cd "$(dirname "$0")/.."
+
+case "${1:-}" in
+    '' | -h | --help) echo "Usage: $0 <out-file>" >&2; exit 2;;
+esac
+
+out_file="$1"
+base_dir=$(basename "$(pwd)")
+base_name=$(basename "${out_file%.tar.gz}")
+
+mkdir -p dist
+tar -czf "$out_file" \
+    -C .. --exclude-vcs \
+    --exclude="**/$out_file" \
+    --xform="s|^$base_dir|$base_name|" \
+    "$base_dir"

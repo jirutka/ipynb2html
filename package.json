@@ -5,7 +5,7 @@
   "scripts": {
     "build": "ttsc --build",
     "bundle": "wsrun --exclude-missing bundle",
-    "clean": "rimraf coverage/ lib/ *.log && wsrun clean",
+    "clean": "rimraf coverage/ dist/ lib/ *.log && wsrun clean",
     "lint": "eslint --ext .ts,.tsx,.js .",
     "postinstall": "patch-package && run-s build",
     "publish-all": "wsrun --serial publish",
