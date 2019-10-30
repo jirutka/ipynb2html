@@ -47,6 +47,8 @@ This package builds on the {npm-name}-core and provides a complete, ready-to-go 
 * https://github.com/IonicaBizau/anser[anser] as ANSI sequences renderer,
 * https://github.com/highlightjs/highlight.js[highlight.js] as syntax highlighter.
 
+It also provides a reference stylesheet which you can find in `dist/notebook.min.css` (or non-minified link:packages/{npm-name}/styles/notebook.css[`styles/notebook.css`]).
+
 
 === {npm-name}-cli
 
@@ -130,6 +132,7 @@ You can link it from https://www.jsdelivr.com/[jsDelivr CDN], for example:
 <html>
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/{npm-name}@{version}/dist/notebook.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@{katex-version}/dist/katex.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@{hljs-version}/build/styles/default.min.css" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/{npm-name}@{version}/dist/{npm-name}-full.min.js" crossorigin="anonymous"></script>
@@ -150,6 +153,7 @@ document.body.appendChild(element)
 <html>
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/{npm-name}@{version}/dist/notebook.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@{katex-version}/dist/katex.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@{hljs-version}/build/styles/default.min.css" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/{npm-name}@{version}/dist/{npm-name}-full.min.js" crossorigin="anonymous"

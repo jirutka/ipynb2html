@@ -23,15 +23,18 @@
   "files": [
     "dist/ipynb2html.min.js*",
     "dist/ipynb2html-full.min.js*",
+    "dist/notebook.min.css*",
     "lib",
-    "src"
+    "src",
+    "styles"
   ],
   "scripts": {
     "build": "ttsc --build",
     "bundle": "rollup -c",
     "clean": "rimraf coverage/ dist/ lib/ .tsbuildinfo",
     "lint": "eslint --ext .ts,.tsx,.js .",
-    "prepublishOnly": "run-p bundle readme2md",
+    "minify-css": "csso styles/notebook.css -o dist/notebook.min.css -s dist/notebook.min.css.map",
+    "prepublishOnly": "run-p bundle minify-css readme2md",
     "test": "jest --detectOpenHandles --coverage --verbose",
     "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",
     "watch-ts": "ttsc --build --watch"

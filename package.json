@@ -31,6 +31,7 @@
     "arrify": "^2.0.1",
     "common-path-prefix": "^2.0.0",
     "core-js": "^3.2.1",
+    "csso-cli": "^3.0.0",
     "dedent": "^0.7.0",
     "eslint": "^6.5.1",
     "eslint-config-standard-with-typescript": "^10.0.0",
