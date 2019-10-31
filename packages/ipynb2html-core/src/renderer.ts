@@ -136,8 +136,7 @@ function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opt
   const r = callableObject('Notebook', {
     Notebook: (notebook: Notebook): TElement => {
       const children = notebook.cells.map(cell => r.Cell(cell, notebook))
-      // Class "worksheet" is for backward compatibility with notebook.js.
-      return el('div', ['notebook', 'worksheet'], children)
+      return el('div', ['notebook'], children)
     },
 
     Cell: (cell: Cell, notebook: Notebook): TElement => {

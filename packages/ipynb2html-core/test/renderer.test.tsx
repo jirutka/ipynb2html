@@ -46,9 +46,9 @@ describe('built renderer', () => {
       renderer.Cell = rendererMock('Cell')
     })
 
-    it('returns div.notebook.worksheet', () => {
+    it('returns div.notebook', () => {
       expect( renderer.Notebook({ ...notebook, cells: [] }) ).toHtmlEqual(
-        <div class="notebook worksheet"></div>
+        <div class="notebook"></div>
       )
     })
 
