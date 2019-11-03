@@ -2,6 +2,7 @@
 /.tmp/
 /coverage/
 /dist/
+/packages/*/bin/
 /packages/*/coverage/
 /packages/*/dist/
 /packages/*/lib/

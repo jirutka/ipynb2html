@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import sourceMapSupport from 'source-map-support'
 
 import cli from './cli'

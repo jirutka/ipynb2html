@@ -6,7 +6,6 @@ import license from 'rollup-plugin-node-license'
 import resolve from 'rollup-plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import typescript from 'rollup-plugin-typescript2'
-import stripShebang from 'rollup-plugin-strip-shebang'
 import ttypescript from 'ttypescript'
 
 import pkg from './package.json'
@@ -15,10 +14,6 @@ import pkg from './package.json'
 export default {
   input: 'src/index.ts',
   plugins: [
-    // Rollup doesn't like shebangs, let's strip it.
-    stripShebang({
-      include: 'src/index.ts',
-    }),
     // Transpile TypeScript sources to JS.
     typescript({
       typescript: ttypescript,
