@@ -17,13 +17,6 @@
   position: relative;
 }
 
-.nb-source {
-  background-color: #f7f7f7;
-  border: 1px solid #cfcfcf;
-  border-radius: 2px;
-  overflow-x: auto;
-}
-
 .nb-source::before,
 .nb-output::before {
   position: absolute;
@@ -47,8 +40,12 @@
 }
 
 .nb-source > pre {
+  background-color: #f7f7f7;
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
   padding: 0.5em;
   margin: 0;
+  overflow-x: auto;
 }
 
 .nb-output {
@@ -75,4 +72,15 @@
 .nb-stderr {
   background-color: #fdd;
   border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .nb-source::before,
+  .nb-output::before {
+    display: block;
+    position: relative;
+    left: 0;
+    padding-bottom: 0.5em;
+    text-align: left;
+  }
 }

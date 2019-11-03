@@ -24,11 +24,22 @@ export default (contents: string, title: string): string => `\
         padding: 0;
       }
       .nb-notebook {
-        width: 99%;
-        max-width: 750px;
+        max-width: 45rem;
         margin: 0 auto;
-        padding: 3em 6em 1em 6em;
+        padding: 3rem 6rem;
         background-color: white;
+      }
+      @media (max-width: 900px) {
+        .nb-notebook {
+          padding-left: 5rem;
+          padding-right: 3rem;
+          max-width: none;
+        }
+      }
+      @media (max-width: 768px) {
+        .nb-notebook {
+          padding: 1rem 5% 2rem 5%;
+        }
       }
 ${notebookCss.slice(0, -1).replace(/\n\n/g, '\n').replace(/^/gm, '      ')}
     </style>
