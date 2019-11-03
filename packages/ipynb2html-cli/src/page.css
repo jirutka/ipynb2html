@@ -1,6 +1,14 @@
 html, body {
   margin: 0;
   padding: 0;
+  background-color: #dedede;
+  color: #2a2a2a;
+  font-family: sans-serif;
+}
+
+code,
+pre {
+  font-size: 0.85rem;
 }
 
 table {
