@@ -3,11 +3,40 @@ html, body {
   padding: 0;
 }
 
+table {
+  border-collapse: collapse;
+  border: 1px solid #cfcfcf;
+}
+
+th {
+  font-weight: 600;
+}
+
+td,
+th {
+  padding: 0.2em 0.4em;
+  border: 1px solid #cfcfcf;
+}
+
+thead tr,
+tbody tr:nth-child(even) {
+  background-color: #f7f7f7;
+}
+
+thead tr:hover,
+tbody tr:hover {
+  background-color: #cfcfcf;
+}
+
 .nb-notebook {
   max-width: 45rem;
   margin: 0 auto;
   padding: 3rem 6rem;
   background-color: white;
+}
+
+.nb-output table {
+  font-size: 0.9em;
 }
 
 @media (max-width: 900px) {
