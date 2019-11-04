@@ -7,7 +7,7 @@ import { $INLINE_JSON } from 'ts-transformer-inline-file'
 
 import * as ipynb2html from 'ipynb2html'
 
-import template from './template'
+import renderPage from './page'
 
 
 const { version, bugs: bugsUrl } = $INLINE_JSON('../package.json')
@@ -87,10 +87,10 @@ export default (argv: string[]): void => {
 
     const title = ipynb2html.readNotebookTitle(notebook) || 'Notebook'
 
-    const render = ipynb2html.createRenderer(new Document())
-    const contents = render(notebook).outerHTML
+    const renderNotebook = ipynb2html.createRenderer(new Document())
+    const contents = renderNotebook(notebook).outerHTML
 
-    const html = template(contents, title)
+    const html = renderPage(contents, title)
 
     if (opts.output) {
       fs.writeFileSync(opts.output, html)
