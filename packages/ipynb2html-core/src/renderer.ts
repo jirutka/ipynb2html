@@ -23,12 +23,12 @@ export type Options<TElement = HTMLElement> = {
    */
   dataRenderers?: DataRenderers<TElement>,
   /**
-   * An array of the supported media types in the priority order. When a cell
+   * An array of the supported MIME types in the priority order. When a cell
    * contains multiple representations of the data, the one with the media type
    * that has the lowest index in this array will be rendered. The default is
    * `Object.keys({ ...dataRenderers, ...builtinRenderers })`.
    */
-  dataRenderersOrder?: string[],
+  dataTypesPriority?: string[],
   /**
    * A function for converting ANSI escape sequences in the given *text* to HTML.
    * It gets the text from the cell as-is, without prior escaping, so it must
@@ -112,7 +112,7 @@ function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opt
   })
 
   // opts.dataRenderers is intentionally included twice; to get the user's
-  // provided renderers in the default dataRenderersOrder before the built-in
+  // provided renderers in the default dataTypesPriority before the built-in
   // renderers and at the same time allow to override any built-in renderer.
   const dataRenderers: DataRenderers<TElement> = {
     ...opts.dataRenderers,
@@ -127,10 +127,10 @@ function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opt
     'text/plain': (data) => el('pre', ['text-output'], escapeHTML(data)),
     ...opts.dataRenderers,
   }
-  const dataRenderersOrder = opts.dataRenderersOrder || Object.keys(dataRenderers)
+  const dataTypesPriority = opts.dataTypesPriority || Object.keys(dataRenderers)
 
   const resolveDataType = (output: DisplayData | ExecuteResult) => {
-    return dataRenderersOrder.find(type => output.data[type] && dataRenderers[type])
+    return dataTypesPriority.find(type => output.data[type] && dataRenderers[type])
   }
 
   const r = callableObject('Notebook', {
