@@ -4,7 +4,7 @@ import arrify from 'arrify'
 import { Document, HTMLElement } from 'nodom'
 
 import buildElementCreator from '@/elementCreator'
-import buildRenderer, { NbRenderer, Options as RendererOpts } from '@/renderer'
+import buildRenderer, { NbRenderer, NbRendererOpts } from '@/renderer'
 import { DisplayData, MimeBundle, MultilineString, Notebook } from '@/nbformat'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,7 +27,7 @@ describe('built renderer', () => {
   const dataRenderers = {
     'text/custom': rendererMock('DisplayData'),
   }
-  const rendererOpts: RendererOpts<HTMLElement> = {
+  const rendererOpts: NbRendererOpts<HTMLElement> = {
     ansiCodesRenderer,
     codeHighlighter,
     markdownRenderer,

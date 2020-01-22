@@ -17,7 +17,7 @@ import {
 } from './nbformat'
 
 
-export type Options<TElement = HTMLElement> = {
+export type NbRendererOpts<TElement = HTMLElement> = {
   /**
    * An object with additional data renderers indexed by a media type.
    */
@@ -94,11 +94,11 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
  *
  * @param {ElementCreator} elementCreator The function that will be used for
  *   building all HTML elements.
- * @param {Options} opts
+ * @param {NbRendererOpts} opts
  * @return {NbRenderer}
  * @template TElement Type of the element object that *elementCreator* produces.
  */
-function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opts: Options<TElement> = {}) {
+function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opts: NbRendererOpts<TElement> = {}) {
   const renderMarkdown = opts.markdownRenderer || identity
   const renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
   const highlightCode = opts.codeHighlighter || escapeHTML
