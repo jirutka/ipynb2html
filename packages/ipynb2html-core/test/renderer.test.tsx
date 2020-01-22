@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/unbound-method */
+
 import '~/test/setup'  // setupFilesAfterEnv doesn't work here
 
 import arrify from 'arrify'
 import { Document, HTMLElement } from 'nodom'
 
 import buildElementCreator from '@/elementCreator'
-import buildRenderer, { NbRenderer, NbRendererOpts } from '@/renderer'
+import NbRenderer, { NbRendererOpts } from '@/renderer'
 import { DisplayData, MimeBundle, MultilineString, Notebook } from '@/nbformat'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,7 +39,7 @@ describe('built renderer', () => {
 
 
   beforeEach(() => {
-    renderer = buildRenderer(elementCreator, rendererOpts)
+    renderer = new NbRenderer(elementCreator, rendererOpts)
   })
 
 
@@ -474,7 +476,7 @@ describe('built renderer', () => {
       const dataRenderer = rendererMock('DisplayData')
 
       beforeEach(() => {
-        renderer = buildRenderer(elementCreator, {
+        renderer = new NbRenderer(elementCreator, {
           ...rendererOpts,
           dataRenderers: { 'text/plain': dataRenderer },
         })

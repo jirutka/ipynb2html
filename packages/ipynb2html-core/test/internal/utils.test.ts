@@ -1,31 +1,64 @@
-import { callableObject, escapeHTML, identity } from '@/internal/utils'
+import { CallableInstance, escapeHTML, identity } from '@/internal/utils'
 
 
-describe('.callableObject', () => {
+describe('CallableInstance', () => {
 
-  describe('returned value', () => {
-    const template = {
-      str: 'allons-y!',
-      func1: jest.fn().mockReturnValue(1),
-      func2: jest.fn().mockReturnValue(2),
+  class FixtureCallable extends CallableInstance<FixtureCallable> {
+    readonly salutation: string
+
+    constructor (salutation: string) {
+      super()
+      this.salutation = salutation
     }
-    const subject = callableObject('func1', template)
 
-    it('is a function that calls the specified template function', () => {
-      expect( subject ).toBeInstanceOf(Function)
-      expect( subject('a', 'b') ).toBe(1)
-      expect( template.func1 ).toBeCalledWith('a', 'b')
+    __call__ (name: string) {
+      return this.salute(name)
+    }
+
+    salute (name: string) {
+      return `${this.salutation}, ${name}!`
+    }
+  }
+
+  describe('subclass', () => {
+    it('can be instantiated using new', () => {
+      expect(() => new FixtureCallable('Hello') ).not.toThrow()
+    })
+  })
+
+  describe('subclass instance', () => {
+    let instance: FixtureCallable
+
+    beforeEach(() => {
+      instance = new FixtureCallable('Hello')
     })
 
-    it('is not the same function as the specified template function', () => {
-      expect( subject ).not.toBe(template.func1)
+    it('is an instance of its class', () => {
+      expect( instance ).toBeInstanceOf(FixtureCallable)
+      expect( instance.salutation ).toBe('Hello')
+      expect( instance.salute('world') ).toBe('Hello, world!')
     })
 
-    it('has all enumerable properties of the given template', () => {
-      expect( subject )
-        .toHaveProperty('str', template.str)
-        .toHaveProperty('func1', template.func1)
-        .toHaveProperty('func2', template.func2)
+    it('is an instance of Function', () => {
+      expect( instance ).toBeInstanceOf(Function)
+    })
+
+    it('is a typeof function', () => {
+      expect( typeof instance ).toBe('function')
+    })
+
+    it('has function property "name" that equals the class name', () => {
+      expect( instance.name ).toBe('FixtureCallable')
+    })
+
+    it('has function property "length" that equals number of arguments of the __call__ method', () => {
+      expect( instance.length ).toBe(1)
+    })
+
+    it('can be called, redirects to the method __call__', () => {
+      expect( instance('world') ).toBe('Hello, world!')
+      expect( instance.apply(null, ['world']) ).toBe('Hello, world!')  // eslint-disable-line no-useless-call
+      expect( instance.call(null, 'world') ).toBe('Hello, world!')  // eslint-disable-line no-useless-call
     })
   })
 })

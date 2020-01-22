@@ -1,6 +1,6 @@
 // This code is originally based on notebookjs 0.4.2 distributed under the MIT license.
 import { ElementCreator } from './elementCreator'
-import { callableObject, escapeHTML, identity } from './internal/utils'
+import { CallableInstance, escapeHTML, identity } from './internal/utils'
 import {
   Cell,
   CellType,
@@ -48,7 +48,7 @@ export type NbRendererOpts<TElement = HTMLElement> = {
   markdownRenderer?: (markup: string) => string,
 }
 
-export type DataRenderer<TElement = HTMLElement> = (data: string) => TElement
+export type DataRenderer<TElement = HTMLElement> = (this: NbRenderer<TElement> | void, data: string) => TElement
 
 type DataRenderers<TElement> = { [mediaType: string]: DataRenderer<TElement> }
 
@@ -86,151 +86,169 @@ function notebookLanguage ({ metadata: meta }: Notebook): string {
   return (meta.language_info && meta.language_info.name) || 'python'
 }
 
-/**
- * Builds a Notebook renderer function with the given options. It returns a
- * "callable object" that exposes a renderer function for each of the
- * Notebook's AST node. You can easily replace any of the functions to modify
- * behaviour of the renderer.
- *
- * @param {ElementCreator} elementCreator The function that will be used for
- *   building all HTML elements.
- * @param {NbRendererOpts} opts
- * @return {NbRenderer}
- * @template TElement Type of the element object that *elementCreator* produces.
- */
-function buildRenderer <TElement> (elementCreator: ElementCreator<TElement>, opts: NbRendererOpts<TElement> = {}) {
-  const renderMarkdown = opts.markdownRenderer || identity
-  const renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
-  const highlightCode = opts.codeHighlighter || escapeHTML
+class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
 
-  const el = elementCreator
-  const el2 = (tag: string, classes: string[]) => (data: string) => el(tag, classes, data)
+  readonly el: ElementCreator<TElement>
+  readonly renderMarkdown: NonNullable<NbRendererOpts['markdownRenderer']>
+  readonly renderAnsiCodes: NonNullable<NbRendererOpts['ansiCodesRenderer']>
+  readonly highlightCode: NonNullable<NbRendererOpts['codeHighlighter']>
+  readonly dataRenderers: DataRenderers<TElement>
+  readonly dataTypesPriority: string[]
 
-  const embeddedImageEl = (format: string) => (data: string) => el('img', {
-    class: 'image-output',
-    src: `data:image/${format};base64,${data.replace(/\n/g, '')}`,
-  })
+  /**
+   * Creates a Notebook renderer with the given options. The constructed object
+   * is "callable", i.e. you can treat it as a function.
+   *
+   * @example
+   *   const renderer = new NbRenderer(document.createElement.bind(document))
+   *   console.log(renderer(notebook).outerHTML)
+   *
+   * @param {ElementCreator} elementCreator The function that will be used for
+   *   building all HTML elements.
+   * @param {NbRendererOpts} opts The renderer's options.
+   */
+  constructor (elementCreator: ElementCreator<TElement>, opts: NbRendererOpts<TElement> = {}) {
+    super()
 
-  // opts.dataRenderers is intentionally included twice; to get the user's
-  // provided renderers in the default dataTypesPriority before the built-in
-  // renderers and at the same time allow to override any built-in renderer.
-  const dataRenderers: DataRenderers<TElement> = {
-    ...opts.dataRenderers,
-    'image/png': embeddedImageEl('png'),
-    'image/jpeg': embeddedImageEl('jpeg'),
-    'image/svg+xml': el2('div', ['svg-output']),
-    'text/svg+xml': (data) => dataRenderers['image/svg+xml'](data),
-    'text/html': el2('div', ['html-output']),
-    'text/markdown': (data) => dataRenderers['text/html'](renderMarkdown(data)),
-    'text/latex': el2('div', ['latex-output']),
-    'application/javascript': el2('script', []),
-    'text/plain': (data) => el('pre', ['text-output'], escapeHTML(data)),
-    ...opts.dataRenderers,
+    this.el = elementCreator
+    this.renderMarkdown = opts.markdownRenderer || identity
+    this.renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
+    this.highlightCode = opts.codeHighlighter || escapeHTML
+
+    const el2 = (tag: string, classes: string[]) => (data: string) => this.el(tag, classes, data)
+
+    const embeddedImageEl = (format: string) => (data: string) => this.el('img', {
+      class: 'image-output',
+      src: `data:image/${format};base64,${data.replace(/\n/g, '')}`,
+    })
+
+    // opts.dataRenderers is intentionally included twice; to get the user's
+    // provided renderers in the default dataTypesPriority before the built-in
+    // renderers and at the same time allow to override any built-in renderer.
+    this.dataRenderers = {
+      ...opts.dataRenderers,
+      'image/png': embeddedImageEl('png'),
+      'image/jpeg': embeddedImageEl('jpeg'),
+      'image/svg+xml': el2('div', ['svg-output']),
+      'text/svg+xml': (data) => this.dataRenderers['image/svg+xml'].call(this, data),
+      'text/html': el2('div', ['html-output']),
+      'text/markdown': (data) => this.el('div', ['html-output'], this.renderMarkdown(data)),
+      'text/latex': el2('div', ['latex-output']),
+      'application/javascript': el2('script', []),
+      'text/plain': (data) => this.el('pre', ['text-output'], escapeHTML(data)),
+      ...opts.dataRenderers,
+    }
+    this.dataTypesPriority = opts.dataTypesPriority || Object.keys(this.dataRenderers)
   }
-  const dataTypesPriority = opts.dataTypesPriority || Object.keys(dataRenderers)
 
-  const resolveDataType = (output: DisplayData | ExecuteResult) => {
-    return dataTypesPriority.find(type => output.data[type] && dataRenderers[type])
+  /**
+   * Renders the given Jupyter *notebook*.
+   */
+  __call__ (notebook: Notebook): TElement {
+    return this.Notebook(notebook)
+  }
+  /**
+   * Renders the given Jupyter *notebook*.
+   */
+  Notebook (notebook: Notebook): TElement {
+    const children = notebook.cells.map(cell => this.Cell(cell, notebook))
+    return this.el('div', ['notebook'], children)
   }
 
-  const r = callableObject('Notebook', {
-    Notebook: (notebook: Notebook): TElement => {
-      const children = notebook.cells.map(cell => r.Cell(cell, notebook))
-      return el('div', ['notebook'], children)
-    },
+  Cell (cell: Cell, notebook: Notebook): TElement {
+    switch (cell.cell_type) {
+      case CellType.Code: return this.CodeCell(cell, notebook)
+      case CellType.Markdown: return this.MarkdownCell(cell, notebook)
+      case CellType.Raw: return this.RawCell(cell, notebook)
+      default: return this.el('div', [], '<!-- Unsupported cell type -->')
+    }
+  }
 
-    Cell: (cell: Cell, notebook: Notebook): TElement => {
-      switch (cell.cell_type) {
-        case CellType.Code: return r.CodeCell(cell, notebook)
-        case CellType.Markdown: return r.MarkdownCell(cell, notebook)
-        case CellType.Raw: return r.RawCell(cell, notebook)
-        default: return el('div', [], '<!-- Unsupported cell type -->')
+  MarkdownCell (cell: MarkdownCell, _notebook: Notebook): TElement {
+    return this.el('div', ['cell', 'markdown-cell'], this.renderMarkdown(joinText(cell.source)))
+  }
+
+  RawCell (cell: RawCell, _notebook: Notebook): TElement {
+    return this.el('div', ['cell', 'raw-cell'], joinText(cell.source))
+  }
+
+  CodeCell (cell: CodeCell, notebook: Notebook): TElement {
+    const source = cell.source.length > 0
+      ? this.Source(cell, notebook)
+      : this.el('div')
+
+    const outputs = coalesceStreams(cell.outputs || [])
+      .map(output => this.Output(output, cell))
+
+    return this.el('div', ['cell', 'code-cell'], [source, ...outputs])
+  }
+
+  Source (cell: CodeCell, notebook: Notebook): TElement {
+    const lang = notebookLanguage(notebook)
+    const html = this.highlightCode(joinText(cell.source), lang)
+
+    const codeEl = this.el('code', { 'class': `lang-${lang}`, 'data-language': lang }, html)
+    const preEl = this.el('pre', [], [codeEl])
+
+    // Class "input" is for backward compatibility with notebook.js.
+    const attrs = { ...executionCountAttrs(cell), class: 'source input' }
+
+    return this.el('div', attrs, [preEl])
+  }
+
+  Output (output: Output, cell: CodeCell): TElement {
+    const innerEl = (() => {
+      switch (output.output_type) {
+        case OutputType.DisplayData: return this.DisplayData(output)
+        case OutputType.ExecuteResult: return this.ExecuteResult(output)
+        case OutputType.Stream: return this.Stream(output)
+        case OutputType.Error: return this.Error(output)
+        default: return this.el('div', [], '<!-- Unsupported output type -->')
       }
-    },
+    })()
+    const attrs = { ...executionCountAttrs(cell), class: 'output' }
 
-    MarkdownCell: (cell: MarkdownCell, _notebook: Notebook): TElement => {
-      return el('div', ['cell', 'markdown-cell'], renderMarkdown(joinText(cell.source)))
-    },
+    return this.el('div', attrs, [innerEl])
+  }
 
-    RawCell: (cell: RawCell, _notebook: Notebook): TElement => {
-      return el('div', ['cell', 'raw-cell'], joinText(cell.source))
-    },
+  DisplayData (output: DisplayData): TElement {
+    const type = this.resolveDataType(output)
+    if (type) {
+      return this.renderData(type, joinText(output.data[type]))
+    }
+    return this.el('div', ['empty-output'])
+  }
 
-    CodeCell: (cell: CodeCell, notebook: Notebook): TElement => {
-      const source = cell.source.length > 0
-        ? r.Source(cell, notebook)
-        : el('div')
+  ExecuteResult (output: ExecuteResult): TElement {
+    const type = this.resolveDataType(output)
+    if (type) {
+      return this.renderData(type, joinText(output.data[type]))
+    }
+    return this.el('div', ['empty-output'])
+  }
 
-      const outputs = coalesceStreams(cell.outputs || [])
-        .map(output => r.Output(output, cell))
+  Error (error: ErrorOutput): TElement {
+    const html = this.renderAnsiCodes(error.traceback.join('\n'))
+    // Class "pyerr" is for backward compatibility with notebook.js.
+    return this.el('pre', ['error', 'pyerr'], html)
+  }
 
-      return el('div', ['cell', 'code-cell'], [source, ...outputs])
-    },
+  Stream (stream: StreamOutput): TElement {
+    const html = this.renderAnsiCodes(joinText(stream.text))
+    return this.el('pre', [stream.name], html)
+  }
 
-    Source: (cell: CodeCell, notebook: Notebook): TElement => {
-      const lang = notebookLanguage(notebook)
-      const html = highlightCode(joinText(cell.source), lang)
+  renderData (mimeType: string, data: string): TElement {
+    const render = this.dataRenderers[mimeType]
+    if (!render) {
+      throw RangeError(`missing renderer for MIME type: ${mimeType}`)
+    }
+    return render.call(this, data)
+  }
 
-      const codeEl = el('code', { 'class': `lang-${lang}`, 'data-language': lang }, html)
-      const preEl = el('pre', [], [codeEl])
-
-      // Class "input" is for backward compatibility with notebook.js.
-      const attrs = { ...executionCountAttrs(cell), class: 'source input' }
-
-      return el('div', attrs, [preEl])
-    },
-
-    Output: (output: Output, cell: CodeCell): TElement => {
-      const innerEl = (() => {
-        switch (output.output_type) {
-          case OutputType.DisplayData: return r.DisplayData(output)
-          case OutputType.ExecuteResult: return r.ExecuteResult(output)
-          case OutputType.Stream: return r.Stream(output)
-          case OutputType.Error: return r.Error(output)
-          default: return el('div', [], '<!-- Unsupported output type -->')
-        }
-      })()
-      const attrs = { ...executionCountAttrs(cell), class: 'output' }
-
-      return el('div', attrs, [innerEl])
-    },
-
-    DisplayData: (output: DisplayData): TElement => {
-      const type = resolveDataType(output)
-      if (type) {
-        return dataRenderers[type](joinText(output.data[type]))
-      }
-      return el('div', ['empty-output'])
-    },
-
-    ExecuteResult: (output: ExecuteResult): TElement => {
-      const type = resolveDataType(output)
-      if (type) {
-        return dataRenderers[type](joinText(output.data[type]))
-      }
-      return el('div', ['empty-output'])
-    },
-
-    Error: (error: ErrorOutput): TElement => {
-      const html = renderAnsiCodes(error.traceback.join('\n'))
-      // Class "pyerr" is for backward compatibility with notebook.js.
-      return el('pre', ['error', 'pyerr'], html)
-    },
-
-    Stream: (stream: StreamOutput): TElement => {
-      const html = renderAnsiCodes(joinText(stream.text))
-      return el('pre', [stream.name], html)
-    },
-  })
-  return r
+  resolveDataType (output: DisplayData | ExecuteResult): string | undefined {
+    return this.dataTypesPriority.find(type => output.data[type])
+  }
 }
 
-export default buildRenderer
-
-// XXX: An ugly hack to infer return type of generic function that returns
-// generalized object.
-abstract class DummyClass<T> {
-  renderer = buildRenderer<T>(this.elementCreator())
-  abstract elementCreator (): ElementCreator<T>
-}
-export type NbRenderer<TElement> = DummyClass<TElement>['renderer']
+export default NbRenderer

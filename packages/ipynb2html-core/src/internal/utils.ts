@@ -5,25 +5,34 @@ const htmlEntities = {
   '>': '&gt;',
 }
 
-/**
- * Creates a "callable object" with the given properties. In fact, it creates
- * a function that calls `obj[funcName]` and copies all the enumerable
- * properties of the *template* to the created function.
- *
- * @param {string} funcName Name of the function property of the *template*.
- * @param {Object} template The source object from which to copy enumerable properties.
- * @return A function with all enumerable properties of the *template*.
- */
-export function callableObject <T, K extends keyof T> (
-  funcName: K,
-  template: T,
-): T[K] extends Function ? T & T[K] : never {
+type CallableConstructor = new <T> () => T extends { __call__: Function }
+  ? T['__call__']
+  : 'subclass does not implement method __call__'
 
-  const fn = function (...args: any[]) {
-    return (template[funcName] as any)(...args)
+export const CallableInstance: CallableConstructor = function Callable (
+  this: object,
+): Function {
+
+  const func = this.constructor.prototype.__call__ as Function
+
+  const cls = function (...args: any[]) {
+    return func.apply(cls, args)
   }
-  return Object.assign(fn, template) as any
-}
+  Object.setPrototypeOf(cls, this.constructor.prototype)
+
+  Object.defineProperties(cls, {
+    name: {
+      value: this.constructor.name,
+      configurable: true,
+    },
+    length: {
+      value: func.length,
+      configurable: true,
+    },
+  })
+  return cls
+} as any
+CallableInstance.prototype = Object.create(Function.prototype)
 
 /**
  * Escapes characters with special meaning in HTML with the corresponding

@@ -6,7 +6,6 @@ import marked, { MarkedOptions } from 'marked'
 import {
   createElementCreator,
   createHtmlRenderer,
-  createNbRenderer,
   MinimalElement,
   NbRenderer,
   NbRendererOpts as BaseOptions,
@@ -127,7 +126,7 @@ export function createRenderer <TElement extends MinimalElement> (
     dataRenderers['text/html'] = createHtmlRenderer({ elementCreator, mathRenderer })
   }
 
-  return createNbRenderer(elementCreator, {
+  return new NbRenderer(elementCreator, {
     ansiCodesRenderer,
     codeHighlighter,
     dataRenderers,
