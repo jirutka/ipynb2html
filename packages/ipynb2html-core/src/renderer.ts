@@ -145,45 +145,45 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
    * Renders the given Jupyter *notebook*.
    */
   __call__ (notebook: Notebook): TElement {
-    return this.Notebook(notebook)
+    return this.render(notebook)
   }
   /**
    * Renders the given Jupyter *notebook*.
    */
-  Notebook (notebook: Notebook): TElement {
-    const children = notebook.cells.map(cell => this.Cell(cell, notebook))
+  render (notebook: Notebook): TElement {
+    const children = notebook.cells.map(cell => this.renderCell(cell, notebook))
     return this.el('div', ['notebook'], children)
   }
 
-  Cell (cell: Cell, notebook: Notebook): TElement {
+  renderCell (cell: Cell, notebook: Notebook): TElement {
     switch (cell.cell_type) {
-      case CellType.Code: return this.CodeCell(cell, notebook)
-      case CellType.Markdown: return this.MarkdownCell(cell, notebook)
-      case CellType.Raw: return this.RawCell(cell, notebook)
+      case CellType.Code: return this.renderCodeCell(cell, notebook)
+      case CellType.Markdown: return this.renderMarkdownCell(cell, notebook)
+      case CellType.Raw: return this.renderRawCell(cell, notebook)
       default: return this.el('div', [], '<!-- Unsupported cell type -->')
     }
   }
 
-  MarkdownCell (cell: MarkdownCell, _notebook: Notebook): TElement {
+  renderMarkdownCell (cell: MarkdownCell, _notebook: Notebook): TElement {
     return this.el('div', ['cell', 'markdown-cell'], this.renderMarkdown(joinText(cell.source)))
   }
 
-  RawCell (cell: RawCell, _notebook: Notebook): TElement {
+  renderRawCell (cell: RawCell, _notebook: Notebook): TElement {
     return this.el('div', ['cell', 'raw-cell'], joinText(cell.source))
   }
 
-  CodeCell (cell: CodeCell, notebook: Notebook): TElement {
+  renderCodeCell (cell: CodeCell, notebook: Notebook): TElement {
     const source = cell.source.length > 0
-      ? this.Source(cell, notebook)
+      ? this.renderSource(cell, notebook)
       : this.el('div')
 
     const outputs = coalesceStreams(cell.outputs || [])
-      .map(output => this.Output(output, cell))
+      .map(output => this.renderOutput(output, cell))
 
     return this.el('div', ['cell', 'code-cell'], [source, ...outputs])
   }
 
-  Source (cell: CodeCell, notebook: Notebook): TElement {
+  renderSource (cell: CodeCell, notebook: Notebook): TElement {
     const lang = notebookLanguage(notebook)
     const html = this.highlightCode(joinText(cell.source), lang)
 
@@ -196,13 +196,13 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
     return this.el('div', attrs, [preEl])
   }
 
-  Output (output: Output, cell: CodeCell): TElement {
+  renderOutput (output: Output, cell: CodeCell): TElement {
     const innerEl = (() => {
       switch (output.output_type) {
-        case OutputType.DisplayData: return this.DisplayData(output)
-        case OutputType.ExecuteResult: return this.ExecuteResult(output)
-        case OutputType.Stream: return this.Stream(output)
-        case OutputType.Error: return this.Error(output)
+        case OutputType.DisplayData: return this.renderDisplayData(output)
+        case OutputType.ExecuteResult: return this.renderExecuteResult(output)
+        case OutputType.Stream: return this.renderStream(output)
+        case OutputType.Error: return this.renderError(output)
         default: return this.el('div', [], '<!-- Unsupported output type -->')
       }
     })()
@@ -211,7 +211,7 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
     return this.el('div', attrs, [innerEl])
   }
 
-  DisplayData (output: DisplayData): TElement {
+  renderDisplayData (output: DisplayData): TElement {
     const type = this.resolveDataType(output)
     if (type) {
       return this.renderData(type, joinText(output.data[type]))
@@ -219,7 +219,7 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
     return this.el('div', ['empty-output'])
   }
 
-  ExecuteResult (output: ExecuteResult): TElement {
+  renderExecuteResult (output: ExecuteResult): TElement {
     const type = this.resolveDataType(output)
     if (type) {
       return this.renderData(type, joinText(output.data[type]))
@@ -227,13 +227,13 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
     return this.el('div', ['empty-output'])
   }
 
-  Error (error: ErrorOutput): TElement {
+  renderError (error: ErrorOutput): TElement {
     const html = this.renderAnsiCodes(error.traceback.join('\n'))
     // Class "pyerr" is for backward compatibility with notebook.js.
     return this.el('pre', ['error', 'pyerr'], html)
   }
 
-  Stream (stream: StreamOutput): TElement {
+  renderStream (stream: StreamOutput): TElement {
     const html = this.renderAnsiCodes(joinText(stream.text))
     return this.el('pre', [stream.name], html)
   }

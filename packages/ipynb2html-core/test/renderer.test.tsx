@@ -12,10 +12,9 @@ import { DisplayData, MimeBundle, MultilineString, Notebook } from '@/nbformat'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Anything } from '~/test/support/matchers/toMatchElement'
 import { mockLastResult, mockResults } from '~/test/support/helpers'
-import * as _fixtures from './support/fixtures/notebook'
+import * as fixtures from './support/fixtures/notebook'
 
 const document = new Document()
-const fixtures = _fixtures  // workaround to allow indexed access
 
 
 describe('built renderer', () => {
@@ -43,41 +42,42 @@ describe('built renderer', () => {
   })
 
 
-  describe('.Notebook', () => {
+  describe('.render', () => {
     beforeEach(() => {
-      renderer.Cell = rendererMock('Cell')
+      renderer.renderCell = rendererMock('Cell')
     })
 
     it('returns div.notebook', () => {
-      expect( renderer.Notebook({ ...notebook, cells: [] }) ).toHtmlEqual(
+      expect( renderer.render({ ...notebook, cells: [] }) ).toHtmlEqual(
         <div class="notebook"></div>
       )
     })
 
-    it('returns element with $cells converted using .Cell() as the children', () => {
-      const result = renderer.Notebook(notebook)
+    it('returns element with $cells converted using .renderCell() as the children', () => {
+      const result = renderer.render(notebook)
 
       notebook.cells.forEach((cell, idx) => {
-        expect( renderer.Cell ).toHaveBeenNthCalledWith(idx + 1, cell, notebook)
+        expect( renderer.renderCell ).toHaveBeenNthCalledWith(idx + 1, cell, notebook)
       })
-      expect( result.children ).toHtmlEqual(mockResults(renderer.Cell))
+      expect( result.children ).toHtmlEqual(mockResults(renderer.renderCell))
     })
   })
 
 
-  describe('.Cell', () => {
+  describe('.renderCell', () => {
 
     describe.each([
-      'CodeCell', 'MarkdownCell', 'RawCell',
-    ] as const)('with %s', (type) => {
-      const cell = fixtures[type]
+      'renderCodeCell', 'renderMarkdownCell', 'renderRawCell',
+    ] as const)('with %s', (funcName) => {
+      const type = funcName.replace('render', '')
+      const cell = (fixtures as any)[type]
 
-      it(`returns result of calling .${type}() with the given cell`, () => {
+      it(`returns result of calling .${funcName}() with the given cell`, () => {
         const expected = stubElement(type)
-        renderer[type] = jest.fn(() => expected)
+        const rendererFunc = (renderer as any)[funcName] = jest.fn(() => expected)
 
-        expect( renderer.Cell(cell, notebook) ).toBe(expected)
-        expect( renderer[type] ).toBeCalledWith(cell, notebook)
+        expect( renderer.renderCell(cell, notebook) ).toBe(expected)
+        expect( rendererFunc ).toBeCalledWith(cell, notebook)
       })
     })
 
@@ -88,7 +88,7 @@ describe('built renderer', () => {
       } as any
 
       it('returns div with comment "Unsupported cell type"', () => {
-        expect( renderer.Cell(cell, notebook) ).toHtmlEqual(
+        expect( renderer.renderCell(cell, notebook) ).toHtmlEqual(
           <div>
             {{__html: '<!-- Unsupported cell type -->' }}
           </div>
@@ -98,12 +98,12 @@ describe('built renderer', () => {
   })
 
 
-  describe('.MarkdownCell', () => {
+  describe('.renderMarkdownCell', () => {
     eachMultilineVariant(fixtures.MarkdownCell, 'source', (cell) => {
       const source = join(cell.source)
 
       it('returns div.cell.markdown-cell with the $source converted using markdownRenderer() as content', () => {
-        expect( renderer.MarkdownCell(cell, notebook) ).toHtmlEqual(
+        expect( renderer.renderMarkdownCell(cell, notebook) ).toHtmlEqual(
           <div class="cell markdown-cell">
             {{__html: mockLastResult(markdownRenderer) }}
           </div>
@@ -114,11 +114,11 @@ describe('built renderer', () => {
   })
 
 
-  describe('.RawCell', () => {
+  describe('.renderRawCell', () => {
     eachMultilineVariant(fixtures.RawCell, 'source', (cell) => {
 
       it('returns div.cell.raw-cell with the $source as content', () => {
-        expect( renderer.RawCell(cell, notebook) ).toHtmlEqual(
+        expect( renderer.renderRawCell(cell, notebook) ).toHtmlEqual(
           <div class="cell raw-cell">
             {{__html: join(cell.source) }}
           </div>
@@ -128,15 +128,15 @@ describe('built renderer', () => {
   })
 
 
-  describe('.CodeCell', () => {
+  describe('.renderCodeCell', () => {
     const cell = fixtures.CodeCell
     let result: HTMLElement
 
     beforeEach(() => {
-      renderer.Source = rendererMock('Source')
-      renderer.Output = rendererMock('Output')
+      renderer.renderSource = rendererMock('Source')
+      renderer.renderOutput = rendererMock('Output')
 
-      result = renderer.CodeCell(cell, notebook)
+      result = renderer.renderCodeCell(cell, notebook)
     })
 
     it('returns div.cell.code-cell', () => {
@@ -147,15 +147,15 @@ describe('built renderer', () => {
 
     describe('with non-empty $source', () => {
 
-      it('returns element with $source rendered using .Source() as children[0]', () => {
-        expect( renderer.Source ).toBeCalledWith(cell, notebook)
-        expect( result.children[0] ).toHtmlEqual(mockLastResult(renderer.Source))
+      it('returns element with $source rendered using .renderSource() as children[0]', () => {
+        expect( renderer.renderSource ).toBeCalledWith(cell, notebook)
+        expect( result.children[0] ).toHtmlEqual(mockLastResult(renderer.renderSource))
       })
     })
 
     describe('with empty $source', () => {
       beforeEach(() => {
-        result = renderer.CodeCell({ ...cell, source: [] }, notebook)
+        result = renderer.renderCodeCell({ ...cell, source: [] }, notebook)
       })
 
       it('returns element with empty div as children[0]', () => {
@@ -165,22 +165,22 @@ describe('built renderer', () => {
       })
     })
 
-    it('returns element with $outputs rendered using .Output() as children[1+]', () => {
+    it('returns element with $outputs rendered using .renderOutput() as children[1+]', () => {
       cell.outputs.forEach((output, idx) => {
-        expect( renderer.Output ).toHaveBeenNthCalledWith(idx + 1, output, cell)
+        expect( renderer.renderOutput ).toHaveBeenNthCalledWith(idx + 1, output, cell)
       })
-      expect( result.children.slice(1) ).toHtmlEqual(mockResults(renderer.Output))
+      expect( result.children.slice(1) ).toHtmlEqual(mockResults(renderer.renderOutput))
     })
   })
 
 
-  describe('.Source', () => {
+  describe('.renderSource', () => {
     const cell = fixtures.CodeCell
     const notebookLang = notebook.metadata.language_info!.name
     let result: HTMLElement
 
     beforeEach(() => {
-      result = renderer.Source(cell, notebook)
+      result = renderer.renderSource(cell, notebook)
     })
 
     it('returns div > pre > code', () => {
@@ -208,7 +208,7 @@ describe('built renderer', () => {
         const myCell = { ...cell, execution_count: 2 }
 
         it('has data-execution-count and data-prompt-number attributes', () => {
-          const result = renderer.Source(myCell, notebook)
+          const result = renderer.renderSource(myCell, notebook)
 
           expect( result.attributes ).toMatchObject({
             'data-execution-count': String(myCell.execution_count),
@@ -221,7 +221,7 @@ describe('built renderer', () => {
         const myCell = { ...cell, execution_count: null }
 
         it('has data-execution-count and data-prompt-number attributes', () => {
-          const result = renderer.Source(myCell, notebook)
+          const result = renderer.renderSource(myCell, notebook)
 
           expect( result.attributes )
             .not.toHaveProperty('data-execution-count')
@@ -234,7 +234,7 @@ describe('built renderer', () => {
       let codeEl: HTMLElement
 
       beforeEach(() => {
-        codeEl = renderer.Source(cell, notebook).firstChild!.firstChild as HTMLElement
+        codeEl = renderer.renderSource(cell, notebook).firstChild!.firstChild as HTMLElement
       })
 
       it("has class lang-<lang> where lang is the notebook's language", () => {
@@ -256,7 +256,7 @@ describe('built renderer', () => {
       const notebookLang = 'python'
 
       it('uses the default language: python', () => {
-        const result = renderer.Source(cell, myNotebook)
+        const result = renderer.renderSource(cell, myNotebook)
         const codeEl = result.firstChild!.firstChild as HTMLElement
 
         expect( codeEl.getAttribute('data-language') ).toBe(notebookLang)
@@ -267,19 +267,20 @@ describe('built renderer', () => {
   })
 
 
-  describe('.Output', () => {
+  describe('.renderOutput', () => {
     const cell = { ...fixtures.CodeCell, execution_count: null }
 
     describe.each([
-      'DisplayData', 'ExecuteResult', 'Stream', 'Error',
-    ] as const)('with %s output', (type) => {
+      'renderDisplayData', 'renderExecuteResult', 'renderStream', 'renderError',
+    ] as const)('with %s output', (funcName) => {
 
-      const output = fixtures[type]
+      const type = funcName.replace('render', '')
+      const output = (fixtures as any)[type]
       let result: HTMLElement
 
       beforeEach(() => {
-        renderer[type] = rendererMock(type)
-        result = renderer.Output(output, cell)
+        renderer[funcName] = rendererMock(type)
+        result = renderer.renderOutput(output, cell)
       })
 
       it('returns div.output', () => {
@@ -288,16 +289,16 @@ describe('built renderer', () => {
         )
       })
 
-      it(`returns element with the output rendered using .${type}() as the only child`, () => {
-        expect( renderer[type] ).toBeCalledWith(output)
-        expect( result.children ).toHtmlEqual([mockLastResult(renderer[type])])
+      it(`returns element with the output rendered using .${funcName}() as the only child`, () => {
+        expect( renderer[funcName] ).toBeCalledWith(output)
+        expect( result.children ).toHtmlEqual([mockLastResult(renderer[funcName])])
       })
 
       describe('when the cell has non-null execution_count', () => {
         const cell = { ...fixtures.CodeCell, execution_count: 2 }
 
         it('returns element with attributes data-execution-count and data-prompt-number', () => {
-          const result = renderer.Output(output, cell)
+          const result = renderer.renderOutput(output, cell)
 
           expect( result.attributes ).toMatchObject({
             'data-execution-count': String(cell.execution_count),
@@ -319,7 +320,7 @@ describe('built renderer', () => {
       }
 
       it('returns div with comment "Unsupported output type"', () => {
-        expect( renderer.Output(output, cell) ).toHtmlEqual(
+        expect( renderer.renderOutput(output, cell) ).toHtmlEqual(
           <div class="output">
             <div>
               {{__html: '<!-- Unsupported output type -->' }}
@@ -331,7 +332,7 @@ describe('built renderer', () => {
   })
 
 
-  describe('.DisplayData', () => {
+  describe('.renderDisplayData', () => {
 
     function displayDataWith (data: MimeBundle): DisplayData {
       return { ...fixtures.DisplayData, data }
@@ -360,7 +361,7 @@ describe('built renderer', () => {
       const displayData = displayDataWith({ 'text/non-sense': 'whaat' })
 
       it('returns div.empty-output', () => {
-        expect( renderer.DisplayData(displayData) ).toHtmlEqual(
+        expect( renderer.renderDisplayData(displayData) ).toHtmlEqual(
           <div class="empty-output"></div>
         )
       })
@@ -372,7 +373,7 @@ describe('built renderer', () => {
         withMimeData(mimeType, ['aW1hZ2Ug\n', 'ZGF0YQ=='], (output) => {
 
           it('returns img.image-output with the data in the src attribute', () => {
-            expect( renderer.DisplayData(output) ).toHtmlEqual(
+            expect( renderer.renderDisplayData(output) ).toHtmlEqual(
               <img class="image-output" src={`data:${mimeType};base64,aW1hZ2UgZGF0YQ==`}></img>
             )
           })
@@ -390,7 +391,7 @@ describe('built renderer', () => {
         withMimeData(mimeType, '<stub>data</stub>', (output, data) => {
 
           it(`returns div${classes.map(x => `.${x}`)} with the data as content`, () => {
-            expect( renderer.DisplayData(output) ).toHtmlEqual(
+            expect( renderer.renderDisplayData(output) ).toHtmlEqual(
               <div class={ classes.join(' ') }>
                 {{__html: join(data) }}
               </div>
@@ -402,7 +403,7 @@ describe('built renderer', () => {
       withMimeData('text/markdown', ['Lorem\n', 'ipsum'], (output, data) => {
 
         it('returns div.html-output with the data converted using markdownRenderer() as content', () => {
-          expect( renderer.DisplayData(output) ).toHtmlEqual(
+          expect( renderer.renderDisplayData(output) ).toHtmlEqual(
             <div class="html-output">
               {{__html: mockLastResult(markdownRenderer) }}
             </div>
@@ -414,7 +415,7 @@ describe('built renderer', () => {
       withMimeData('text/plain', '>_<', (output) => {
 
         it('returns pre.text-output with html-escaped data', () => {
-          expect( renderer.DisplayData(output) ).toHtmlEqual(
+          expect( renderer.renderDisplayData(output) ).toHtmlEqual(
             <pre class="text-output">{ '>_<' }</pre>
           )
         })
@@ -423,7 +424,7 @@ describe('built renderer', () => {
       withMimeData('application/javascript', 'alert("Hello &!")', (output, data) => {
 
         it('returns script with the data', () => {
-          expect( renderer.DisplayData(output) ).toHtmlEqual(
+          expect( renderer.renderDisplayData(output) ).toHtmlEqual(
             <script>{{__html: join(data) }}</script>
           )
         })
@@ -435,7 +436,7 @@ describe('built renderer', () => {
       withMimeData('text/custom', 'Lorem ipsum', (output, data) => {
 
         it('renders the data using the associated external renderer', () => {
-          expect( renderer.DisplayData(output) ).toHtmlEqual(
+          expect( renderer.renderDisplayData(output) ).toHtmlEqual(
             mockLastResult(dataRenderers['text/custom'])
           )
           expect( dataRenderers['text/custom'] ).toBeCalledWith(join(data))
@@ -452,7 +453,7 @@ describe('built renderer', () => {
       const output = displayDataWith(mimeBundle)
 
       it('renders the data of the MIME type with a higher priority', () => {
-        expect( renderer.DisplayData(output) ).toHtmlEqual(
+        expect( renderer.renderDisplayData(output) ).toHtmlEqual(
           <div class="html-output">
             {{__html: mimeBundle['text/html'] }}
           </div>
@@ -466,7 +467,7 @@ describe('built renderer', () => {
         }
         const output = displayDataWith(mimeBundle)
 
-        expect( renderer.DisplayData(output) ).toHtmlEqual(
+        expect( renderer.renderDisplayData(output) ).toHtmlEqual(
           mockLastResult(dataRenderers['text/custom'])
         )
       })
@@ -486,19 +487,19 @@ describe('built renderer', () => {
         const data = 'allons-y!'
         const output = displayDataWith({ 'text/plain': [data] })
 
-        expect( renderer.DisplayData(output) ).toBe(mockLastResult(dataRenderer))
+        expect( renderer.renderDisplayData(output) ).toBe(mockLastResult(dataRenderer))
         expect( dataRenderer ).toBeCalledWith(data)
       })
     })
   })
 
 
-  describe('.Error', () => {
+  describe('.renderError', () => {
     const error = fixtures.Error
     const traceback = error.traceback.join('\n')
 
     it('returns pre.error.pyerr with inner $traceback converted using ansiCodesRenderer', () => {
-      expect( renderer.Error(error) ).toHtmlEqual(
+      expect( renderer.renderError(error) ).toHtmlEqual(
         <pre class="error pyerr">
           {{__html: mockLastResult(ansiCodesRenderer) }}
         </pre>
@@ -508,12 +509,12 @@ describe('built renderer', () => {
   })
 
 
-  describe('.Stream', () => {
+  describe('.renderStream', () => {
     eachMultilineVariant(fixtures.Stream, 'text', (stream) => {
       const text = join(stream.text)
 
       it('returns pre.$name with inner $text converted using ansiCodesRenderer', () => {
-        expect( renderer.Stream(stream) ).toHtmlEqual(
+        expect( renderer.renderStream(stream) ).toHtmlEqual(
           <pre class={ stream.name }>
             {{__html: mockLastResult(ansiCodesRenderer) }}
           </pre>
