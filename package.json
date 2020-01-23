@@ -1,6 +1,6 @@
 {
   "name": "ipynb2html-parent",
-  "version": "0.1.0-beta.8",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "ttsc --build",
