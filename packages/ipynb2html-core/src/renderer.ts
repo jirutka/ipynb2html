@@ -83,7 +83,7 @@ function executionCountAttrs ({ execution_count: count }: CodeCell): { [k: strin
 }
 
 function notebookLanguage ({ metadata: meta }: Notebook): string {
-  return (meta.language_info && meta.language_info.name) || 'python'
+  return meta.language_info?.name ?? 'python'
 }
 
 class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
@@ -111,9 +111,9 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
     super()
 
     this.el = elementCreator
-    this.renderMarkdown = opts.markdownRenderer || identity
-    this.renderAnsiCodes = opts.ansiCodesRenderer || escapeHTML
-    this.highlightCode = opts.codeHighlighter || escapeHTML
+    this.renderMarkdown = opts.markdownRenderer ?? identity
+    this.renderAnsiCodes = opts.ansiCodesRenderer ?? escapeHTML
+    this.highlightCode = opts.codeHighlighter ?? escapeHTML
 
     const el2 = (tag: string, classes: string[]) => (data: string) => this.el(tag, classes, data)
 
@@ -138,7 +138,7 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
       'text/plain': (data) => this.el('pre', ['text-output'], escapeHTML(data)),
       ...opts.dataRenderers,
     }
-    this.dataTypesPriority = opts.dataTypesPriority || Object.keys(this.dataRenderers)
+    this.dataTypesPriority = opts.dataTypesPriority ?? Object.keys(this.dataRenderers)
   }
 
   /**
@@ -177,7 +177,7 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
       ? this.renderSource(cell, notebook)
       : this.el('div')
 
-    const outputs = coalesceStreams(cell.outputs || [])
+    const outputs = coalesceStreams(cell.outputs ?? [])
       .map(output => this.renderOutput(output, cell))
 
     return this.el('div', ['cell', 'code-cell'], [source, ...outputs])

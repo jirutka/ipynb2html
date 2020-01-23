@@ -118,6 +118,8 @@ module.exports = {
     '@typescript-eslint/promise-function-async': ['error', {
       allowAny: true,
     }],
+    // It has too many false positives.
+    '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/semi': ['error', 'never'],
     '@typescript-eslint/strict-boolean-expressions': 'off',
   },
@@ -127,6 +129,13 @@ module.exports = {
       rules: {
         // Allow to format arrays for parametrized tests as tables.
         'array-bracket-spacing': 'off',
+        'comma-dangle': ['error', {
+          arrays: 'always-multiline',
+          objects: 'always-multiline',
+          imports: 'always-multiline',
+          exports: 'always-multiline',
+          functions: 'only-multiline',
+        }],
         'comma-spacing': 'off',
         'object-curly-spacing': 'off',
         'no-multi-spaces': 'off',

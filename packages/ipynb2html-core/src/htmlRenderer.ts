@@ -16,7 +16,7 @@ export default <TElement> (opts: Options<TElement>): DataRenderer<TElement> => {
   const { elementCreator: el, mathRenderer: renderMath } = opts
 
   return (data: string): TElement => {
-    const math = (extractMathRx.exec(data) || [])[1]
+    const math = (extractMathRx.exec(data) ?? [])[1]
     return math
       ? el('div', ['latex-output'], renderMath(math))
       : el('div', ['html-output'], data)

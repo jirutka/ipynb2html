@@ -191,7 +191,7 @@ export function extractMath (text: string): [string, MathExpression[]] {
     }
   }
   if (lastIdx) {
-    processMath(unescape, math, blocks, startIdx || 0, lastIdx)
+    processMath(unescape, math, blocks, startIdx ?? 0, lastIdx)
     startIdx = endDelim = lastIdx = null
   }
   return [unescape(blocks.join('')), math.map(parseDelimitedMath)]

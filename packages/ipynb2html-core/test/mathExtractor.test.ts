@@ -20,7 +20,7 @@ describe('.extractMath', () => {
 
         it('extracts and substitutes math expression in the given text', () => {
           expect(
-            extractMath(`Let's define ${raw}.`)
+            extractMath(`Let's define ${raw}.`),
           ).toEqual(["Let's define @@1@@.", [{ displayMode, raw, value }]])
         })
       })
@@ -31,7 +31,7 @@ describe('.extractMath', () => {
 
         it('extracts and substitutes math expression in the given text', () => {
           expect(
-            extractMath(`Let's define ${raw}.`)
+            extractMath(`Let's define ${raw}.`),
           ).toEqual(["Let's define @@1@@.", [{ displayMode, raw, value }]])
         })
       })
@@ -43,7 +43,7 @@ describe('.extractMath', () => {
 
     it('extracts and substitutes math expression in the given text', () => {
       expect(
-        extractMath(`Let's define ${raw}.`)
+        extractMath(`Let's define ${raw}.`),
       ).toEqual(["Let's define @@1@@.", [{ displayMode: true, raw, value: raw }]])
     })
   })
@@ -52,14 +52,14 @@ describe('.extractMath', () => {
 
     it('escapes @@[0-9]+@@ as @@0[0-9]+@@', () => {
       expect(
-        extractMath('This @@02@@ is not our marker')
+        extractMath('This @@02@@ is not our marker'),
       ).toEqual(['This @@002@@ is not our marker', []])
     })
   })
 
   it('ignores math delimiters inside `inline code`', () => {
     expect(
-      extractMath('`$x$` and ``$`x`$`` is a code, $x$ is not')
+      extractMath('`$x$` and ``$`x`$`` is a code, $x$ is not'),
     ).toEqual([
       '`$x$` and ``$`x`$`` is a code, @@1@@ is not',
       [{ displayMode: false, raw: '$x$', value: 'x' }],
@@ -68,7 +68,7 @@ describe('.extractMath', () => {
 
   it('ignores math delimiters inside `inline code` with line breaks', () => {
     expect(
-      extractMath('`$x\n$` and ``\n$`x`$\n`` is a code, `$x$\n\nis` not')
+      extractMath('`$x\n$` and ``\n$`x`$\n`` is a code, `$x$\n\nis` not'),
     ).toEqual([
       '`$x\n$` and ``\n$`x`$\n`` is a code, `@@1@@\n\nis` not',
       [{ displayMode: false, raw: '$x$', value: 'x' }],
@@ -135,13 +135,13 @@ describe('.restoreMath', () => {
     repl[21] = 'second'
 
     expect(
-      restoreMath("Let's define @@1@@ and @@22@@.", repl)
+      restoreMath("Let's define @@1@@ and @@22@@.", repl),
     ).toEqual("Let's define first and second.")
   })
 
   it('unescapes marker-like sequences', () => {
     expect(
-      restoreMath('This @@001@@ is not our marker, nor @@01@@, but @@1@@ is.', ['this one'])
+      restoreMath('This @@001@@ is not our marker, nor @@01@@, but @@1@@ is.', ['this one']),
     ).toEqual('This @@01@@ is not our marker, nor @@1@@, but this one is.')
   })
 })

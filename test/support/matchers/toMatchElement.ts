@@ -52,7 +52,7 @@ function clearAttributes (node: Node): void {
 export function toMatchElement (received: HTMLElement, expected: HTMLElement, opts?: Options): MatcherResult {
   received = received.cloneNode(true) as HTMLElement
 
-  if (opts && opts.ignoreAttrs) {
+  if (opts?.ignoreAttrs) {
     clearAttributes(received)
   }
   filterWildcardChildren(received, expected)
