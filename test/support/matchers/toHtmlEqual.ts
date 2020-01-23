@@ -6,7 +6,7 @@ type MatcherResult = jest.CustomMatcherResult
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
-    interface Matchers<R> {
+    interface Matchers<R, T> {
       toHtmlEqual (expected: HTMLElement | string | Array<HTMLElement | string>): R,
     }
   }

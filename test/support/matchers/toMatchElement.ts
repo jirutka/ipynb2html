@@ -10,7 +10,7 @@ type Options = {
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
-    interface Matchers<R> {
+    interface Matchers<R, T> {
       toMatchElement (expected: HTMLElement, opts?: Options): R,
     }
   }
