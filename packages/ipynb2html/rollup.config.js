@@ -1,6 +1,6 @@
 import addGitMsg from 'rollup-plugin-add-git-msg'
 import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
+import commonjs from '@rollup/plugin-commonjs'
 import license from 'rollup-plugin-node-license'
 import resolve from 'rollup-plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'

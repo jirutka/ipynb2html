@@ -1,5 +1,5 @@
 import addGitMsg from 'rollup-plugin-add-git-msg'
-import commonjs from 'rollup-plugin-commonjs'
+import commonjs from '@rollup/plugin-commonjs'
 import executable from 'rollup-plugin-executable'
 import externals from 'rollup-plugin-node-externals'
 import license from 'rollup-plugin-node-license'
