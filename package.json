@@ -23,7 +23,7 @@
     "@types/highlightjs": "^9.12.0",
     "@types/jest": "^24.0.18",
     "@types/katex": "^0.11.0",
-    "@types/marked": "^0.6.5",
+    "@types/marked": "^0.7.2",
     "@types/node": "^10.13.0",
     "@typescript-eslint/eslint-plugin": "^2.4.0",
     "@typescript-eslint/parser": "^2.4.0",
