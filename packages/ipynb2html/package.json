@@ -44,9 +44,9 @@
   },
   "dependencies": {
     "anser": "^1.4.9",
-    "highlightjs": "^9.12.0",
+    "highlightjs": "^9.16.2",
     "ipynb2html-core": "0.1.0-beta.8",
-    "katex": "^0.11.0",
+    "katex": "^0.11.1",
     "marked": "^0.7.0"
   },
   "peerDependencies": {
