@@ -3,16 +3,14 @@ import marked from 'marked'
 import { Notebook } from 'ipynb2html-core'
 
 
-class EmptyRenderer extends marked.Renderer {
+class EmptyRenderer extends marked.Renderer {}
 
-  constructor (options?: marked.MarkedOptions) {
-    super(options)
-
-    for (const prop in this) {
-      if (this[prop] instanceof Function) {
-        (this as any)[prop] = () => ''
-      }
-    }
+// Override all the EmptyRenderer's methods inherited from marked.Renderer to
+// always return an empty string.
+const RendererProto: any = marked.Renderer.prototype
+for (const prop of Object.getOwnPropertyNames(RendererProto)) {
+  if (prop !== 'constructor' && typeof RendererProto[prop] === 'function') {
+    ;(EmptyRenderer.prototype as any)[prop] = () => ''
   }
 }
 
