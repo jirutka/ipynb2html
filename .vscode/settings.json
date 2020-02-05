@@ -8,6 +8,11 @@
     "typescript"
   ],
 
+  "files.associations": {
+    // XXX: PostCSS extension doesn't provide as nice autocompletion as
+    // VSCode's native CSS support. But this doesn't understand nested rules...
+    "*.pcss": "css",
+  },
   "files.encoding": "utf8",
   "files.eol": "\n",
   "files.exclude": {

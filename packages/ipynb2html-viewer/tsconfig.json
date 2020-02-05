@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsxFactory": "h",
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "tsBuildInfoFile": "./.tsbuildinfo",
+    "baseUrl": ".",
+  },
+  "include": [
+    "./src",
+  ],
+  "references": [
+    { "path": "../ipynb2html" },
+  ],
+}

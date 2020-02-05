@@ -1,0 +1,57 @@
+{
+  "name": "ipynb2html-viewer",
+  "version": "0.0.0",
+  "description": "Web viewer of Jupyter Notebooks",
+  "author": "Jakub Jirutka <jakub@jirutka.cz>",
+  "license": "MIT",
+  "homepage": "https://github.com/jirutka/ipynb2html",
+  "bugs": "https://github.com/jirutka/ipynb2html/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jirutka/ipynb2html.git"
+  },
+  "keywords": [
+    "browser",
+    "converter",
+    "ipython",
+    "jupyter",
+    "notebook",
+    "webapp"
+  ],
+  "main": "lib/index.js",
+  "browser": "dist/ipynb-viewer.min.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "src",
+    "index.html"
+  ],
+  "scripts": {
+    "build": "run-p build-bundle build-css",
+    "build-bundle": "rollup -c",
+    "build-css": "run-p build-css:*",
+    "build-css:dev": "postcss src/view.pcss -o dist/ipynb-viewer.css",
+    "build-css:prod": "NODE_ENV=production postcss src/view.pcss -o dist/ipynb-viewer.min.css",
+    "build-ts": "ttsc --build",
+    "bundle": "run-s build",
+    "clean": "rimraf coverage/ dist/ lib/ .eslintcache .tsbuildinfo",
+    "lint": "PKGDIR=$PWD; cd ../../ && eslint --cache --ext .ts,.tsx,.js $PKGDIR",
+    "prepublishOnly": "run-s readme2md",
+    "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",
+    "watch": "run-p watch-bundle watch-css",
+    "watch-bundle": "rollup -c --watch",
+    "watch-css": "postcss src/view.pcss -o dist/ipynb-viewer.css --watch",
+    "watch-ts": "tssc --build --watch"
+  },
+  "dependencies": {
+    "@hyperapp/events": "^0.0.4",
+    "hyperapp": "^2.0.4",
+    "ipynb2html": "0.3.0"
+  },
+  "browserslist": [
+    ">0.5%",
+    "Firefox ESR",
+    "not dead"
+  ]
+}
