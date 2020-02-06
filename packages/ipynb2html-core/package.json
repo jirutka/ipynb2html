@@ -24,10 +24,11 @@
     "src"
   ],
   "scripts": {
+    "build": "run-s build-ts",
     "build-ts": "ttsc --build",
     "clean": "rimraf coverage/ lib/ .eslintcache .tsbuildinfo",
     "lint": "PKGDIR=$PWD; cd ../../ && eslint --cache --ext .ts,.tsx,.js $PKGDIR",
-    "prepublishOnly": "run-s readme2md",
+    "prepublishOnly": "run-p build readme2md",
     "test": "jest --detectOpenHandles --coverage --verbose",
     "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",
     "watch-ts": "ttsc --build --watch"

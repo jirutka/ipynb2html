@@ -29,11 +29,14 @@
     "src"
   ],
   "scripts": {
+    "build": "run-p build-except-ts build-ts",
+    "build-bundle": "rollup -c",
+    "build-except-ts": "run-s build-bundle",
     "build-ts": "ttsc --build",
-    "bundle": "rollup -c && ./scripts/pack-bundle",
     "clean": "rimraf coverage/ dist/ lib/ .eslintcache .tsbuildinfo",
     "lint": "PKGDIR=$PWD; cd ../../ && eslint --cache --ext .ts,.tsx,.js $PKGDIR",
-    "prepublishOnly": "run-s readme2md",
+    "pack-bundle": "./scripts/pack-bundle",
+    "prepublishOnly": "run-s build readme2md pack-bundle",
     "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",
     "watch-ts": "ttsc --build --watch"
   },
