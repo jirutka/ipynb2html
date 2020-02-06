@@ -101,6 +101,7 @@ module.exports = {
     }],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-namespace': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/no-require-imports': 'error',
     // Disabled in favour of the next rule.
     '@typescript-eslint/no-unused-vars': 'off',
@@ -144,7 +145,6 @@ module.exports = {
         'space-in-parens': 'off',
         // jest.mock() must be above imports.
         'import/first': 'off',
-        '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
   ],
