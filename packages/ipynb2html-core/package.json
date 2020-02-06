@@ -26,7 +26,7 @@
   "scripts": {
     "build": "ttsc --build",
     "clean": "rimraf coverage/ lib/ .tsbuildinfo",
-    "lint": "eslint --ext .ts,.tsx,.js .",
+    "lint": "PKGDIR=$PWD; cd ../../ && eslint --ext .ts,.tsx,.js $PKGDIR",
     "prepublishOnly": "run-s readme2md",
     "test": "jest --detectOpenHandles --coverage --verbose",
     "readme2md": "../../scripts/adoc2md -a npm-readme ../../README.adoc > README.md",

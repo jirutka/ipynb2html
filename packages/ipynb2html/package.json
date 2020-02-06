@@ -32,7 +32,7 @@
     "build": "ttsc --build",
     "bundle": "rollup -c",
     "clean": "rimraf coverage/ dist/ lib/ .tsbuildinfo",
-    "lint": "eslint --ext .ts,.tsx,.js .",
+    "lint": "PKGDIR=$PWD; cd ../../ && eslint --ext .ts,.tsx,.js $PKGDIR",
     "minify-css": "csso styles/notebook.css -o dist/notebook.min.css -s dist/notebook.min.css.map",
     "prepublishOnly": "run-p bundle minify-css readme2md",
     "test": "jest --detectOpenHandles --coverage --verbose",
