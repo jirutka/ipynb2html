@@ -102,9 +102,9 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-namespace': 'warn',
     '@typescript-eslint/no-require-imports': 'error',
-    '@typescript-eslint/no-unused-vars': ['error', {
-      argsIgnorePattern: '^_',
-    }],
+    // Disabled in favour of the next rule.
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars-experimental': 'error',
     '@typescript-eslint/no-use-before-define': ['error', {
       classes: true,
       functions: false,
