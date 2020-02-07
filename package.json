@@ -5,8 +5,8 @@
   "scripts": {
     "build": "ttsc --build",
     "bundle": "wsrun --exclude-missing bundle",
-    "clean": "rimraf coverage/ dist/ lib/ *.log && wsrun clean",
-    "lint": "eslint --ext .ts,.tsx,.js .",
+    "clean": "rimraf coverage/ dist/ lib/ .eslintcache *.log && wsrun clean",
+    "lint": "eslint --cache --ext .ts,.tsx,.js .",
     "postinstall": "patch-package && run-s build",
     "publish-all": "wsrun --serial publish",
     "test": "jest --detectOpenHandles --coverage --verbose",
