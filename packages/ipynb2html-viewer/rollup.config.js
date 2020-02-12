@@ -4,6 +4,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import conditional from 'rollup-plugin-conditional'
 import license from 'rollup-plugin-node-license'
 import livereload from 'rollup-plugin-livereload'
+import postcss from 'rollup-plugin-postcss'
 import resolve from '@rollup/plugin-node-resolve'
 import serve from 'rollup-plugin-serve'
 import { terser } from 'rollup-plugin-terser'
@@ -15,7 +16,9 @@ import pkg from './package.json'
 
 const isProductionBuild = process.env.NODE_ENV === 'production'
 const isWatchBuild = !!process.env.ROLLUP_WATCH
+const destDir = './dist'
 const extensions = ['.mjs', '.js', '.ts']
+
 
 export default {
   input: 'src/index.ts',
@@ -60,6 +63,13 @@ export default {
         ],
       ],
     }),
+    // Convert PostCSS styles to CSS.
+    postcss({
+      autoModules: false,
+      extract: true,
+      sourceMap: true,
+      minimize: isProductionBuild,
+    }),
     conditional(!isWatchBuild, [
       // Add git tag, commit SHA and build date at top of the file.
       addGitMsg({
@@ -90,9 +100,11 @@ export default {
     'ipynb2html',
   ],
   output: {
-    name: 'init',
-    file: `dist/ipynb-viewer${isProductionBuild ? '.min' : ''}.js`,
+    dir: destDir,
+    entryFileNames: `ipynb-viewer${isProductionBuild ? '.min' : ''}.js`,
+    assetFileNames: `ipynb-viewer${isProductionBuild ? '.min' : ''}.[ext]`,
     format: 'umd',
+    name: 'init',
     sourcemap: true,
     globals: {
       ipynb2html: 'ipynb2html',

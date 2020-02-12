@@ -8,6 +8,8 @@ import * as actions from './actions'
 import { State, ErrorMessage } from './types'
 import { match, targetFile } from './utils'
 
+import './view.pcss'
+
 
 const { homepage } = $INLINE_JSON<{ homepage: string }>('../package.json')
 const renderNotebook = ipynb2html.createRenderer(document)
