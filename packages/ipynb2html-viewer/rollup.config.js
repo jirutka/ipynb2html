@@ -2,6 +2,7 @@ import addGitMsg from 'rollup-plugin-add-git-msg'
 import babel from '@rollup/plugin-babel'
 import commonjs from '@rollup/plugin-commonjs'
 import conditional from 'rollup-plugin-conditional'
+import html from '@rollup/plugin-html'
 import license from 'rollup-plugin-node-license'
 import livereload from 'rollup-plugin-livereload'
 import postcss from 'rollup-plugin-postcss'
@@ -11,6 +12,7 @@ import { terser } from 'rollup-plugin-terser'
 import ttypescript from 'ttypescript'
 import typescript from 'rollup-plugin-typescript2'
 
+import indexTemplate from './index-html'
 import pkg from './package.json'
 
 
@@ -70,6 +72,10 @@ export default {
       sourceMap: true,
       minimize: isProductionBuild,
     }),
+    // Generate index.html from the template.
+    html({
+      template: indexTemplate,
+    }),
     conditional(!isWatchBuild, [
       // Add git tag, commit SHA and build date at top of the file.
       addGitMsg({
@@ -91,8 +97,11 @@ export default {
         },
       }),
     ]),
+    // Use only when running in watch mode...
     conditional(isWatchBuild, () => [
-      serve(),
+      serve({
+        contentBase: destDir,
+      }),
       livereload(),
     ]),
   ],
