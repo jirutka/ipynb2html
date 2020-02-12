@@ -26,7 +26,7 @@ jobs:
       - run: yarn test
       - run: yarn lint
 
-  publish:
+  publish-release:
     name: Publish to npmjs and GitHub Releases
     needs: [test]
     if: startsWith(github.ref, 'refs/tags/v')
@@ -66,3 +66,26 @@ jobs:
             dist/*.tar.gz
             packages/ipynb2html-cli/dist/*.tar.gz
             packages/ipynb2html-cli/dist/*.zip
+
+  deploy-viewer:
+    name: Build and deploy viewer to ipynb.js.org
+    needs: [test]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # fetch all history to make `git describe` work
+
+      - run: yarn install
+
+      - name: Build ipynb-viewer
+        run: BUILD_DESTDIR=$(pwd)/site yarn workspace ipynb2html-viewer build-site
+
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: site
+          CLEAN: true
