@@ -29,7 +29,9 @@
   ],
   "scripts": {
     "build": "run-s build-except-ts",
-    "build-bundle": "rollup -c",
+    "build-bundle": "run-p build-bundle:*",
+    "build-bundle:dev": "rollup -c",
+    "build-bundle:prod": "NODE_ENV=production rollup -c",
     "build-css": "run-p build-css:*",
     "build-css:dev": "postcss src/view.pcss -o dist/ipynb-viewer.css",
     "build-css:prod": "NODE_ENV=production postcss src/view.pcss -o dist/ipynb-viewer.min.css",

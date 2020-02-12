@@ -13,6 +13,8 @@ import typescript from 'rollup-plugin-typescript2'
 import pkg from './package.json'
 
 
+const isProductionBuild = process.env.NODE_ENV === 'production'
+const isWatchBuild = !!process.env.ROLLUP_WATCH
 const extensions = ['.mjs', '.js', '.ts']
 
 export default {
@@ -58,17 +60,28 @@ export default {
         ],
       ],
     }),
-    // Add git tag, commit SHA and build date at top of the file.
-    addGitMsg({
-      copyright: [
-        pkg.author,
-        '* This project is licensed under the terms of the MIT license.'
-      ].join('\n'),
-    }),
-    // Generate table of the bundled packages at top of the file.
-    license({ format: 'table' }),
-    // Use only when running in watch mode...
-    conditional(process.env.ROLLUP_WATCH, () => [
+    conditional(!isWatchBuild, [
+      // Add git tag, commit SHA and build date at top of the file.
+      addGitMsg({
+        copyright: [
+          pkg.author,
+          '* This project is licensed under the terms of the MIT license.'
+        ].join('\n'),
+      }),
+      // Generate table of the bundled packages at top of the file.
+      license({ format: 'table' }),
+    ]),
+    conditional(isProductionBuild, [
+      // Minify JS.
+      terser({
+        ecma: 5,
+        output: {
+          // Preserve comment injected by addGitMsg and license.
+          comments: RegExp(`(?:\\$\\{${pkg.name}\\}|Bundled npm packages)`),
+        },
+      }),
+    ]),
+    conditional(isWatchBuild, () => [
       serve(),
       livereload(),
     ]),
@@ -76,23 +89,13 @@ export default {
   external: [
     'ipynb2html',
   ],
-  output: [false, true].map(minify => ({
+  output: {
     name: 'init',
-    file: `dist/ipynb-viewer${minify ? '.min.js' : '.js'}`,
+    file: `dist/ipynb-viewer${isProductionBuild ? '.min' : ''}.js`,
     format: 'umd',
     sourcemap: true,
     globals: {
       ipynb2html: 'ipynb2html',
     },
-    plugins: [
-      // Minify JS when building .min.js file and *not* running in watch mode.
-      !process.env.ROLLUP_WATCH && minify && terser({
-        ecma: 5,
-        output: {
-          // Preserve comment injected by addGitMsg and license.
-          comments: RegExp(`(?:\\$\\{${pkg.name}\\}|Bundled npm packages)`),
-        },
-      }),
-    ].filter(Boolean),
-  })),
+  },
 }
