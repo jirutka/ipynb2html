@@ -16,9 +16,17 @@ import indexTemplate from './index-html'
 import pkg from './package.json'
 
 
-const isProductionBuild = process.env.NODE_ENV === 'production'
-const isWatchBuild = !!process.env.ROLLUP_WATCH
-const destDir = './dist'
+const flags = (process.env.BUILD_FLAGS || '').split(',').reduce((obj, flag) => {
+  obj[flag] = true
+  return obj
+}, {})
+flags.watch = !!process.env.ROLLUP_WATCH
+
+const assetInfix =
+  flags.hash ? '.[hash]' :
+  flags.minify ? '.min' :
+  ''
+const destDir = process.env.BUILD_DESTDIR || './dist'
 const extensions = ['.mjs', '.js', '.ts']
 
 
@@ -70,13 +78,13 @@ export default {
       autoModules: false,
       extract: true,
       sourceMap: true,
-      minimize: isProductionBuild,
+      minimize: !!flags.minify,
     }),
     // Generate index.html from the template.
     html({
       template: indexTemplate,
     }),
-    conditional(!isWatchBuild, [
+    conditional(!flags.watch, [
       // Add git tag, commit SHA and build date at top of the file.
       addGitMsg({
         copyright: [
@@ -87,7 +95,7 @@ export default {
       // Generate table of the bundled packages at top of the file.
       license({ format: 'table' }),
     ]),
-    conditional(isProductionBuild, [
+    conditional(flags.minify, [
       // Minify JS.
       terser({
         ecma: 5,
@@ -98,7 +106,7 @@ export default {
       }),
     ]),
     // Use only when running in watch mode...
-    conditional(isWatchBuild, () => [
+    conditional(flags.watch, () => [
       serve({
         contentBase: destDir,
       }),
@@ -110,8 +118,8 @@ export default {
   ],
   output: {
     dir: destDir,
-    entryFileNames: `ipynb-viewer${isProductionBuild ? '.min' : ''}.js`,
-    assetFileNames: `ipynb-viewer${isProductionBuild ? '.min' : ''}.[ext]`,
+    entryFileNames: `ipynb-viewer${assetInfix}.js`,
+    assetFileNames: `ipynb-viewer${assetInfix}.[ext]`,
     format: 'umd',
     name: 'init',
     sourcemap: true,
