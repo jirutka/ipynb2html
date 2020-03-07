@@ -2,8 +2,10 @@ dist: bionic
 
 language: node_js
 node_js:
-  - '10'
+  - '13'
   - '12'
+  - '10'
+  - lts/*
   - node
 
 addons:
