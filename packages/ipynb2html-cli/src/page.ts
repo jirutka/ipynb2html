@@ -1,3 +1,4 @@
+import { version } from 'ipynb2html'
 import { $INLINE_FILE } from 'ts-transformer-inline-file'
 
 const notebookCss = $INLINE_FILE('../../ipynb2html/styles/notebook.css')
@@ -10,6 +11,7 @@ export default (contents: string, title: string): string => `\
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1">
+    <meta name="generator" content="ipynb2html ${version}">
     <title>${title}</title>
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/default.min.css"
