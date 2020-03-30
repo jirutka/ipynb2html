@@ -18,8 +18,8 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      // Use eslint-import-resolver-ts to obey "paths" in tsconfig.json.
-      ts: {
+      // Use eslint-import-resolver-typescript to obey "paths" in tsconfig.json.
+      typescript: {
         directory: tsconfigs,
       },
     },
