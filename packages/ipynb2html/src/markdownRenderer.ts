@@ -1,9 +1,26 @@
 import hljs from 'highlightjs'
 import katex, { KatexOptions } from 'katex'
-import marked, { MarkedOptions } from 'marked'
+import marked, { Slugger } from 'marked'
 
 import { mathExtractor } from 'ipynb2html-core'
 
+
+export interface MarkedOptions extends marked.MarkedOptions {
+  /** Generate heading anchors (this implies headingIds). */
+  headerAnchors?: boolean,
+}
+
+class Renderer extends marked.Renderer {
+
+  heading (text: string, level: 1 | 2 | 3 | 4 | 5 | 6, raw: string, slugger: Slugger): string {
+    if ((this.options as MarkedOptions).headerAnchors) {
+      const id = (this.options.headerPrefix ?? '') + slugger.slug(raw)
+      return `<h${level} id="${id}"><a class="anchor" href="#${id}" aria-hidden="true"></a>${text}</h${level}>`
+    } else {
+      return super.heading(text, level, raw, slugger)
+    }
+  }
+}
 
 function highlight (code: string, lang: string): string {
   return hljs.getLanguage(lang)
@@ -31,6 +48,8 @@ const rendererWithMath = (markedOpts: MarkedOptions, katexOpts: KatexOptions) =>
  * @param {KatexOptions} katexOpts Options for the KaTeX math renderer.
  */
 export default (markedOpts: MarkedOptions = {}, katexOpts: KatexOptions = {}) => {
+
+  markedOpts = { renderer: new Renderer(markedOpts), ...markedOpts }
   if (hljs) {  // highlightjs may be an optional dependency (in browser bundle)
     markedOpts = { highlight, ...markedOpts }
   }

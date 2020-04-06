@@ -13,6 +13,29 @@ pre {
 
 h1, h2, h3, h4, h5, h6 {
   margin-top: 1.6em;
+  position: relative;
+}
+
+h1 .anchor,
+h2 .anchor,
+h3 .anchor,
+h4 .anchor,
+h5 .anchor,
+h6 .anchor {
+  display: block;
+  width: 1em;
+  left: -1em;
+  height: 100%;
+  position: absolute;
+}
+
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Cg fill='none' stroke='%23000' stroke-width='3'%3E%3Cpath d='M26.1 22a5.8 5.8 0 00-8.1 0l-9.6 9.5a5.8 5.8 0 008.2 8.2l5.8-5.9'/%3E%3Cpath d='M23.6 28a5.8 5.8 0 008.2 0l9.5-9.5a5.8 5.8 0 00-8.1-8.2l-5.8 5.9'/%3E%3C/g%3E%3C/svg%3E") no-repeat 100% center;
 }
 
 table {

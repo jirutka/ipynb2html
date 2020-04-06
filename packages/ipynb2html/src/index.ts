@@ -1,7 +1,7 @@
 import anser from 'anser'
 import hljs from 'highlightjs'
 import katex, { KatexOptions } from 'katex'
-import marked, { MarkedOptions } from 'marked'
+import marked from 'marked'
 
 import {
   createElementCreator,
@@ -12,7 +12,7 @@ import {
   Notebook,
 } from 'ipynb2html-core'
 
-import buildMarkdownRenderer from './markdownRenderer'
+import buildMarkdownRenderer, { MarkedOptions } from './markdownRenderer'
 
 
 export { default as version } from './version'
@@ -48,6 +48,10 @@ type MinimalDocument<TElement extends MinimalElement> = {
 const defaultKatexOpts: KatexOptions = {
   displayMode: true,
   throwOnError: false,
+}
+
+const defaultMarkedOpts: MarkedOptions = {
+  headerAnchors: true,
 }
 
 function hljsCodeHighlighter (code: string, lang: string): string {
@@ -115,7 +119,8 @@ export function createRenderer <TElement extends MinimalElement> (
     codeHighlighter = hljsCodeHighlighter
   }
   if (!markdownRenderer && marked) {
-    markdownRenderer = buildMarkdownRenderer(opts.markedOpts, katexOpts)
+    const markedOpts = { ...defaultMarkedOpts, ...opts.markedOpts }
+    markdownRenderer = buildMarkdownRenderer(markedOpts, katexOpts)
   }
   if (!dataRenderers['text/html'] && katex) {
     const mathRenderer = (tex: string) => katex.renderToString(tex, katexOpts)
