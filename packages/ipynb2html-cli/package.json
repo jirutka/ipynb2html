@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "ipynb2html": "0.1.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "minimist-options": "^4.0.2",
     "nodom": "^2.3.0",
     "source-map-support": "^0.5.16"
