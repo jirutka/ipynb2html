@@ -115,11 +115,7 @@ export function createRenderer <TElement extends MinimalElement> (
     codeHighlighter = hljsCodeHighlighter
   }
   if (!markdownRenderer && marked) {
-    if (katex) {
-      markdownRenderer = buildMarkdownRenderer(opts.markedOpts, katexOpts)
-    } else {
-      markdownRenderer = (text) => marked.parse(text, opts.markedOpts)
-    }
+    markdownRenderer = buildMarkdownRenderer(opts.markedOpts, katexOpts)
   }
   if (!dataRenderers['text/html'] && katex) {
     const mathRenderer = (tex: string) => katex.renderToString(tex, katexOpts)
