@@ -18,25 +18,33 @@ declare global {
 
 export const AnythingNode = new class extends Node {
   render () { return '<!--Anything-->' }
+  toString () { return this.render() }
 }()
 
 export const Anything = () => AnythingNode
 
+function isWritable (obj: any, prop: string): boolean {
+  const desc = Object.getOwnPropertyDescriptor(obj, prop)
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  return !!desc?.writable || !!desc?.set
+}
+
 function filterWildcardChildren (rec: Node, exp: Node): void {
   if (exp.firstChild === AnythingNode
-      && exp.children.length === 1
-      && rec instanceof HTMLElement
-      && rec.innerHTML
+      && exp.childNodes.length === 1
+      && (rec as HTMLElement).innerHTML
   ) {
-    rec.innerHTML = ''
-    rec.children.splice(0, rec.children.length, AnythingNode)
+    if (isWritable(rec, 'innerHTML')) {
+      ;(rec as HTMLElement).innerHTML = ''
+    }
+    rec.childNodes.splice(0, rec.childNodes.length, AnythingNode)
     return
   }
-  for (let i = 0; i < exp.children.length && i < rec.children.length; i++) {
-    if (exp.children[i] === AnythingNode) {
-      rec.children[i] = AnythingNode
+  for (let i = 0; i < exp.childNodes.length && i < rec.childNodes.length; i++) {
+    if (exp.childNodes[i] === AnythingNode) {
+      rec.childNodes[i] = AnythingNode
     } else {
-      filterWildcardChildren(rec.children[i], exp.children[i])
+      filterWildcardChildren(rec.childNodes[i], exp.childNodes[i])
     }
   }
 }
@@ -46,11 +54,13 @@ function clearAttributes (node: Node): void {
     node.attributes = {}
     node.className = ''
   }
-  node.children.forEach(clearAttributes)
+  node.childNodes.forEach(clearAttributes)
 }
 
 export function toMatchElement (received: HTMLElement, expected: HTMLElement, opts?: Options): MatcherResult {
-  received = received.cloneNode(true) as HTMLElement
+  if (received.cloneNode) {
+    received = received.cloneNode(true) as HTMLElement
+  }
 
   if (opts?.ignoreAttrs) {
     clearAttributes(received)
