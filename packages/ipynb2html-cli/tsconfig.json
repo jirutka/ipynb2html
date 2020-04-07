@@ -5,10 +5,6 @@
     "outDir": "./lib",
     "tsBuildInfoFile": "./.tsbuildinfo",
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["../../*"],
-    },
   },
   "include": [
     "./src",

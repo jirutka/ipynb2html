@@ -63,7 +63,7 @@ module.exports = {
   globals: {
     'ts-jest': {
       compiler: 'ttypescript',
-      tsConfig: '<rootDir>/tsconfig.json',
+      tsConfig: '<rootDir>/test/tsconfig.json',
     },
   },
 

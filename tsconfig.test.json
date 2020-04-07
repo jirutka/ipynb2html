@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "composite": false,
+    "noEmit": true,
+    "paths": {
+      // These paths are relative from baseUrl which is defined in
+      // tsconfig.json that includes this file inside each project.
+      "@/*": ["../src/*"],
+      "~/*": ["../../../*"],
+    },
+  },
+}

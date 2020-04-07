@@ -1,4 +1,6 @@
 const tsconfigs = [
+  'tsconfig.json',
+  '*/tsconfig.json',
   'packages/*/tsconfig.json',
   'packages/*/test/tsconfig.json',
 ]
