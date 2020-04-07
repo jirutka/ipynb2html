@@ -204,6 +204,6 @@ export function extractMath (text: string): [string, MathExpression[]] {
  */
 export function restoreMath (text: string, math: string[]): string {
   return text
-    .replace(/@@([1-9][0-9]*)@@/g, (_, n) => math[Number(n) - 1])
+    .replace(/@@([1-9][0-9]*)@@/g, (_, n) => math[Number(n) - 1] ?? '')
     .replace(/@@0(\d+)@@/g, (_, n) => `@@${n}@@`)
 }

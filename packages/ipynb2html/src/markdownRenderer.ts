@@ -10,15 +10,31 @@ export interface MarkedOptions extends marked.MarkedOptions {
   headerAnchors?: boolean,
 }
 
+// Removes math markers from the given string.
+const stripMath = (text: string) => mathExtractor.restoreMath(text, []).trim()
+
 class Renderer extends marked.Renderer {
 
   heading (text: string, level: 1 | 2 | 3 | 4 | 5 | 6, raw: string, slugger: Slugger): string {
-    if ((this.options as MarkedOptions).headerAnchors) {
-      const id = (this.options.headerPrefix ?? '') + slugger.slug(raw)
-      return `<h${level} id="${id}"><a class="anchor" href="#${id}" aria-hidden="true"></a>${text}</h${level}>`
-    } else {
+    const opts = this.options as MarkedOptions
+
+    if (!opts.headerIds && !opts.headerAnchors) {
       return super.heading(text, level, raw, slugger)
     }
+    const id = (opts.headerPrefix ?? '') + slugger.slug(stripMath(raw))
+
+    if (opts.headerAnchors) {
+      text = `<a class="anchor" href="#${id}" aria-hidden="true"></a>${text}`
+    }
+    return `<h${level} id="${id}">${text}</h${level}>`
+  }
+
+  link (href: string | null, title: string | null, text: string): string {
+    return super.link(href && stripMath(href), title && stripMath(title), text)
+  }
+
+  image (href: string | null, title: string | null, text: string): string {
+    return super.image(href && stripMath(href), title && stripMath(title), stripMath(text))
   }
 }
 
