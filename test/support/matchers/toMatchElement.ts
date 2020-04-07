@@ -36,7 +36,7 @@ function filterWildcardChildren (rec: Node, exp: Node): void {
     if (exp.children[i] === AnythingNode) {
       rec.children[i] = AnythingNode
     } else {
-      filterWildcardChildren(exp.children[i], rec.children[i])
+      filterWildcardChildren(rec.children[i], exp.children[i])
     }
   }
 }
