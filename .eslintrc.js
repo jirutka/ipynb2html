@@ -66,6 +66,10 @@ module.exports = {
     'import/no-duplicates': 'off',
     // Some packages has it wrong in type declarations (e.g. katex, marked).
     'import/no-named-as-default-member': 'off',
+    'import/order': ['warn', {
+      'groups': [['builtin', 'external']],
+      'newlines-between': 'always-and-inside-groups',
+    }],
 
     // TypeScript
     '@typescript-eslint/consistent-type-definitions': 'off',

@@ -1,6 +1,6 @@
-import readNotebookTitle from '@/readNotebookTitle'
-
 import { Notebook, CellType, MarkdownCell } from 'ipynb2html-core'
+
+import readNotebookTitle from '@/readNotebookTitle'
 
 
 const markdownCell = (source: string | string[]): MarkdownCell => ({
