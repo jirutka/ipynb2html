@@ -129,6 +129,9 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/semi': ['error', 'never'],
     '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/unbound-method': ['warn', {
+      ignoreStatic: true,
+    }],
   },
   overrides: [
     {
