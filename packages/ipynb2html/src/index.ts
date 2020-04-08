@@ -52,6 +52,7 @@ const defaultKatexOpts: KatexOptions = {
 
 const defaultMarkedOpts: MarkedOptions = {
   headerAnchors: true,
+  headerIdsStripAccents: true,
 }
 
 function hljsCodeHighlighter (code: string, lang: string): string {

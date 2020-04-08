@@ -8,7 +8,11 @@ import { mathExtractor } from 'ipynb2html-core'
 export interface MarkedOptions extends marked.MarkedOptions {
   /** Generate heading anchors (this implies headingIds). */
   headerAnchors?: boolean,
+  headerIdsStripAccents?: boolean,
 }
+
+// Removes accents from the given string.
+const stripAccents = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
 // Removes math markers from the given string.
 const stripMath = (text: string) => mathExtractor.restoreMath(text, []).trim()
@@ -21,7 +25,11 @@ class Renderer extends marked.Renderer {
     if (!opts.headerIds && !opts.headerAnchors) {
       return super.heading(text, level, raw, slugger)
     }
-    const id = (opts.headerPrefix ?? '') + slugger.slug(stripMath(raw))
+
+    let id = (opts.headerPrefix ?? '') + slugger.slug(stripMath(raw))
+    if (opts.headerIdsStripAccents) {
+      id = stripAccents(id)
+    }
 
     if (opts.headerAnchors) {
       text = `<a class="anchor" href="#${id}" aria-hidden="true"></a>${text}`

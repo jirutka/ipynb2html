@@ -69,6 +69,20 @@ describe('headings', () => {
       )
     })
   })
+
+  describe('when headerIdsStripAccents is true', () => {
+    beforeEach(() => {
+      markedOpts = { headerIdsStripAccents: true }
+    })
+
+    it('strips accents in generated id', () => {
+      expect( render('## Příliš žluťoučký kůň') ).toHtmlEqual(
+        <h2 id="prilis-zlutoucky-kun">
+          Příliš žluťoučký kůň
+        </h2>
+      )
+    })
+  })
 })
 
 
