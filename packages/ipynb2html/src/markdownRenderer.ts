@@ -1,4 +1,4 @@
-import hljs from 'highlightjs'
+import hljs from 'highlight.js'
 import katex, { KatexOptions } from 'katex'
 import marked, { Slugger } from 'marked'
 
@@ -74,7 +74,7 @@ const rendererWithMath = (markedOpts: MarkedOptions, katexOpts: KatexOptions) =>
 export default (markedOpts: MarkedOptions = {}, katexOpts: KatexOptions = {}) => {
 
   markedOpts = { renderer: new Renderer(markedOpts), ...markedOpts }
-  if (hljs) {  // highlightjs may be an optional dependency (in browser bundle)
+  if (hljs) {  // highlight.js may be an optional dependency (in browser bundle)
     markedOpts = { highlight, ...markedOpts }
   }
 

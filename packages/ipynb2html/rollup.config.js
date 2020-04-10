@@ -13,10 +13,10 @@ import pkg from './package.json'
 const extensions = ['.mjs', '.js', '.ts']
 
 const globals = {
-  anser: 'anser',
-  highlightjs: 'hljs',
-  katex: 'katex',
-  marked: 'marked',
+  'anser': 'anser',
+  'highlight.js': 'hljs',
+  'katex': 'katex',
+  'marked': 'marked',
 }
 
 const plugins = [
