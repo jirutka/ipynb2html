@@ -1,6 +1,6 @@
 {
   "name": "ipynb2html-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "CLI tool for converting Jupyter Notebooks to static HTML",
   "author": "Jakub Jirutka <jakub@jirutka.cz>",
   "license": "MIT",
@@ -41,7 +41,7 @@
     "node": ">=10.13.0"
   },
   "dependencies": {
-    "ipynb2html": "0.2.0",
+    "ipynb2html": "0.2.1",
     "minimist": "^1.2.5",
     "minimist-options": "^4.0.2",
     "nodom": "^2.3.0",
