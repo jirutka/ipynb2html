@@ -1,11 +1,13 @@
 import { version } from 'ipynb2html'
-import { $INLINE_FILE } from 'ts-transformer-inline-file'
-
-const notebookCss = $INLINE_FILE('../../ipynb2html/styles/notebook.css')
-const pageCss = $INLINE_FILE('./page.css')
 
 
-export default (contents: string, title: string): string => `\
+export type Options = {
+  contents: string,
+  title: string,
+  style: string,
+}
+
+export default ({ contents, title, style }: Options): string => `\
 <!DOCTYPE html>
 <html>
   <head>
@@ -22,7 +24,7 @@ export default (contents: string, title: string): string => `\
         integrity="sha384-BdGj8xC2eZkQaxoQ8nSLefg4AV4/AwB3Fj+8SUSo7pnKP6Eoy18liIKTPn9oBYNG"
         crossorigin="anonymous">
     <style>
-${(pageCss + notebookCss).slice(0, -1).replace(/\n\n/g, '\n').replace(/^/gm, '      ')}
+${style.replace(/\n\n/g, '\n').replace(/\n$/, '').replace(/^/gm, '      ')}
     </style>
   </head>
   <body>
