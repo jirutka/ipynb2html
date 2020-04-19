@@ -165,11 +165,11 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
   }
 
   renderMarkdownCell (cell: MarkdownCell, _notebook: Notebook): TElement {
-    return this.el('div', ['cell', 'markdown-cell'], this.renderMarkdown(joinText(cell.source)))
+    return this.el('section', ['cell', 'markdown-cell'], this.renderMarkdown(joinText(cell.source)))
   }
 
   renderRawCell (cell: RawCell, _notebook: Notebook): TElement {
-    return this.el('div', ['cell', 'raw-cell'], joinText(cell.source))
+    return this.el('section', ['cell', 'raw-cell'], joinText(cell.source))
   }
 
   renderCodeCell (cell: CodeCell, notebook: Notebook): TElement {
@@ -180,7 +180,7 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
     const outputs = coalesceStreams(cell.outputs ?? [])
       .map(output => this.renderOutput(output, cell))
 
-    return this.el('div', ['cell', 'code-cell'], [source, ...outputs])
+    return this.el('section', ['cell', 'code-cell'], [source, ...outputs])
   }
 
   renderSource (cell: CodeCell, notebook: Notebook): TElement {

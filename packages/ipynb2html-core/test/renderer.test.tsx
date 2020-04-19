@@ -102,11 +102,11 @@ describe('built renderer', () => {
     eachMultilineVariant(fixtures.MarkdownCell, 'source', (cell) => {
       const source = join(cell.source)
 
-      it('returns div.cell.markdown-cell with the $source converted using markdownRenderer() as content', () => {
+      it('returns section.cell.markdown-cell with the $source converted using markdownRenderer() as content', () => {
         expect( renderer.renderMarkdownCell(cell, notebook) ).toHtmlEqual(
-          <div class="cell markdown-cell">
+          <section class="cell markdown-cell">
             {{__html: mockLastResult(markdownRenderer) }}
-          </div>
+          </section>
         )
         expect( markdownRenderer ).toBeCalledWith(source)
       })
@@ -117,11 +117,11 @@ describe('built renderer', () => {
   describe('.renderRawCell', () => {
     eachMultilineVariant(fixtures.RawCell, 'source', (cell) => {
 
-      it('returns div.cell.raw-cell with the $source as content', () => {
+      it('returns section.cell.raw-cell with the $source as content', () => {
         expect( renderer.renderRawCell(cell, notebook) ).toHtmlEqual(
-          <div class="cell raw-cell">
+          <section class="cell raw-cell">
             {{__html: join(cell.source) }}
-          </div>
+          </section>
         )
       })
     })
@@ -139,9 +139,9 @@ describe('built renderer', () => {
       result = renderer.renderCodeCell(cell, notebook)
     })
 
-    it('returns div.cell.code-cell', () => {
+    it('returns section.cell.code-cell', () => {
       expect( result ).toMatchElement(
-        <div class="cell code-cell"><Anything /></div>
+        <section class="cell code-cell"><Anything /></section>
       )
     })
 
