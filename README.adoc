@@ -6,7 +6,7 @@
 :ansiup-version: 4.0.4
 :hljs-version: 9.15.10
 :katex-version: 0.11.1
-:marked-version: 0.7.0
+:marked-version: 1.0.0
 :vs-marketplace-uri: https://marketplace.visualstudio.com/items?itemName=
 
 ifdef::env-github[]
