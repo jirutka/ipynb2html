@@ -4,7 +4,7 @@
 :gh-branch: master
 :version: 0.2.1
 :ansiup-version: 4.0.4
-:hljs-version: 9.15.10
+:hljs-version: 10.1.1
 :katex-version: 0.11.1
 :marked-version: 1.0.0
 :vs-marketplace-uri: https://marketplace.visualstudio.com/items?itemName=

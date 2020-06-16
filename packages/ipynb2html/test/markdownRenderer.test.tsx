@@ -133,10 +133,12 @@ describe('image', () => {
 describe('code', () => {
 
   it('highlights fenced code block', () => {
-    expect( render('```js\nconsole.log("Hello, world!")\n```') ).toHtmlEqual(
+    // Note: We use `backticks` in this example to avoid problem that JSX
+    // implicitly decodes HTML entities, but node-html-parser does not.
+    expect( render('```js\nconsole.log(`Hello, world!`)\n```') ).toHtmlEqual(
       <pre>
         <code class="language-js">
-          <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Hello, world!"</span>)
+          <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Hello, world!`</span>)
         </code>
       </pre>
     )
