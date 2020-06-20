@@ -11,7 +11,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
     interface Matchers<R, T> {
-      toMatchElement (expected: HTMLElement, opts?: Options): R,
+      toMatchElement: (expected: HTMLElement, opts?: Options) => R,
     }
   }
 }

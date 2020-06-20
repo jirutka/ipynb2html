@@ -42,7 +42,7 @@ export type NbRendererOpts<TElement = HTMLElement> = BaseOptions<TElement> & {
  * for this module's function.
  */
 type MinimalDocument<TElement extends MinimalElement> = {
-  createElement (tag: string): TElement,
+  createElement: (tag: string) => TElement,
 }
 
 const defaultKatexOpts: KatexOptions = {

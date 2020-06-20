@@ -4,8 +4,8 @@ type Attributes = { [k: string]: string }
 // for this module's function.
 export type MinimalElement = {
   innerHTML: string,
-  setAttribute (name: string, value: string): void,
-  appendChild (child: any): any,
+  setAttribute: (name: string, value: string) => void,
+  appendChild: (child: any) => any,
 }
 
 export type ElementCreator<TElement = HTMLElement> =
