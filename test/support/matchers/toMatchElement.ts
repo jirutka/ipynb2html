@@ -21,7 +21,7 @@ export const AnythingNode = new class extends Node {
   toString () { return this.render() }
 }()
 
-export const Anything = () => AnythingNode
+export const Anything = (): Node => AnythingNode
 
 function isWritable (obj: any, prop: string): boolean {
   const desc = Object.getOwnPropertyDescriptor(obj, prop)
@@ -35,7 +35,7 @@ function filterWildcardChildren (rec: Node, exp: Node): void {
       && (rec as HTMLElement).innerHTML
   ) {
     if (isWritable(rec, 'innerHTML')) {
-      ;(rec as HTMLElement).innerHTML = ''
+      (rec as HTMLElement).innerHTML = ''
     }
     rec.childNodes.splice(0, rec.childNodes.length, AnythingNode)
     return

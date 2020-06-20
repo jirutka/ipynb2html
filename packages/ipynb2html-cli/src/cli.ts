@@ -10,6 +10,7 @@ import * as ipynb2html from 'ipynb2html'
 import renderPage from './page'
 
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const { version, bugs: bugsUrl } = $INLINE_JSON('../package.json')
 const notebookCss = $INLINE_FILE('../../ipynb2html/styles/notebook.css')
 const pageCss = $INLINE_FILE('./page.css')
@@ -106,6 +107,7 @@ export default (argv: string[]): void => {
   const opts = parseCliArgs(argv)
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const notebook = JSON.parse(fs.readFileSync(opts.input, 'utf-8'))
     const style = opts.styles.map(loadStyle).join('\n')
 
@@ -125,7 +127,7 @@ export default (argv: string[]): void => {
     if (opts.debug) {
       console.debug(err)
     } else {
-      logErr(err.message)
+      logErr((err as Error).message)
     }
     return exit(1)
   }

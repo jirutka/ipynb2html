@@ -60,7 +60,8 @@ export function createElement (
     } else if (child instanceof NNode) {
       el.appendChild(child)
     } else if (typeof child === 'object' && '__html' in child) {
-      el.innerHTML = child.__html
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      el.innerHTML = child.__html as string
     } else {
       el.appendChild(document.createTextNode(String(child)))
     }
@@ -68,6 +69,7 @@ export function createElement (
   return el
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 (global as any).JSX = {
   createElement,
 }

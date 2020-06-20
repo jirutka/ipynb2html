@@ -1,22 +1,27 @@
 
-const htmlEntities = {
+const htmlEntities: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
 }
 
-type CallableConstructor = new <T> () => T extends { __call__: Function }
+type Callable = (...args: any[]) => any
+
+type CallableConstructor = new <T> () => T extends { __call__: Callable }
   ? T['__call__']
   : 'subclass does not implement method __call__'
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment,
+                  @typescript-eslint/no-unsafe-member-access,
+                  @typescript-eslint/ban-types */
 export const CallableInstance: CallableConstructor = function Callable (
   this: object,
-): Function {
+): Callable {
 
-  const func = this.constructor.prototype.__call__ as Function
+  const func = this.constructor.prototype.__call__ as Callable
 
   const cls = function (...args: any[]) {
-    return func.apply(cls, args)
+    return func.apply(cls, args) as unknown
   }
   Object.setPrototypeOf(cls, this.constructor.prototype)
 
@@ -33,13 +38,16 @@ export const CallableInstance: CallableConstructor = function Callable (
   return cls
 } as any
 CallableInstance.prototype = Object.create(Function.prototype)
+/* eslint-enable @typescript-eslint/no-unsafe-assignment,
+                 @typescript-eslint/no-unsafe-member-access,
+                 @typescript-eslint/ban-types */
 
 /**
  * Escapes characters with special meaning in HTML with the corresponding
  * HTML entities.
  */
 export function escapeHTML (str: string): string {
-  return str.replace(/[&<>]/g, c => (htmlEntities as any)[c])
+  return str.replace(/[&<>]/g, c => htmlEntities[c])
 }
 
 /**

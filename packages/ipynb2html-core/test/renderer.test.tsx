@@ -149,7 +149,7 @@ describe('built renderer', () => {
 
       it('returns element with $source rendered using .renderSource() as children[0]', () => {
         expect( renderer.renderSource ).toBeCalledWith(cell, notebook)
-        expect( result.children[0] ).toHtmlEqual(mockLastResult(renderer.renderSource))
+        expect( result.children[0] ).toHtmlEqual(mockLastResult(renderer.renderSource)!)
       })
     })
 
@@ -291,7 +291,7 @@ describe('built renderer', () => {
 
       it(`returns element with the output rendered using .${funcName}() as the only child`, () => {
         expect( renderer[funcName] ).toBeCalledWith(output)
-        expect( result.children ).toHtmlEqual([mockLastResult(renderer[funcName])])
+        expect( result.children ).toHtmlEqual([mockLastResult(renderer[funcName])!])
       })
 
       describe('when the cell has non-null execution_count', () => {
@@ -437,7 +437,7 @@ describe('built renderer', () => {
 
         it('renders the data using the associated external renderer', () => {
           expect( renderer.renderDisplayData(output) ).toHtmlEqual(
-            mockLastResult(dataRenderers['text/custom'])
+            mockLastResult(dataRenderers['text/custom'])!
           )
           expect( dataRenderers['text/custom'] ).toBeCalledWith(join(data))
         })
@@ -468,7 +468,7 @@ describe('built renderer', () => {
         const output = displayDataWith(mimeBundle)
 
         expect( renderer.renderDisplayData(output) ).toHtmlEqual(
-          mockLastResult(dataRenderers['text/custom'])
+          mockLastResult(dataRenderers['text/custom'])!
         )
       })
     })

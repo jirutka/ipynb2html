@@ -5,6 +5,8 @@ import marked, { Slugger } from 'marked'
 import { mathExtractor } from 'ipynb2html-core'
 
 
+export type MarkdownRenderer = (markdown: string) => string
+
 export interface MarkedOptions extends marked.MarkedOptions {
   /** Generate heading anchors (this implies headingIds). */
   headerAnchors?: boolean,
@@ -71,7 +73,7 @@ const rendererWithMath = (markedOpts: MarkedOptions, katexOpts: KatexOptions) =>
  * @param {MarkedOptions} markedOpts Options for the marked Markdown renderer.
  * @param {KatexOptions} katexOpts Options for the KaTeX math renderer.
  */
-export default (markedOpts: MarkedOptions = {}, katexOpts: KatexOptions = {}) => {
+export default (markedOpts: MarkedOptions = {}, katexOpts: KatexOptions = {}): MarkdownRenderer => {
 
   markedOpts = { renderer: new Renderer(markedOpts), ...markedOpts }
   if (hljs) {  // highlight.js may be an optional dependency (in browser bundle)

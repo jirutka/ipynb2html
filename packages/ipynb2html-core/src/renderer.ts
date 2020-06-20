@@ -48,6 +48,7 @@ export type NbRendererOpts<TElement = HTMLElement> = {
   markdownRenderer?: (markup: string) => string,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export type DataRenderer<TElement = HTMLElement> = (this: NbRenderer<TElement> | void, data: string) => TElement
 
 type DataRenderers<TElement> = { [mediaType: string]: DataRenderer<TElement> }
@@ -147,6 +148,7 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
   __call__ (notebook: Notebook): TElement {
     return this.render(notebook)
   }
+
   /**
    * Renders the given Jupyter *notebook*.
    */

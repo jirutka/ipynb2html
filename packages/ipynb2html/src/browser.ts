@@ -39,6 +39,7 @@ export function autoRender (opts: NbRendererOpts = {}): void {
 
   document.querySelectorAll(selector).forEach(script => {
     if (script.textContent && script.parentElement) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const notebook = JSON.parse(unescapeHTML(script.textContent))
       const nbElement = render(notebook)
       script.parentElement.replaceChild(nbElement, script)

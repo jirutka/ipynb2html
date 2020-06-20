@@ -7,12 +7,14 @@ class EmptyRenderer extends marked.Renderer {}
 
 // Override all the EmptyRenderer's methods inherited from marked.Renderer to
 // always return an empty string.
-const RendererProto: any = marked.Renderer.prototype
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+const RendererProto = marked.Renderer.prototype
 for (const prop of Object.getOwnPropertyNames(RendererProto)) {
-  if (prop !== 'constructor' && typeof RendererProto[prop] === 'function') {
-    ;(EmptyRenderer.prototype as any)[prop] = () => ''
+  if (prop !== 'constructor' && typeof (RendererProto as any)[prop] === 'function') {
+    (EmptyRenderer.prototype as any)[prop] = () => ''
   }
 }
+/* eslint-enable @typescript-eslint/no-unsafe-member-access */
 
 class MainTitleRenderer extends EmptyRenderer {
   _titleFound = false

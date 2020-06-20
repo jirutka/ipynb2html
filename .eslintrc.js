@@ -28,7 +28,6 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'standard-with-typescript',
@@ -37,36 +36,35 @@ module.exports = {
   ],
   rules: {
     'comma-dangle': ['error', 'always-multiline'],
-    // Disable in favour of TypeScript rule.
-    'func-call-spacing': 'off',
     'linebreak-style': ['error', 'unix'],
-    'lines-between-class-members': 'off',
-    // Disable in favour of TypeScript rule.
-    'no-extra-semi': 'off',
+    // Changed from error to warn and enabled ignoreEOLComments.
     'no-multi-spaces': ['warn', {
       ignoreEOLComments: true,
     }],
+    // Changed from error to warn and adjusted options.
     'no-multiple-empty-lines': ['warn', {
       max: 2,
       maxEOF: 1,
       maxBOF: 1,
     }],
     'no-template-curly-in-string': 'off',
+    // Changed from 'after' to 'before'.
     'operator-linebreak': ['error', 'before'],
+    // Changed from error and all 'never' to warn and switches 'never'.
     'padded-blocks': ['warn', {
       switches: 'never',
     }],
+    // Changed from 'as-needed' to 'consistent-as-needed'.
     'quote-props': ['error', 'consistent-as-needed'],
-    // Disable in favour of TypeScript rule.
-    'semi': 'off',
 
     // Import
+
+    // Some packages have wrong type declarations.
     'import/default': 'off',
     'import/newline-after-import': 'warn',
-    'import/no-absolute-path': 'error',
     // This rule disallows using both wildcard and selective imports from the same module.
     'import/no-duplicates': 'off',
-    // Some packages has it wrong in type declarations (e.g. katex, marked).
+    // Some packages have it wrong in type declarations (e.g. katex, marked).
     'import/no-named-as-default-member': 'off',
     'import/order': ['warn', {
       'groups': [['builtin', 'external']],
@@ -74,7 +72,12 @@ module.exports = {
     }],
 
     // TypeScript
+
+    // Changed from error to warn.
+    '@typescript-eslint/ban-types': 'warn',
+    // Changed from error to off.
     '@typescript-eslint/consistent-type-definitions': 'off',
+    // Changed from error to off.
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': ['warn', {
       accessibility: 'no-public',
@@ -82,7 +85,10 @@ module.exports = {
         parameterProperties: 'off',
       },
     }],
-    '@typescript-eslint/func-call-spacing': ['error', 'never'],
+    // Changed from warn to error and adjusted options.
+    '@typescript-eslint/explicit-module-boundary-types': ['error', {
+      allowArgumentsExplicitlyTypedAsAny: true,
+    }],
     '@typescript-eslint/indent': ['error', 2, {
       SwitchCase: 1,
       VariableDeclarator: 1,
@@ -101,34 +107,45 @@ module.exports = {
       flatTernaryExpressions: true,
       ignoreComments: false,
     }],
+    // Changed from error to warn.
+    '@typescript-eslint/lines-between-class-members': 'warn',
     '@typescript-eslint/member-delimiter-style': ['error', {
+      // Changed delimiter from none to comma.
       multiline: { delimiter: 'comma', requireLast: true },
       singleline: { delimiter: 'comma', requireLast: false },
     }],
+    // Changed from warn to off.
     '@typescript-eslint/no-explicit-any': 'off',
+    // Changed from error to warn.
+    '@typescript-eslint/no-extra-semi': 'warn',
+    // Changed from error to warn.
     '@typescript-eslint/no-namespace': 'warn',
+    // Changed from error to warn.
     '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/no-require-imports': 'error',
+    // Changed from error to warn.
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    // Changed from error to warn.
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
     // Disabled in favour of the next rule.
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars-experimental': 'error',
+    // Changed options.
     '@typescript-eslint/no-use-before-define': ['error', {
-      classes: true,
       functions: false,
       typedefs: false,
-      variables: true,
     }],
     '@typescript-eslint/prefer-for-of': 'warn',
+    // Changed from error to warn.
     '@typescript-eslint/prefer-includes': 'warn',
+    // Changed from error to warn.
     '@typescript-eslint/prefer-regexp-exec': 'warn',
     '@typescript-eslint/prefer-string-starts-ends-with': 'warn',
-    '@typescript-eslint/promise-function-async': ['error', {
-      allowAny: true,
-    }],
     // It has too many false positives.
     '@typescript-eslint/restrict-template-expressions': 'off',
-    '@typescript-eslint/semi': ['error', 'never'],
+    // Changed from error to off.
     '@typescript-eslint/strict-boolean-expressions': 'off',
+    // Changed from error to warn and adjusted options.
     '@typescript-eslint/unbound-method': ['warn', {
       ignoreStatic: true,
     }],
@@ -144,9 +161,9 @@ module.exports = {
           objects: 'always-multiline',
           imports: 'always-multiline',
           exports: 'always-multiline',
+          // Changed to not require comma in a multiline expect().
           functions: 'only-multiline',
         }],
-        'comma-spacing': 'off',
         'object-curly-spacing': 'off',
         'no-multi-spaces': 'off',
         'standard/array-bracket-even-spacing': 'off',
@@ -154,6 +171,10 @@ module.exports = {
         'space-in-parens': 'off',
         // jest.mock() must be above imports.
         'import/first': 'off',
+        '@typescript-eslint/comma-spacing': 'off',
+        // False positive on expect() functions.
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-return': 'warn',
       },
     },
   ],

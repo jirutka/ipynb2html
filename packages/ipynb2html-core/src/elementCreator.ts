@@ -5,7 +5,7 @@ type Attributes = { [k: string]: string }
 export type MinimalElement = {
   innerHTML: string,
   setAttribute: (name: string, value: string) => void,
-  appendChild: (child: any) => any,
+  appendChild: (child: any) => unknown,
 }
 
 export type ElementCreator<TElement = HTMLElement> =
