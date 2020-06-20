@@ -75,11 +75,12 @@ module.exports = {
 
     // Changed from error to warn.
     '@typescript-eslint/ban-types': 'warn',
+    '@typescript-eslint/class-literal-property-style': ['error', 'fields'],
     // Changed from error to off.
     '@typescript-eslint/consistent-type-definitions': 'off',
     // Changed from error to off.
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-member-accessibility': ['warn', {
+    '@typescript-eslint/explicit-member-accessibility': ['error', {
       accessibility: 'no-public',
       overrides: {
         parameterProperties: 'off',
@@ -120,6 +121,7 @@ module.exports = {
         },
       },
     }],
+    '@typescript-eslint/member-ordering': 'warn',
     // Changed from warn to off.
     '@typescript-eslint/no-explicit-any': 'off',
     // Changed from error to warn.
@@ -151,6 +153,7 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     // Changed from error to off.
     '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/switch-exhaustiveness-check': 'error',
     // Changed from error to warn and adjusted options.
     '@typescript-eslint/unbound-method': ['warn', {
       ignoreStatic: true,
