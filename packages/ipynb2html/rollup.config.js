@@ -45,6 +45,7 @@ const plugins = [
   // Transpile all sources for older browsers and inject needed polyfills.
   babel({
     babelrc: false,
+    babelHelpers: 'bundled',
     // To avoid Babel injecting core-js polyfills into core-js.
     exclude: [/node_modules\/core-js\//],
     extensions,
