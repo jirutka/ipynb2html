@@ -1,5 +1,5 @@
 import addGitMsg from 'rollup-plugin-add-git-msg'
-import babel from 'rollup-plugin-babel'
+import babel from '@rollup/plugin-babel'
 import commonjs from '@rollup/plugin-commonjs'
 import license from 'rollup-plugin-node-license'
 import resolve from '@rollup/plugin-node-resolve'
@@ -33,9 +33,6 @@ const plugins = [
         incremental: true,
       },
     },
-    // This is needed for node-license plugin. :(
-    // https://github.com/ezolenko/rollup-plugin-typescript2#plugins-using-asyncawait
-    objectHashIgnoreUnknownHack: true,
     clean: true,
   }),
   // Resolve node modules.
@@ -72,22 +69,23 @@ const plugins = [
   }),
   // Generate table of the bundled packages at top of the file.
   license({ format: 'table' }),
-  // Minify JS.
-  terser({
-    ecma: 5,
-    include: [/^.+\.min\.js$/],
-    output: {
-      // Preserve comment injected by addGitMsg and license.
-      comments: RegExp(`(?:\\$\\{${pkg.name}\\}|Bundled npm packages)`),
-    },
-  }),
 ]
 
-const output = (filename, extra = {}) => ['.js', '.min.js'].map(ext => ({
+const output = (filename, extra = {}) => [false, true].map(minify => ({
   name: pkg.name,
-  file: `${filename}${ext}`,
+  file: `${filename}${minify ? '.min.js' : '.js'}`,
   format: 'umd',
   sourcemap: true,
+  plugins: [
+    // Minify JS when building .min.js file.
+    minify && terser({
+      ecma: 5,
+      output: {
+        // Preserve comment injected by addGitMsg and license.
+        comments: RegExp(`(?:\\$\\{${pkg.name}\\}|Bundled npm packages)`),
+      },
+    }),
+  ].filter(Boolean),
   ...extra,
 }))
 

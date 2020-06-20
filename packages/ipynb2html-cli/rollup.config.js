@@ -26,9 +26,6 @@ export default {
           incremental: true,
         },
       },
-      // This is needed for node-license plugin. :(
-      // https://github.com/ezolenko/rollup-plugin-typescript2#plugins-using-asyncawait
-      objectHashIgnoreUnknownHack: true,
       clean: true,
     }),
     // Make node builtins external.
