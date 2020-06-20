@@ -111,7 +111,7 @@ export default (argv: string[]): void => {
     const notebook = JSON.parse(fs.readFileSync(opts.input, 'utf-8'))
     const style = opts.styles.map(loadStyle).join('\n')
 
-    const title = ipynb2html.readNotebookTitle(notebook) ?? 'Notebook'
+    const title = ipynb2html.readNotebookTitle(notebook) || 'Notebook'
 
     const renderNotebook = ipynb2html.createRenderer(new Document())
     const contents = renderNotebook(notebook).outerHTML
