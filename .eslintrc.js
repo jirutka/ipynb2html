@@ -109,10 +109,16 @@ module.exports = {
     }],
     // Changed from error to warn.
     '@typescript-eslint/lines-between-class-members': 'warn',
+    // Changed delimiter for type literals from none to comma.
+    // The reason is just aesthetic symmetry with object literals.
     '@typescript-eslint/member-delimiter-style': ['error', {
-      // Changed delimiter from none to comma.
       multiline: { delimiter: 'comma', requireLast: true },
       singleline: { delimiter: 'comma', requireLast: false },
+      overrides: {
+        interface: {
+          multiline: { delimiter: 'none' },
+        },
+      },
     }],
     // Changed from warn to off.
     '@typescript-eslint/no-explicit-any': 'off',

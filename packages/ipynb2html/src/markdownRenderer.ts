@@ -9,8 +9,8 @@ export type MarkdownRenderer = (markdown: string) => string
 
 export interface MarkedOptions extends marked.MarkedOptions {
   /** Generate heading anchors (this implies headingIds). */
-  headerAnchors?: boolean,
-  headerIdsStripAccents?: boolean,
+  headerAnchors?: boolean
+  headerIdsStripAccents?: boolean
 }
 
 // Removes accents from the given string.
