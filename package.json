@@ -65,7 +65,7 @@
     "ts-transformer-export-default-name": "^0.1.0",
     "ts-transformer-inline-file": "^0.1.1",
     "ttypescript": "^1.5.10",
-    "typescript": "~3.7.5",
+    "typescript": "~3.9.5",
     "wsrun": "^5.2.0",
     "yarn-version-bump": "^0.0.3",
     "yazl": "^2.5.1"
