@@ -126,6 +126,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     // Changed from error to warn.
     '@typescript-eslint/no-extra-semi': 'warn',
+    // It disallows using void even in valid cases.
+    '@typescript-eslint/no-invalid-void-type': 'off',
     // Changed from error to warn.
     '@typescript-eslint/no-namespace': 'warn',
     // Changed from error to warn.
