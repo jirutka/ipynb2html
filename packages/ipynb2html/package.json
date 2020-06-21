@@ -49,6 +49,12 @@
     "katex": "^0.11.1",
     "marked": "^1.0.0"
   },
+  "devDependencies": {
+    "@types/highlight.js": "^9.12.4",
+    "@types/katex": "^0.11.0",
+    "@types/marked": "^0.7.4",
+    "ansi_up": "^4.0.4"
+  },
   "peerDependencies": {
     "nodom": "^2.3.0"
   },
