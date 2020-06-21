@@ -69,8 +69,15 @@ module.exports = {
 
     // TypeScript
 
-    // Changed from error to warn.
-    '@typescript-eslint/ban-types': 'warn',
+    // Changed options.
+    '@typescript-eslint/ban-types': ['error', {
+      // Allow to use {} and object - they are actually useful.
+      types: {
+        '{}': false,
+        'object': false,
+      },
+      extendDefaults: true,
+    }],
     '@typescript-eslint/class-literal-property-style': ['error', 'fields'],
     // Changed from error to off.
     '@typescript-eslint/consistent-type-definitions': 'off',
