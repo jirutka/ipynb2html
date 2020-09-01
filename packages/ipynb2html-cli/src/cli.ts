@@ -5,7 +5,7 @@ import { Document } from 'nodom'
 import { exit } from 'process'
 import { $INLINE_FILE, $INLINE_JSON } from 'ts-transformer-inline-file'
 
-import * as ipynb2html from 'ipynb2html'
+import * as ipynb2html from 'ipynb2html-fix'
 
 import renderPage from './page'
 

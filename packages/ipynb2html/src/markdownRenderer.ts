@@ -2,7 +2,7 @@ import hljs from 'highlight.js'
 import katex, { KatexOptions } from 'katex'
 import marked, { Slugger } from 'marked'
 
-import { mathExtractor } from 'ipynb2html-core'
+import { mathExtractor } from 'ipynb2html-core-fix'
 
 
 export type MarkdownRenderer = (markdown: string) => string

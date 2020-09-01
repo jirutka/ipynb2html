@@ -1,4 +1,4 @@
-import { version } from 'ipynb2html'
+import { version } from 'ipynb2html-fix'
 
 
 export type Options = {

@@ -1,6 +1,7 @@
 {
-  "name": "ipynb2html-parent",
-  "version": "0.2.1",
+  "name": "ipynb2html-fix",
+  "version": "0.2.2",
+  "main": "",
   "private": true,
   "scripts": {
     "build": "ttsc --build",
@@ -68,5 +69,9 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "asciidoctor": "^2.2.0",
+    "pandoc": "^0.2.0"
+  }
 }

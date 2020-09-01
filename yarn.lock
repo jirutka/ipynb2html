@@ -2,6 +2,21 @@
 # yarn lockfile v1
 
 
+"@asciidoctor/cli@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.npm.taobao.org/@asciidoctor/cli/download/@asciidoctor/cli-3.4.0.tgz#586e9133f3367c7b3236631197f4b621890d9227"
+  integrity sha1-WG6RM/M2fHsyNmMRl/S2IYkNkic=
+  dependencies:
+    yargs "15.3.1"
+
+"@asciidoctor/core@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.npm.taobao.org/@asciidoctor/core/download/@asciidoctor/core-2.2.0.tgz#cae722e32666bf3c38365afe7d05f2f433b165fd"
+  integrity sha1-yuci4yZmvzw4Nlr+fQXy9DOxZf0=
+  dependencies:
+    asciidoctor-opal-runtime "0.3.0"
+    unxhr "1.0.1"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.8.3.tgz#33e25903d7481181534e12ec0a25f16b6fcf419e"
@@ -1684,6 +1699,22 @@ asap@^2.0.0:
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
   integrity sha1-5QNHYR1+aQlDIIu9r+vLwvuGbUY=
 
+asciidoctor-opal-runtime@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.npm.taobao.org/asciidoctor-opal-runtime/download/asciidoctor-opal-runtime-0.3.0.tgz#df327a870ddd3cd5eb0e162d64ed4dcdd3fe3fee"
+  integrity sha1-3zJ6hw3dPNXrDhYtZO1NzdP+P+4=
+  dependencies:
+    glob "7.1.3"
+    unxhr "1.0.1"
+
+asciidoctor@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.npm.taobao.org/asciidoctor/download/asciidoctor-2.2.0.tgz#880f0dfe349d7dcc8b819ebc691bf1fd36d47bbe"
+  integrity sha1-iA8N/jSdfcyLgZ68aRvx/TbUe74=
+  dependencies:
+    "@asciidoctor/cli" "3.4.0"
+    "@asciidoctor/core" "2.2.0"
+
 asn1@~0.2.3:
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/asn1/-/asn1-0.2.4.tgz#8d2475dfab553bb33e77b54e59e880bb8ce23136"
@@ -3039,6 +3070,18 @@ glob-parent@^5.0.0, glob-parent@~5.1.0:
   integrity sha512-qjtRgnIVmOfnKUE3NJAQEdk+lKrxfw8t5ke7SXtfMTHcjsBfOfWXCQfdb30zfDoZQ2IRSIiidmjtbHZPZ++Ihw==
   dependencies:
     is-glob "^4.0.1"
+
+glob@7.1.3:
+  version "7.1.3"
+  resolved "https://registry.npm.taobao.org/glob/download/glob-7.1.3.tgz?cache=0&sync_timestamp=1573078079496&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fglob%2Fdownload%2Fglob-7.1.3.tgz#3960832d3f1574108342dafd3a67b332c0969df1"
+  integrity sha1-OWCDLT8VdBCDQtr9OmezMsCWnfE=
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^3.0.4"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
 
 glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4, glob@^7.1.6:
   version "7.1.6"
@@ -4746,6 +4789,11 @@ p-try@^2.0.0:
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-2.2.0.tgz#cb2868540e313d61de58fafbe35ce9004d5540e6"
   integrity sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==
 
+pandoc@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npm.taobao.org/pandoc/download/pandoc-0.2.0.tgz#897cf45d11e72ef6c5d7de667a7c30336c5d361b"
+  integrity sha1-iXz0XRHnLvbF195menwwM2xdNhs=
+
 parent-module@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parent-module/-/parent-module-1.0.1.tgz#691d2709e78c79fae3a156622452d00762caaaa2"
@@ -6285,6 +6333,11 @@ unset-value@^1.0.0:
     has-value "^0.3.1"
     isobject "^3.0.0"
 
+unxhr@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npm.taobao.org/unxhr/download/unxhr-1.0.1.tgz#92200322d66c728993de771f9e01eeb21f41bc7b"
+  integrity sha1-kiADItZscomT3ncfngHush9BvHs=
+
 uri-js@^4.2.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/uri-js/-/uri-js-4.2.2.tgz#94c540e1ff772956e2299507c010aea6c8838eb0"
@@ -6533,6 +6586,23 @@ yargs-parser@^13.1.2:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
+yargs@15.3.1, yargs@^15.3.1:
+  version "15.3.1"
+  resolved "https://registry.npm.taobao.org/yargs/download/yargs-15.3.1.tgz?cache=0&sync_timestamp=1598505632743&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fyargs%2Fdownload%2Fyargs-15.3.1.tgz#9505b472763963e54afe60148ad27a330818e98b"
+  integrity sha1-lQW0cnY5Y+VK/mAUitJ6MwgY6Ys=
+  dependencies:
+    cliui "^6.0.0"
+    decamelize "^1.2.0"
+    find-up "^4.1.0"
+    get-caller-file "^2.0.1"
+    require-directory "^2.1.1"
+    require-main-filename "^2.0.0"
+    set-blocking "^2.0.0"
+    string-width "^4.2.0"
+    which-module "^2.0.0"
+    y18n "^4.0.0"
+    yargs-parser "^18.1.1"
+
 yargs@^13.0.0:
   version "13.3.2"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-13.3.2.tgz#ad7ffefec1aa59565ac915f82dccb38a9c31a2dd"
@@ -6548,23 +6618,6 @@ yargs@^13.0.0:
     which-module "^2.0.0"
     y18n "^4.0.0"
     yargs-parser "^13.1.2"
-
-yargs@^15.3.1:
-  version "15.3.1"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-15.3.1.tgz#9505b472763963e54afe60148ad27a330818e98b"
-  integrity sha512-92O1HWEjw27sBfgmXiixJWT5hRBp2eobqXicLtPBIDBhYB+1HpwZlXmbW2luivBJHBzki+7VyCLRtAkScbTBQA==
-  dependencies:
-    cliui "^6.0.0"
-    decamelize "^1.2.0"
-    find-up "^4.1.0"
-    get-caller-file "^2.0.1"
-    require-directory "^2.1.1"
-    require-main-filename "^2.0.0"
-    set-blocking "^2.0.0"
-    string-width "^4.2.0"
-    which-module "^2.0.0"
-    y18n "^4.0.0"
-    yargs-parser "^18.1.1"
 
 yarn-version-bump@^0.0.3:
   version "0.0.3"

@@ -1,6 +1,6 @@
 import marked from 'marked'
 
-import { Notebook } from 'ipynb2html-core'
+import { Notebook } from 'ipynb2html-core-fix'
 
 
 class EmptyRenderer extends marked.Renderer {}

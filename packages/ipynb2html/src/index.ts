@@ -10,7 +10,7 @@ import {
   NbRenderer,
   NbRendererOpts as BaseOptions,
   Notebook,
-} from 'ipynb2html-core'
+} from 'ipynb2html-core-fix'
 
 import buildMarkdownRenderer, { MarkedOptions } from './markdownRenderer'
 
