@@ -119,7 +119,7 @@ class NbRenderer <TElement> extends CallableInstance<NbRenderer<TElement>> {
 
     const embeddedImageEl = (format: string) => (data: string) => this.el('img', {
       class: 'image-output',
-      src: `data:image/${format};base64,${data.replace(/\n/g, '')}`,
+      src: /^https?/.test(data)?data:`data:image/${format};base64,${data.replace(/\n/g, '')}`,
     })
 
     // opts.dataRenderers is intentionally included twice; to get the user's
