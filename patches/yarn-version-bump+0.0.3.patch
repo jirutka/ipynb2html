@@ -1,0 +1,15 @@
+TODO: Remove after https://github.com/chrisdarroch/yarn-bump/pull/1 is merged and released.
+
+diff --git a/node_modules/yarn-version-bump/src/workspace.js b/node_modules/yarn-version-bump/src/workspace.js
+index 28b1dd1..0cf2ecb 100644
+--- a/node_modules/yarn-version-bump/src/workspace.js
++++ b/node_modules/yarn-version-bump/src/workspace.js
+@@ -9,7 +9,7 @@ class Workspace {
+ 
+     get workspaceSnapshot() {
+         return runCommand('yarn',
+-            ['workspaces', 'info', '--silent'],
++            ['--silent', 'workspaces', 'info'],
+             { cwd: this.root }
+         )
+         .then(data => JSON.parse(data))
