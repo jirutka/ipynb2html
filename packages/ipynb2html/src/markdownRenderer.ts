@@ -50,7 +50,7 @@ class Renderer extends marked.Renderer {
 
 function highlight (code: string, lang: string): string {
   return hljs.getLanguage(lang)
-    ? hljs.highlight(lang, code, true).value
+    ? hljs.highlight(code, { language: lang, ignoreIllegals: true }).value
     : code
 }
 

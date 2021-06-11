@@ -57,7 +57,7 @@ const defaultMarkedOpts: MarkedOptions = {
 
 function hljsCodeHighlighter (code: string, lang: string): string {
   return hljs.getLanguage(lang)
-    ? hljs.highlight(lang, code).value
+    ? hljs.highlight(code, { language: lang }).value
     : code
 }
 
