@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/katex": "^0.11.0",
     "@types/marked": "^2.0.3",
-    "ansi_up": "^4.0.4"
+    "ansi_up": "^5.0.1"
   },
   "peerDependencies": {
     "nodom": "^2.3.0"
