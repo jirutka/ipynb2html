@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "anser": "^1.4.9",
-    "highlight.js": "^10.1.1",
+    "highlight.js": "^10.7.3",
     "ipynb2html-core": "0.3.0",
     "katex": "^0.11.1",
     "marked": "^2.0.7"

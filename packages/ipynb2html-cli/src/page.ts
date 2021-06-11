@@ -16,7 +16,7 @@ export default ({ contents, title, style }: Options): string => `\
     <meta name="generator" content="ipynb2html ${version}">
     <title>${title}</title>
     <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.1/build/styles/default.min.css"
+        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.7.3/build/styles/default.min.css"
         integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ"
         crossorigin="anonymous">
     <link rel="stylesheet"
