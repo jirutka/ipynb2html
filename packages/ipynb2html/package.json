@@ -50,7 +50,6 @@
     "marked": "^2.0.7"
   },
   "devDependencies": {
-    "@types/highlight.js": "^9.12.4",
     "@types/katex": "^0.11.0",
     "@types/marked": "^2.0.3",
     "ansi_up": "^4.0.4"
