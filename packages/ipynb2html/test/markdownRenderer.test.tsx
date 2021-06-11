@@ -147,5 +147,6 @@ describe('code', () => {
 
 
 function render (text: string) {
-  return parseHtml(markdownRenderer(markedOpts, katexOpts)(text), { pre: true }).childNodes[0]
+  const html = markdownRenderer(markedOpts, katexOpts)(text).replace(/\n/, '')
+  return parseHtml(html, { pre: true }).childNodes[0]
 }
