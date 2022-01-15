@@ -47,7 +47,7 @@
     "highlight.js": "^10.7.3",
     "ipynb2html-core": "0.3.0",
     "katex": "^0.13.11",
-    "marked": "^2.0.7"
+    "marked": "^4.0.10"
   },
   "devDependencies": {
     "@types/katex": "^0.11.0",
