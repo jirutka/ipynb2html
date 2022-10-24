@@ -20,7 +20,7 @@ export default ({ contents, title, style }: Options): string => `\
         integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ"
         crossorigin="anonymous">
     <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css"
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css"
         integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc"
         crossorigin="anonymous">
     <style>

@@ -1352,10 +1352,10 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
-"@types/katex@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@types/katex/-/katex-0.11.0.tgz#b16c54ee670925ffef0616beae9e90c557e17334"
-  integrity sha512-27BfE8zASRLYfSBNMk5/+KIjr2CBBrH0i5lhsO04fca4TGirIIMay73v3zNkzqmsaeIa/Mi5kejWDcxPLAmkvA==
+"@types/katex@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/@types/katex/-/katex-0.14.0.tgz#b84c0afc3218069a5ad64fe2a95321881021b5fe"
+  integrity sha512-+2FW2CcT0K3P+JMR8YG846bmDwplKUTsWgT2ENwdQ1UdVfRk3GQrh6Mi4sTopy30gI8Uau5CEqHTDZ6YvWIUPA==
 
 "@types/marked@^2.0.3":
   version "2.0.3"
@@ -2113,10 +2113,10 @@ commander@^2.20.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
 
-commander@^6.0.0:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
-  integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+commander@^8.0.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-8.3.0.tgz#4837ea1b2da67b9c616a67afbb0fafee567bca66"
+  integrity sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==
 
 common-path-prefix@^3.0.0:
   version "3.0.0"
@@ -4066,12 +4066,12 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-katex@^0.13.11:
-  version "0.13.11"
-  resolved "https://registry.yarnpkg.com/katex/-/katex-0.13.11.tgz#66138ebf173f25ef130cd3a3ea3ea1d12a3f1362"
-  integrity sha512-yJBHVIgwlAaapzlbvTpVF/ZOs8UkTj/sd46Fl8+qAf2/UiituPYVeapVD8ADZtqyRg/qNWUKt7gJoyYVWLrcXw==
+katex@^0.16.3:
+  version "0.16.3"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.16.3.tgz#29640560b8fa0403e45f3aa20da5fdbb6d2b83a8"
+  integrity sha512-3EykQddareoRmbtNiNEDgl3IGjryyrp2eg/25fHDEnlHymIDi33bptkMv6K4EOC2LZCybLW/ZkEo6Le+EM9pmA==
   dependencies:
-    commander "^6.0.0"
+    commander "^8.0.0"
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
