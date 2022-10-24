@@ -1,0 +1,78 @@
+name: CI
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    name: Test on Node.js ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 8
+          - 14
+          - 16
+          - 18
+          - latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # fetch all history to make `git describe` work
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: yarn install
+      - run: yarn build
+      - run: yarn bundle
+      - run: yarn test
+      - run: yarn lint
+
+      - name: Run ipynb2html-cli bundle
+        run: |
+          rm -rf node_modules
+          ./packages/ipynb2html-cli/dist/ipynb2html --version
+
+  publish:
+    name: Publish to npmjs and GitHub Releases
+    needs: [test]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # fetch all history to make `git describe` work
+
+      - run: sudo apt-get install asciidoctor pandoc
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org
+
+      - run: yarn install
+
+      - name: Generate source tarball
+        run: ./scripts/create-src-tarball dist/ipynb2html-${GITHUB_REF/refs\/tags\//}-src.tar.gz
+
+      - run: yarn build
+      - run: yarn bundle
+
+      - name: Publish packages to npmjs
+        run: yarn publish-all --non-interactive
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Upload tarballs to Releases
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          fail_on_unmatched_files: true
+          files: |
+            dist/*.tar.gz
+            packages/ipynb2html-cli/dist/*.tar.gz
+            packages/ipynb2html-cli/dist/*.zip
