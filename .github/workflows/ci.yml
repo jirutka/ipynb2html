@@ -30,6 +30,11 @@ jobs:
       - run: yarn test
       - run: yarn lint
 
+      - name: Run ipynb2html-cli bundle
+        run: |
+          rm -rf node_modules
+          ./packages/ipynb2html-cli/dist/ipynb2html --version
+
   publish:
     name: Publish to npmjs and GitHub Releases
     needs: [test]
