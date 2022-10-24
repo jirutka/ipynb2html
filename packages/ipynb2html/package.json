@@ -43,7 +43,7 @@
     "node": ">=10.13.0"
   },
   "dependencies": {
-    "anser": "^1.4.9",
+    "anser": "^2.1.1",
     "highlight.js": "^10.7.3",
     "ipynb2html-core": "0.3.0",
     "katex": "^0.13.11",
