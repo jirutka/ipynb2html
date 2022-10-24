@@ -1,7 +1,7 @@
 import anser from 'anser'
 import hljs from 'highlight.js'
 import katex, { KatexOptions } from 'katex'
-import marked from 'marked'
+import { marked } from 'marked'
 
 import {
   createElementCreator,
