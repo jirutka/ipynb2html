@@ -77,6 +77,8 @@ It requires only Node.js (version 10 or newer) to be installed on the system.
 
 The archive also contains source maps (useful for debugging).
 
+If you use *Alpine Linux*, you can also install it from package https://pkgs.alpinelinux.org/packages?name={npm-name}[{npm-name}].
+
 endif::[]
 
 
