@@ -1,7 +1,7 @@
 import addGitMsg from 'rollup-plugin-add-git-msg'
+import builtins from 'builtins'
 import commonjs from '@rollup/plugin-commonjs'
 import executable from 'rollup-plugin-executable'
-import externals from 'rollup-plugin-node-externals'
 import license from 'rollup-plugin-node-license'
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
@@ -28,8 +28,6 @@ export default {
       },
       clean: true,
     }),
-    // Make node builtins external.
-    externals(),
     // Resolve node modules.
     resolve({
       extensions: ['.mjs', '.js', '.ts'],
@@ -57,6 +55,8 @@ export default {
     // Make the output file executable.
     executable(),
   ],
+  // Don't bundle Node's builtins.
+  external: builtins({ version: '*' }),
   output: {
     file: 'dist/ipynb2html',
     format: 'cjs',
