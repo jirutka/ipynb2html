@@ -2,7 +2,7 @@
 :npm-name: ipynb2html
 :gh-name: jirutka/{npm-name}
 :gh-branch: master
-:version: 0.3.0
+:version: 0.4.0-rc.1
 :ansiup-version: 5.0.1
 :hljs-version: 10.7.3
 :katex-version: 0.16.3
